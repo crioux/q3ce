@@ -1,0 +1,4 @@
+EXPORTS
+
+vmMain=_G_vmMain
+dllEntry=dllEntry

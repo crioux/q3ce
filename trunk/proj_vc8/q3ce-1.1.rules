@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="Q3CE Rules"
+	Version="8.00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="ARM Assembler"
+			DisplayName="ARM Assembler"
+			CommandLine="armasm -cpu xscale &quot;$(InputPath)&quot; &quot;$(IntDir)\$(InputName).obj&quot;&#x0D;&#x0A;"
+			Outputs="&quot;$(IntDir)\$(InputName).obj&quot;"
+			FileExtensions="*.asm"
+			ExecutionDescription="Assembling $(InputPath)"
+			>
+			<Properties>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>
