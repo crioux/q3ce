@@ -1,0 +1,81 @@
+
+Compilation Guide to Quake 3 Arena CE
+Version 1.1
+-------------------------------------
+
+
+Project files are supplied for Visual Studio 8. 
+
+1. First extract this zipfile. Assuming you're reading this, you've already done that. Lets call the top level directory
+   where the text file is called 'q3ce'.
+
+2. You will need to get the Gerbera/Rasteroid library from Hybrid. Download Rasteroid from their website http://www.hybrid.fi, 
+   or find it on their ftp site. You want the OpenGL-ES 1.1 implementation for Pocket PC. I'm not going to provide a link to
+   their download directly, because they want you to read their EULA thingy. Put the gerbera directory in q3ce/gerbera.
+
+3. You will need to get the MBX libraries from Imagination Technologies. Download it from:
+   http://www.pvrdev.com/Pub/MBX/Download/default.htm
+   Extract to a directory called pvrsdk. (directories should be like q3ce\pvrsdk\builds, q3ce\pvrsdk\demos, etc)
+
+4. You should be ready to compile. Open the q3ce-1.1.sln.
+   Proceed to build the release version, or the debug version of the program. If all is well, you'll have an
+   executable now. Proceed to build a working file set like the one in the binary distribution of q3ce if you don't
+   want to use the one in the distro.
+
+
+Here's some of the design choices that had to go into making this port:
+
+
+1. Screen resolution. You can't change it. The game will run at whatever resolution your LCD screen is natively. At some point
+I may implement something like "r_screenrotate" or whatnot, so you can play in landscape mode. Right now, you're lucky it
+works at all :) That said, a number of internal changes were necessary to get it to lay things out right in 240x320 or other
+'long' or 'portrait' dimensions. It has only been tested on 240x320 and 480x640, but it will likely work on others. Rotated
+screens are unlikely to work.
+
+2. Mouse. I added absolute positioning to the mouse code so that the UI could use the stylus to select menu items.
+In-game mouse code still uses relative mouse positioning, but i wouldn't really try to use it in the game very much.
+
+3. Keys. I tried to get everything useful accessible. You'll note that the volume slider on many devices controls the
+up/down look. Everything does something. Click some buttons and find out, or edit your own q3config.cfg file.
+
+4. Memory. Geez. Windows CE doesn't give you much to work with. The stack can only grow to under 32 MB because
+that's what the OS allots for. I replaced all the memory allocation functions with stuff that uses memory mapped files
+because they can be mapped in 'high memory' (almost sounds like DOS, doesn't it!). Also, configured the heap to 
+allocate 24MB right at the beginning. This is primarily for Rasteroid/Gerbera, because the rest of the Q3CE code
+doesn't really use 'malloc()'. It uses the Z_Malloc and Hunk stuff which was moved the memory mapped files, as mentioned
+earlier.
+
+5. Textures. I reduced the size of all the textures by half. This is effectively 'r_picmip 1', but permanent. There's
+no sense in having 256x256 textures on a 320x240 screen. Heck, we could probably get away with 64x64 in a lot of cases
+but i didn't need to push it. This saves on the size of the PK3 file.
+
+6. The PK3 files. I removed the demos. Converted the sounds and background music to MP3. The full motion videos are optional.
+Background music doesn't play yet. This gets the PK3 down to around 120 MB. It should all fit on an SD card now. Yes, 
+it takes forever to copy to the card. For extra cool points, the full motion videos are encoded in DivX format and are 
+much much smaller. Background music will probably come at some point.
+
+7. OpenGL-ES. It's not OpenGL. But it's close. So I wrote a wrapper for it, and converted most of the Q3A code over that way. 
+It's the way all the mobile 3D graphics are going.
+
+8. Random bugs. Yes, I found a bunch of random bugs, overflows, etc in the Q3A source. And an ancient version of zlib
+that probably has that nasty security problem in it. I have a patch up to the newest zlib version here, but it's not
+applied to the Q3CE tree as distributed. I may opt to upgrade the zlib version at some point, if not only for the 
+speed at which it operates. And there's a lot of uninitialized static variables that someone assumed would be zero.
+
+9. Virtual Machine. The Q3A code uses a virtual machine to make modwriting and distribution easier. I eliminated that
+for speed purposes and built all of the modules statically. As a result, you can't use mods with this distribution.
+This was a real trick because the symbols all overlapped and whatnot. The patch gives new symbol prefixes to all 
+the things that collided. 
+
+10. Sound. The sound basically works. It's been brought down to 16 concurrent sound effects. If you don't have a
+fast CPU, it will compete with the graphics a bit. It may sound choppy. Depends on how much is going on. There may
+be a way to fix this a bit with buffering, but I haven't given it a whole lot of thought. I forward-ported the Quake 2
+waveOut code to make this work, since Q3A really only had DirectSound support, and PPC2003 doesn't have DirectSound.
+For Windows CE 5.0, I may reimplement this.
+
+That's it for now. Enjoy.
+
+9/27/05
+Christien Rioux 
+crioux@noctem.org
+
