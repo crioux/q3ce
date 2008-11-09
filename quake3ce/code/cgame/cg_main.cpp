@@ -43,7 +43,11 @@ This must be the very first function compiled into the .q3vm file
 ================
 */
 
+#ifdef _WIN32
 SysCallArg _CG_vmMain( int command, SysCallArgs &args ) 
+#else
+EXTERN_C DLLEXPORT SysCallArg vmMain( int command, SysCallArgs &args ) 
+#endif
 {
 	switch ( command ) {
 	case CG_INIT:
@@ -199,8 +203,8 @@ vmCvar_t	cg_obeliskRespawnDelay;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
-	char		*cvarName;
-	char		*defaultString;
+	const char		*cvarName;
+	const char		*defaultString;
 	int			cvarFlags;
 } _CG_cvarTable_t;
 
@@ -490,7 +494,7 @@ The server says this item is used on this level
 static void CG_RegisterItemSounds( int itemNum ) {
 	gitem_t			*item;
 	char			data[MAX_QPATH];
-	char			*s, *start;
+	const char			*s, *start;
 	int				len;
 
 	item = &bg_itemlist[ itemNum ];
@@ -808,7 +812,7 @@ This function may execute for a couple of minutes with a slow disk.
 static void CG_RegisterGraphics( void ) {
 	int			i;
 	char		items[MAX_ITEMS+1];
-	static char		*sb_nums[11] = {
+	static const char		*sb_nums[11] = {
 		"gfx/2d/numbers/zero_32b",
 		"gfx/2d/numbers/one_32b",
 		"gfx/2d/numbers/two_32b",
@@ -1180,13 +1184,13 @@ CG_StartMusic
 ======================
 */
 void CG_StartMusic( void ) {
-	char	*s;
+	const char	*s;
 	char	parm1[MAX_QPATH], parm2[MAX_QPATH];
 
 	// start the background music
-	s = (char *)CG_ConfigString( CS_MUSIC );
-	Q_strncpyz( parm1, COM_Parse( &s ), sizeof( parm1 ) );
-	Q_strncpyz( parm2, COM_Parse( &s ), sizeof( parm2 ) );
+	s = (const char *)CG_ConfigString( CS_MUSIC );
+	Q_strncpyz( parm1, COM_Parse( (const char **)&s ), sizeof( parm1 ) );
+	Q_strncpyz( parm2, COM_Parse( (const char **)&s ), sizeof( parm2 ) );
 
 	_CG_trap_S_StartBackgroundTrack( parm1, parm2 );
 }

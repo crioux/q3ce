@@ -37,7 +37,7 @@ R_ArrayElementDiscrete
 This is just for OpenGL conformance testing, it should never be the fastest
 ================
 */
-static void APIENTRY R_ArrayElementDiscrete( GLint index ) {
+static void R_ArrayElementDiscrete( GLint index ) {
 	glColor4ubv( tess.svars.colors[ index ] );
 	//if ( glState.currenttmu ) {
 	//	glMultiTexCoord2X( 0, tess.svars.texcoords[ 0 ][ index ][0], tess.svars.texcoords[ 0 ][ index ][1] );
@@ -56,7 +56,7 @@ R_DrawStripElements
 */
 static int		c_vertexes;		// for seeing how long our average strips are
 static int		c_begins;
-static void R_DrawStripElements( int numIndexes, const glIndex_t *indexes, void ( APIENTRY *element )(GLint) ) {
+static void R_DrawStripElements( int numIndexes, const glIndex_t *indexes, void ( *element )(GLint) ) {
 	int i;
 	int last[3] = { -1, -1, -1 };
 	qboolean even;
@@ -793,7 +793,7 @@ static void ComputeColors( shaderStage_t *pStage )
 				bfixed len;
 				bvec3_t v;
 
-				VectorSubtract( tess.xyz[i], backEnd.viewParms.or.origin, v );
+				VectorSubtract( tess.xyz[i], backEnd.viewParms._or.origin, v );
 				len = FIXED_VEC3LEN( v );
 
 				len /= tess.shader->portalRange;

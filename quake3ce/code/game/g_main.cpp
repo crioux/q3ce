@@ -27,8 +27,8 @@ level_locals_t	level;
 
 typedef struct {
 	vmCvar_t	*vmCvar;
-	char		*cvarName;
-	char		*defaultString;
+	const char		*cvarName;
+	const char		*defaultString;
 	int			cvarFlags;
 	int			modificationCount;  // for tracking changes
 	qboolean	trackChange;	    // track this variable, and announce if changed
@@ -201,8 +201,12 @@ This is the only way control passes into the module.
 This must be the very first function compiled into the .q3vm file
 ================
 */
+#ifdef _WIN32
+SysCallArg _G_vmMain( int command, const SysCallArgs &args ) {
+#else
+EXTERN_C DLLEXPORT SysCallArg vmMain( int command, const SysCallArgs &args ) {
+#endif
 
-SysCallArg _G_vmMain( int command, SysCallArgs &args ) {
 	switch ( command ) {
 	case GAME_INIT:
 		G_InitGame( args[0], args[1], args[2] );
@@ -211,7 +215,7 @@ SysCallArg _G_vmMain( int command, SysCallArgs &args ) {
 		G_ShutdownGame( args[0] );
 		return SysCallArg();
 	case GAME_CLIENT_CONNECT:
-		return SysCallArg::Ptr(ClientConnect( args[0], args[1], args[2] ));
+		return SysCallArg::ConstPtr(ClientConnect( args[0], args[1], args[2] ));
 	case GAME_CLIENT_THINK:
 		ClientThink( args[0] );
 		return SysCallArg();
@@ -1549,7 +1553,7 @@ void CheckVote( void ) {
 PrintTeam
 ==================
 */
-void PrintTeam(int team, char *message) {
+void PrintTeam(int team, const char *message) {
 	int i;
 
 	for ( i = 0 ; i < level.maxclients ; i++ ) {

@@ -120,7 +120,7 @@ void RB_AddFlare( void *surface, int fogNum, bvec3_t point, vec3_t color, avec3_
 
 	// if the point is off the screen, don't bother adding it
 	// calculate screen coordinates and depth
-	R_TransformModelToClip( point, backEnd.or.modelMatrix, 
+	R_TransformModelToClip( point, backEnd._or.modelMatrix, 
 		backEnd.viewParms.projectionMatrix, eye, clip );
 
 	// check to see if the point is completely off screen
@@ -176,7 +176,7 @@ void RB_AddFlare( void *surface, int fogNum, bvec3_t point, vec3_t color, avec3_
 	// fade the intensity of the flare down as the
 	// light surface turns away from the viewer
 	if ( normal ) {
-		VectorSubtract( backEnd.viewParms.or.origin, point, local );
+		VectorSubtract( backEnd.viewParms._or.origin, point, local );
 		FIXED_FASTVEC3NORM( local );
 		d = FIXED_VEC3DOT( local, normal );
 		FIXED_VEC3SCALE( f->color, MAKE_GFIXED(d), f->color ); 

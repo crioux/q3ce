@@ -309,7 +309,7 @@ void BotRemoveConsoleMessage(int chatstate, int handle)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void BotQueueConsoleMessage(int chatstate, int type, char *message)
+void BotQueueConsoleMessage(int chatstate, int type, const char *message)
 {
 	bot_consolemessage_t *m;
 	bot_chatstate_t *cs;
@@ -447,7 +447,7 @@ void UnifyWhiteSpaces(char *string)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int StringContains(char *str1, char *str2, int casesensitive)
+int StringContains(const char *str1, const char *str2, int casesensitive)
 {
 	int len, i, j, index;
 
@@ -478,7 +478,7 @@ int StringContains(char *str1, char *str2, int casesensitive)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-char *StringContainsWord(char *str1, char *str2, int casesensitive)
+char *StringContainsWord(char *str1, const char *str2, int casesensitive)
 {
 	int len, i, j;
 
@@ -514,13 +514,52 @@ char *StringContainsWord(char *str1, char *str2, int casesensitive)
 	} //end for
 	return NULL;
 } //end of the function StringContainsWord
+
+const char *StringContainsWord(const char *str1, const char *str2, int casesensitive)
+{
+	int len, i, j;
+
+	len = strlen(str1) - strlen(str2);
+	for (i = 0; i <= len; i++, str1++)
+	{
+		//if not at the start of the string
+		if (i)
+		{
+			//skip to the start of the next word
+			while(*str1 && *str1 != ' ' && *str1 != '.' && *str1 != ',' && *str1 != '!') str1++;
+			if (!*str1) break;
+			str1++;
+		} //end for
+		//compare the word
+		for (j = 0; str2[j]; j++)
+		{
+			if (casesensitive)
+			{
+				if (str1[j] != str2[j]) break;
+			} //end if
+			else
+			{
+				if (toupper(str1[j]) != toupper(str2[j])) break;
+			} //end else
+		} //end for
+		//if there was a word match
+		if (!str2[j])
+		{
+			//if the first string has an end of word
+			if (!str1[j] || str1[j] == ' ' || str1[j] == '.' || str1[j] == ',' || str1[j] == '!') return str1;
+		} //end if
+	} //end for
+	return NULL;
+} //end of the function StringContainsWord
+
+
 //===========================================================================
 //
 // Parameter:				-
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void StringReplaceWords(char *string, char *synonym, char *replacement)
+void StringReplaceWords(char *string, const char *synonym, const char *replacement)
 {
 	char *str, *str2;
 
@@ -578,7 +617,7 @@ void BotDumpSynonymList(bot_synonymlist_t *synlist)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-bot_synonymlist_t *BotLoadSynonyms(char *filename)
+bot_synonymlist_t *BotLoadSynonyms(const char *filename)
 {
 	int pass, size, contextlevel, numsynonyms;
 	unsigned long int context, contextstack[32];
@@ -932,7 +971,7 @@ void BotDumpRandomStringList(bot_randomlist_t *randomlist)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-bot_randomlist_t *BotLoadRandomStrings(char *filename)
+bot_randomlist_t *BotLoadRandomStrings(const char *filename)
 {
 	int pass, size;
 	char *ptr = NULL, chatmessagestring[MAX_MESSAGE_SIZE];
@@ -1041,7 +1080,7 @@ bot_randomlist_t *BotLoadRandomStrings(char *filename)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-char *RandomString(char *name)
+char *RandomString(const char *name)
 {
 	bot_randomlist_t *random;
 	bot_randomstring_t *rs;
@@ -1132,7 +1171,7 @@ void BotFreeMatchPieces(bot_matchpiece_t *matchpieces)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-bot_matchpiece_t *BotLoadMatchPieces(source_t *source, char *endtoken)
+bot_matchpiece_t *BotLoadMatchPieces(source_t *source, const char *endtoken)
 {
 	int lastwasvariable, emptystring;
 	token_t token;
@@ -1251,7 +1290,7 @@ void BotFreeMatchTemplates(bot_matchtemplate_t *mt)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-bot_matchtemplate_t *BotLoadMatchTemplates(char *matchfile)
+bot_matchtemplate_t *BotLoadMatchTemplates(const char *matchfile)
 {
 	source_t *source;
 	token_t token;
@@ -1427,7 +1466,7 @@ int StringsMatch(bot_matchpiece_t *pieces, bot_match_t *match)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int BotFindMatch(char *str, bot_match_t *match, unsigned long int context)
+int BotFindMatch(const char *str, bot_match_t *match, unsigned long int context)
 {
 	int i;
 	bot_matchtemplate_t *ms;
@@ -1490,7 +1529,7 @@ void BotMatchVariable(bot_match_t *match, int variable, char *buf, int size)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-bot_stringlist_t *BotFindStringInList(bot_stringlist_t *list, char *string)
+bot_stringlist_t *BotFindStringInList(bot_stringlist_t *list, const char *string)
 {
 	bot_stringlist_t *s;
 
@@ -1506,10 +1545,10 @@ bot_stringlist_t *BotFindStringInList(bot_stringlist_t *list, char *string)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-bot_stringlist_t *BotCheckChatMessageIntegrety(char *message, bot_stringlist_t *stringlist)
+bot_stringlist_t *BotCheckChatMessageIntegrety(char const *message, bot_stringlist_t *stringlist)
 {
 	int i;
-	char *msgptr;
+	const char *msgptr;
 	char temp[MAX_MESSAGE_SIZE];
 	bot_stringlist_t *s;
 
@@ -1821,7 +1860,7 @@ void BotCheckValidReplyChatKeySet(source_t *source, bot_replychatkey_t *keys)
 // Returns:				-
 // Changes Globals:		-
 //===========================================================================
-bot_replychat_t *BotLoadReplyChat(char *filename)
+bot_replychat_t *BotLoadReplyChat(const char *filename)
 {
 	char chatmessagestring[MAX_MESSAGE_SIZE];
 	char namebuffer[MAX_MESSAGE_SIZE];
@@ -2006,7 +2045,7 @@ void BotDumpInitialChat(bot_chat_t *chat)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-bot_chat_t *BotLoadInitialChat(char *chatfile, char *chatname)
+bot_chat_t *BotLoadInitialChat(const char *chatfile, const char *chatname)
 {
 	int pass, foundchat, indent, size;
 	char *ptr = NULL;
@@ -2199,7 +2238,7 @@ void BotFreeChatFile(int chatstate)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int BotLoadChatFile(int chatstate, char *chatfile, char *chatname)
+int BotLoadChatFile(int chatstate, const char *chatfile, const char *chatname)
 {
 	bot_chatstate_t *cs;
 	int n, avail = 0;
@@ -2406,7 +2445,7 @@ void BotConstructChatMessage(bot_chatstate_t *chatstate, char *message, unsigned
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-char *BotChooseInitialChatMessage(bot_chatstate_t *cs, char *type)
+char *BotChooseInitialChatMessage(bot_chatstate_t *cs, const char *type)
 {
 	int n, numchatmessages;
 	gfixed besttime;
@@ -2464,7 +2503,7 @@ char *BotChooseInitialChatMessage(bot_chatstate_t *cs, char *type)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int BotNumInitialChats(int chatstate, char *type)
+int BotNumInitialChats(int chatstate, const char *type)
 {
 	bot_chatstate_t *cs;
 	bot_chattype_t *t;
@@ -2491,7 +2530,7 @@ int BotNumInitialChats(int chatstate, char *type)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void BotInitialChat(int chatstate, char *type, int mcontext, char *var0, char *var1, char *var2, char *var3, char *var4, char *var5, char *var6, char *var7)
+void BotInitialChat(int chatstate, const char *type, int mcontext, const char *var0, const char *var1, const char *var2, const char *var3, const char *var4, const char *var5, const char *var6, const char *var7)
 {
 	char *message;
 	int index;
@@ -2613,7 +2652,7 @@ void BotPrintReplyChatKeys(bot_replychat_t *replychat)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int BotReplyChat(int chatstate, char *message, int mcontext, int vcontext, char *var0, char *var1, char *var2, char *var3, char *var4, char *var5, char *var6, char *var7)
+int BotReplyChat(int chatstate, const char *message, int mcontext, int vcontext, const char *var0, const char *var1, const char *var2, const char *var3, const char *var4, const char *var5, const char *var6, const char *var7)
 {
 	bot_replychat_t *rchat, *bestrchat;
 	bot_replychatkey_t *key;
@@ -2858,7 +2897,7 @@ void BotSetChatGender(int chatstate, int gender)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void BotSetChatName(int chatstate, char *name, int client)
+void BotSetChatName(int chatstate, const char *name, int client)
 {
 	bot_chatstate_t *cs;
 
@@ -2952,7 +2991,7 @@ void BotFreeChatState(int handle)
 //===========================================================================
 int BotSetupChatAI(void)
 {
-	char *file;
+	const char *file;
 
 #ifdef DEBUG
 	int starttime = Sys_MilliSeconds();

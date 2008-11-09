@@ -46,7 +46,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ID_SPECIFYLEAGUEDOWN	103
 #define ID_SPECIFYLEAGUEBACK	104
 
-static char* specifyleague_artlist[] =
+static const char* specifyleague_artlist[] =
 {
 	SPECIFYLEAGUE_FRAMEL,
 	SPECIFYLEAGUE_FRAMER,

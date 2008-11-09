@@ -35,7 +35,7 @@ Also called by scoreboard drawing
 */
 const char	*CG_PlaceString( int rank ) {
 	static char	str[64];
-	char	*s, *t;
+	const char	*s, *t;
 
 	if ( rank & RANK_TIED_FLAG ) {
 		rank &= ~RANK_TIED_FLAG;
@@ -78,8 +78,8 @@ CG_Obituary
 static void CG_Obituary( entityState_t *ent ) {
 	int			mod;
 	int			target, attacker;
-	char		*message;
-	char		*message2;
+	const char	*message;
+	const char	*message2;
 	const char	*targetInfo;
 	const char	*attackerInfo;
 	char		targetName[32];
@@ -208,7 +208,7 @@ static void CG_Obituary( entityState_t *ent ) {
 
 	// check for kill messages from the current clientNum
 	if ( attacker == cg.snap->ps.clientNum ) {
-		char	*s;
+		const char	*s;
 
 		if ( cgs.gametype < GT_TEAM ) {
 			s = va("You fragged %s\n%s place with %i", targetName, 
@@ -423,7 +423,7 @@ Also called by playerstate transition
 ================
 */
 void CG_PainEvent( centity_t *cent, int health ) {
-	char	*snd;
+	const char	*snd;
 
 	// don't do more than two pain sounds a second
 	if ( cg.time - cent->pe.painTime < 500 ) {

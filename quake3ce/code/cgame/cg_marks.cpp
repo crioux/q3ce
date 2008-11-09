@@ -361,7 +361,7 @@ typedef enum
 #define	MAX_SHADER_ANIMS		32
 #define	MAX_SHADER_ANIM_FRAMES	64
 
-static char *shaderAnimNames[MAX_SHADER_ANIMS] = {
+static const char *shaderAnimNames[MAX_SHADER_ANIMS] = {
 	"explode1",
 	NULL
 };
@@ -1497,7 +1497,7 @@ CG_ParticleExplosion
 ======================
 */
 
-void CG_ParticleExplosion (char *animStr, bvec3_t origin, bvec3_t vel, int duration, int sizeStart, int sizeEnd)
+void CG_ParticleExplosion (const char *animStr, bvec3_t origin, bvec3_t vel, int duration, int sizeStart, int sizeEnd)
 {
 	cparticle_t	*p;
 	int anim;
@@ -1560,8 +1560,8 @@ void CG_AddParticleShrapnel (localEntity_t *le)
 int CG_NewParticleArea (int num)
 {
 	// const char *str;
-	char *str;
-	char *token;
+	const char *str;
+	const char *token;
 	int type;
 	bvec3_t origin, origin2;
 	int		i;
@@ -1570,12 +1570,12 @@ int CG_NewParticleArea (int num)
 	int	numparticles;
 	int	snum;
 	
-	str = (char *) CG_ConfigString (num);
+	str = (const char *) CG_ConfigString (num);
 	if (!str[0])
 		return (0);
 	
 	// returns type 128 64 or 32
-	token = COM_Parse (&str);
+	token = COM_Parse ((const char **)&str);
 	type = atoi (token);
 	
 	if (type == 1)

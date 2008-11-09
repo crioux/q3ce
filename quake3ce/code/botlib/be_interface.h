@@ -29,7 +29,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  *****************************************************************************/
 
-//#define DEBUG			//debug code
+//#define DEBUG			//debug codes
 #define RANDOMIZE		//randomize bot behaviour
 
 //FIXME: get rid of this global structure

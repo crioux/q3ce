@@ -1,6 +1,7 @@
 #ifndef __INC_MEMHEAP_H
 #define __INC_MEMHEAP_H
 
+#include"unixdefs.h"
 
 class CMemHeap
 {
@@ -32,3 +33,4 @@ public:
 };
 
 #endif
+

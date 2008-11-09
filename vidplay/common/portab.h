@@ -50,6 +50,10 @@
 #define TARGET_WIN32
 //#define MULTITHREAD
 
+#elif defined(_LINUX)
+
+#define TARGET_LINUX
+
 #else
 #error Unsupported target
 #endif
@@ -84,6 +88,9 @@ typedef signed char int8_t;
 typedef unsigned char uint8_t;
 typedef signed __int64 int64_t;
 typedef unsigned __int64 uint64_t;
+typedef char tchar_t;
+#define TEXT(x) x
+
 #define NOINLINE 
 #define INLINE __forceinline
 #define STDCALL __stdcall
@@ -91,7 +98,7 @@ typedef unsigned __int64 uint64_t;
 #include <stdint.h>
 #define INLINE inline
 #define NOINLINE __attribute__((noinline))
-#if defined(TARGET_WINCE) || defined(TARGET_PALMOS)
+#if defined(TARGET_WINCE) || defined(TARGET_PALMOS) || defined(TARGET_LINUX)
 #define __stdcall
 #define STDCALL 
 #else
@@ -157,12 +164,16 @@ typedef char tchar_t;
 #endif
 #endif
 
+#ifndef DLLEXPORT
+
 #if defined(_WIN32)
 #define DLLEXPORT __declspec(dllexport)
 #define DLLIMPORT __declspec(dllimport)
 #else
 #define DLLEXPORT
 #define DLLIMPORT
+#endif
+
 #endif
 
 #if !defined(SH3) && !defined(MIPS)
@@ -206,7 +217,11 @@ typedef const void* constplanes[MAXPLANES];
 #endif
 
 #if defined(__GNUC__)
-#define alloca(size) __builtin_alloca(size)
+//#define alloca(size) __builtin_alloca(size)
+#define _strnicmp strncasecmp
+#define Sleep sleep
+#define _snprintf snprintf
+
 #if defined(TARGET_PALMOS)
 extern int rand();
 extern void qsort(void* const base,size_t,size_t,int(*cmp)(const void*,const void*));

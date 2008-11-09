@@ -763,7 +763,7 @@ void MSG_ReportChangeVectors_f( void ) {
 }
 
 typedef struct {
-	char	*name;
+	const char	*name;
 	int		offset;
 	int		bits;	
 } netField_t;

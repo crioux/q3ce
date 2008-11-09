@@ -126,13 +126,15 @@ PlayerIcon
 =================
 */
 static void PlayerIcon( const char *modelAndSkin, char *iconName, int iconNameMaxSize ) {
-	char	*skin;
+	const char	*skin;
+	char *pskin;
 	char	model[MAX_QPATH];
 
 	Q_strncpyz( model, modelAndSkin, sizeof(model));
-	skin = Q_strrchr( model, '/' );
-	if ( skin ) {
-		*skin++ = '\0';
+	pskin = Q_strrchr( model, '/' );
+	if ( pskin ) {
+		*pskin++ = '\0';
+		skin=pskin;
 	}
 	else {
 		skin = "default";
@@ -167,7 +169,7 @@ UI_SPLevelMenu_SetBots
 static void UI_SPLevelMenu_SetBots( void ) {
 	char	*p;
 	char	*bot;
-	char	*botInfo;
+	const char	*botInfo;
 	char	bots[MAX_INFO_STRING];
 
 	levelMenuInfo.numBots = 0;
@@ -733,7 +735,7 @@ static void UI_SPLevelMenu_Init( void ) {
 	levelMenuInfo.item_banner.generic.type			= MTYPE_BTEXT;
 	levelMenuInfo.item_banner.generic.x				= 320;
 	levelMenuInfo.item_banner.generic.y				= 16;
-	levelMenuInfo.item_banner.string				= "CHOOSE LEVEL";
+	levelMenuInfo.item_banner.string				= strdup("CHOOSE LEVEL");
 	levelMenuInfo.item_banner.color					= color_red;
 	levelMenuInfo.item_banner.style					= UI_CENTER;
 

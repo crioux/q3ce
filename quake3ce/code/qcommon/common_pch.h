@@ -10,14 +10,26 @@
 #include <time.h>
 #include <string.h>
 #include <setjmp.h>
-#include <winsock.h>
+#include <stdlib.h>
 
+#ifdef _WIN32
+#include <winsock.h>
 #include"find.h"
+#else
+#include <sys/socket.h>
+#include <netinet/in.h>
+#endif
+
 #include"fixed.h"
+
+#ifdef _WIN32
 #include<windows.h>
-#include "gles/gl.h"
+#endif
+
+#include "GLES/gl.h"
 #include "gleswrappers.h"
 
 
 
 #endif
+

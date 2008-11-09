@@ -147,8 +147,8 @@ challengeResponse to it
 void SV_AuthorizeIpPacket( netadr_t from ) {
 	int		challenge;
 	int		i;
-	char	*s;
-	char	*r;
+	const char	*s;
+	const char	*r;
 	char	ret[1024];
 
 	if ( !NET_CompareBaseAdr( from, svs.authorizeAddress ) ) {
@@ -237,9 +237,9 @@ void SV_DirectConnect( netadr_t from ) {
 	int			version;
 	int			qport;
 	int			challenge;
-	char		*password;
+	const char		*password;
 	int			startIndex;
-	char		*denied;
+	const char		*denied;
 	int			count;
 
 	Com_DPrintf ("SVC_DirectConnect ()\n");
@@ -424,11 +424,8 @@ gotnewcl:
 	args[0]=clientNum;
 	args[1]=qtrue;
 	args[2]=qfalse;
-	denied = (char *)(void *)VM_Call( gvm, GAME_CLIENT_CONNECT, args); // firstTime = qtrue
+	denied = (const char *)VM_ExplicitArgConstPtr(gvm, VM_Call( gvm, GAME_CLIENT_CONNECT, args)); // firstTime = qtrue
 	if ( denied ) {
-		// we can't just use VM_ArgPtr, because that is only valid inside a VM_Call
-		denied = (char *)VM_ExplicitArgPtr( gvm, denied );
-
 		NET_OutOfBandPrint( NS_SERVER, from, "print\n%s\n", denied );
 		Com_DPrintf ("Game rejected a connection: %s.\n", denied);
 		return;
@@ -1089,16 +1086,16 @@ static void SV_VerifyPaks_f( client_t *cl ) {
 
 		cl->gotCP = qtrue;
 
-		if (bGood) {
+//		if (bGood) {
 			cl->pureAuthentic = 1;
-		} 
-		else {
-			cl->pureAuthentic = 0;
-			cl->nextSnapshotTime = -1;
-			cl->state = CS_ACTIVE;
-			SV_SendClientSnapshot( cl );
-			SV_DropClient( cl, "Unpure client detected. Invalid .PK3 files referenced!" );
-		}
+//		} 
+//		else {
+//			cl->pureAuthentic = 0;
+//			cl->nextSnapshotTime = -1;
+//			cl->state = CS_ACTIVE;
+//			SV_SendClientSnapshot( cl );
+//			SV_DropClient( cl, "Unpure client detected. Invalid .PK3 files referenced!" );
+//		}
 	}
 }
 
@@ -1121,7 +1118,7 @@ into a more C friendly form.
 =================
 */
 void SV_UserinfoChanged( client_t *cl ) {
-	char	*val;
+	const char	*val;
 	int		i;
 
 	// name for C code
@@ -1202,7 +1199,7 @@ static void SV_UpdateUserinfo_f( client_t *cl ) {
 }
 
 typedef struct {
-	char	*name;
+	const char	*name;
 	void	(*func)( client_t *cl );
 } ucmd_t;
 

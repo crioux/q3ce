@@ -218,7 +218,7 @@ static void UI_SPSkillMenu_Init( void ) {
 	skillMenuInfo.art_banner.generic.flags		= QMF_CENTER_JUSTIFY;
 	skillMenuInfo.art_banner.generic.x			= 320;
 	skillMenuInfo.art_banner.generic.y			= 16;
-	skillMenuInfo.art_banner.string				= "DIFFICULTY";
+	skillMenuInfo.art_banner.string				= strdup("DIFFICULTY");
 	skillMenuInfo.art_banner.color				= color_white;
 	skillMenuInfo.art_banner.style				= UI_CENTER;
 
@@ -228,7 +228,7 @@ static void UI_SPSkillMenu_Init( void ) {
 	skillMenuInfo.item_baby.generic.y			= 170;
 	skillMenuInfo.item_baby.generic.callback	= UI_SPSkillMenu_SkillEvent;
 	skillMenuInfo.item_baby.generic.id			= ID_BABY;
-	skillMenuInfo.item_baby.string				= "I Can Win";
+	skillMenuInfo.item_baby.string				= strdup("I Can Win");
 	skillMenuInfo.item_baby.color				= color_red;
 	skillMenuInfo.item_baby.style				= UI_CENTER;
 
@@ -238,7 +238,7 @@ static void UI_SPSkillMenu_Init( void ) {
 	skillMenuInfo.item_easy.generic.y			= 198;
 	skillMenuInfo.item_easy.generic.callback	= UI_SPSkillMenu_SkillEvent;
 	skillMenuInfo.item_easy.generic.id			= ID_EASY;
-	skillMenuInfo.item_easy.string				= "Bring It On";
+	skillMenuInfo.item_easy.string				= strdup("Bring It On");
 	skillMenuInfo.item_easy.color				= color_red;
 	skillMenuInfo.item_easy.style				= UI_CENTER;
 
@@ -248,7 +248,7 @@ static void UI_SPSkillMenu_Init( void ) {
 	skillMenuInfo.item_medium.generic.y			= 227;
 	skillMenuInfo.item_medium.generic.callback	= UI_SPSkillMenu_SkillEvent;
 	skillMenuInfo.item_medium.generic.id		= ID_MEDIUM;
-	skillMenuInfo.item_medium.string			= "Hurt Me Plenty";
+	skillMenuInfo.item_medium.string			= strdup("Hurt Me Plenty");
 	skillMenuInfo.item_medium.color				= color_red;
 	skillMenuInfo.item_medium.style				= UI_CENTER;
 
@@ -258,7 +258,7 @@ static void UI_SPSkillMenu_Init( void ) {
 	skillMenuInfo.item_hard.generic.y			= 255;
 	skillMenuInfo.item_hard.generic.callback	= UI_SPSkillMenu_SkillEvent;
 	skillMenuInfo.item_hard.generic.id			= ID_HARD;
-	skillMenuInfo.item_hard.string				= "Hardcore";
+	skillMenuInfo.item_hard.string				= strdup("Hardcore");
 	skillMenuInfo.item_hard.color				= color_red;
 	skillMenuInfo.item_hard.style				= UI_CENTER;
 
@@ -268,7 +268,7 @@ static void UI_SPSkillMenu_Init( void ) {
 	skillMenuInfo.item_nightmare.generic.y			= 283;
 	skillMenuInfo.item_nightmare.generic.callback	= UI_SPSkillMenu_SkillEvent;
 	skillMenuInfo.item_nightmare.generic.id			= ID_NIGHTMARE;
-	skillMenuInfo.item_nightmare.string				= "NIGHTMARE!";
+	skillMenuInfo.item_nightmare.string				= strdup("NIGHTMARE!");
 	skillMenuInfo.item_nightmare.color				= color_red;
 	skillMenuInfo.item_nightmare.style				= UI_CENTER;
 

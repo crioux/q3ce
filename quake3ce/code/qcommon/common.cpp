@@ -156,9 +156,11 @@ void QDECL Com_Printf( const char *fmt, ... ) {
 	// echo to dedicated console and early console
 	Sys_Print( msg );
 
+#ifdef _WIN32
 	// echo to vc debug
 	_snwprintf(wmsg,MAXPRINTMSG,L"%S",msg);
 	OutputDebugString(wmsg);
+#endif
 
 	// logfile
 	if ( com_logfile && com_logfile->integer ) {
@@ -350,7 +352,8 @@ Com_ParseCommandLine
 Break it up into multiple console lines
 ==================
 */
-void Com_ParseCommandLine( char *commandLine ) {
+void Com_ParseCommandLine( const char *cmdLine ) {
+    char *commandLine=strdup(cmdLine);
     int inq = 0;
     com_consoleLines[0] = commandLine;
     com_numConsoleLines = 1;
@@ -410,7 +413,7 @@ be after execing the config and default.
 */
 void Com_StartupVariable( const char *match ) {
 	int		i;
-	char	*s;
+	const char	*s;
 	cvar_t	*cv;
 
 	for (i=0 ; i < com_numConsoleLines ; i++) {
@@ -513,7 +516,7 @@ void Info_Print( const char *s ) {
 Com_StringContains
 ============
 */
-char *Com_StringContains(char *str1, char *str2, int casesensitive) {
+const char *Com_StringContains(const char *str1, const char *str2, int casesensitive) {
 	int len, i, j;
 
 	len = strlen(str1) - strlen(str2);
@@ -542,10 +545,10 @@ char *Com_StringContains(char *str1, char *str2, int casesensitive) {
 Com_Filter
 ============
 */
-int Com_Filter(char *filter, char *name, int casesensitive)
+int Com_Filter(const char *filter, const char *name, int casesensitive)
 {
 	char buf[MAX_TOKEN_CHARS];
-	char *ptr;
+	const char *ptr;
 	int i, found;
 
 	while(*filter) {
@@ -622,7 +625,7 @@ int Com_Filter(char *filter, char *name, int casesensitive)
 Com_FilterPath
 ============
 */
-int Com_FilterPath(char *filter, char *name, int casesensitive)
+int Com_FilterPath(const char *filter, const char *name, int casesensitive)
 {
 	int i;
 	char new_filter[MAX_QPATH];
@@ -654,7 +657,7 @@ int Com_FilterPath(char *filter, char *name, int casesensitive)
 Com_HashKey
 ============
 */
-int Com_HashKey(char *string, int maxlen) {
+int Com_HashKey(const char *string, int maxlen) {
 	int register hash, i;
 
 	hash = 0;
@@ -671,7 +674,7 @@ Com_RealTime
 ================
 */
 int Com_RealTime(qtime_t *qtime) {
-
+#ifdef _WIN32
 	SYSTEMTIME st;
 	GetLocalTime(&st);
 	
@@ -686,6 +689,23 @@ int Com_RealTime(qtime_t *qtime) {
 	qtime->tm_isdst = 0;
 	
 	return 1;
+#else
+	time_t t;
+	time(&t);
+	struct tm *tm=localtime(&t);	
+
+	qtime->tm_sec = tm->tm_sec;
+	qtime->tm_min = tm->tm_min;
+	qtime->tm_hour = tm->tm_hour;
+	qtime->tm_mday = tm->tm_mday;
+	qtime->tm_mon = tm->tm_mon;
+	qtime->tm_year = tm->tm_year;
+	qtime->tm_wday = tm->tm_wday;
+	qtime->tm_yday = tm->tm_yday;
+	qtime->tm_isdst = tm->tm_isdst;
+	
+	return 1;
+#endif
 }
 
 
@@ -736,7 +756,7 @@ Z_TagMalloc
 ================
 */
 #ifdef ZONE_DEBUG
-void *Z_TagMallocDebug( int size, int tag, char *label, char *file, int line ) {
+void *Z_TagMallocDebug( int size, int tag, const char *label, const char *file, int line ) {
 static int s_sequence=0;
 #else
 void *Z_TagMalloc( int size, int tag ) {
@@ -756,7 +776,7 @@ Z_Malloc
 ========================
 */
 #ifdef ZONE_DEBUG
-void *Z_MallocDebug( int size, char *label, char *file, int line ) {
+void *Z_MallocDebug( int size, const char *label, const char *file, int line ) {
 #else
 void *Z_Malloc( int size ) {
 #endif
@@ -856,8 +876,8 @@ typedef struct hunkblock_s {
 	int size;
 	byte printed;
 	struct hunkblock_s *next;
-	char *label;
-	char *file;
+	const char *label;
+	const char *file;
 	int line;
 } hunkblock_t;
 
@@ -866,7 +886,7 @@ static	hunkblock_t *hunkblocks;
 static	hunkUsed_t	hunk_low, hunk_high;
 static	hunkUsed_t	*hunk_permanent, *hunk_temp;
 
-static HANDLE s_hunkhandle=NULL;
+//static HANDLE s_hunkhandle=NULL;
 static	byte	*s_hunkData = NULL;
 static	int		s_hunkTotal;
 
@@ -1124,7 +1144,7 @@ Allocate permanent (until the hunk is cleared) memory
 =================
 */
 #ifdef HUNK_DEBUG
-void *Hunk_AllocDebug( int size, ha_pref preference, char *label, char *file, int line ) {
+void *Hunk_AllocDebug( int size, ha_pref preference, const char *label, const char *file, int line ) {
 #else
 void *Hunk_Alloc( int size, ha_pref preference ) {
 #endif
@@ -1778,8 +1798,8 @@ static void Com_WriteCDKey( const char *filename, const char *ikey ) {
 Com_Init
 =================
 */
-void Com_Init( char *commandLine ) {
-	char	*s;
+void Com_Init( const char *commandLine ) {
+	const char	*s;
 
 	Com_Printf( "%s %s %s\n", Q3_VERSION, CPUSTRING, __DATE__ );
 
@@ -1985,7 +2005,7 @@ void Com_WriteConfiguration( void ) {
 	if (UI_usesUniqueCDKey() && fs && fs->string[0] != 0) {
 		Com_WriteCDKey( fs->string, &cl_cdkey[16] );
 	} else {
-		Com_WriteCDKey( "baseq3", cl_cdkey );
+		Com_WriteCDKey( BASEGAME, cl_cdkey );
 	}
 #endif
 }
@@ -2390,7 +2410,7 @@ static void PrintMatches( const char *s ) {
 
 static void keyConcatArgs( void ) {
 	int		i;
-	char	*arg;
+	const char	*arg;
 
 	for ( i = 1 ; i < Cmd_Argc() ; i++ ) {
 		Q_strcat( completionField->buffer, sizeof( completionField->buffer ), " " );

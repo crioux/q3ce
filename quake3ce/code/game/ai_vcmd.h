@@ -30,7 +30,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
  *****************************************************************************/
 
-int BotVoiceChatCommand(bot_state_t *bs, int mode, char *voicechat);
+int BotVoiceChatCommand(bot_state_t *bs, int mode, const char *voicechat);
 void BotVoiceChat_Defend(bot_state_t *bs, int client, int mode);
 
 

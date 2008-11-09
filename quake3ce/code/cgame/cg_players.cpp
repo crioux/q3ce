@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // cg_players.c -- handle the media and animation for player entities
 #include"cgame_pch.h"
 
-char	*cg_customSoundNames[MAX_CUSTOM_SOUNDS] = {
+const char	*cg_customSoundNames[MAX_CUSTOM_SOUNDS] = {
 	"*death1.wav",
 	"*death2.wav",
 	"*death3.wav",
@@ -88,10 +88,10 @@ models/players/visor/animation.cfg, etc
 ======================
 */
 static qboolean	CG_ParseAnimationFile( const char *filename, clientInfo_t *ci ) {
-	char		*text_p, *prev;
+	const char		*text_p, *prev;
 	int			len;
 	int			i;
-	char		*token;
+	const char		*token;
 	gfixed		fps;
 	int			skip;
 	char		text[20000];
@@ -126,7 +126,7 @@ static qboolean	CG_ParseAnimationFile( const char *filename, clientInfo_t *ci ) 
 	// read optional parameters
 	while ( 1 ) {
 		prev = text_p;	// so we can unget
-		token = COM_Parse( &text_p );
+		token = COM_Parse( (const char **)&text_p );
 		if ( !token ) {
 			break;
 		}
@@ -310,7 +310,7 @@ CG_FindClientModelFile
 ==========================
 */
 static qboolean	CG_FindClientModelFile( char *filename, int length, clientInfo_t *ci, const char *teamName, const char *modelName, const char *skinName, const char *base, const char *ext ) {
-	char *team, *charactersFolder;
+	const char *team, *charactersFolder;
 	int i;
 
 	if ( cgs.gametype >= GT_TEAM ) {
@@ -385,7 +385,7 @@ CG_FindClientHeadFile
 ==========================
 */
 static qboolean	CG_FindClientHeadFile( char *filename, int length, clientInfo_t *ci, const char *teamName, const char *headModelName, const char *headSkinName, const char *base, const char *ext ) {
-	char *team, *headsFolder;
+	const char *team, *headsFolder;
 	int i;
 
 	if ( cgs.gametype >= GT_TEAM ) {
@@ -944,17 +944,19 @@ void CG_NewClientInfo( int clientNum ) {
 		// forcemodel makes everyone use a single model
 		// to prevent load hitches
 		char modelStr[MAX_QPATH];
-		char *skin;
+		char *pskin;
+		const char *skin;
 
 		if( cgs.gametype >= GT_TEAM ) {
 			Q_strncpyz( newInfo.modelName, DEFAULT_TEAM_MODEL, sizeof( newInfo.modelName ) );
 			Q_strncpyz( newInfo.skinName, "default", sizeof( newInfo.skinName ) );
 		} else {
 			_CG_trap_Cvar_VariableStringBuffer( "model", modelStr, sizeof( modelStr ) );
-			if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+			if ( ( pskin = strchr( modelStr, '/' ) ) == NULL) {
 				skin = "default";
 			} else {
-				*skin++ = 0;
+				*pskin++ = 0;
+				skin=pskin;
 			}
 
 			Q_strncpyz( newInfo.skinName, skin, sizeof( newInfo.skinName ) );
@@ -988,17 +990,19 @@ void CG_NewClientInfo( int clientNum ) {
 		// forcemodel makes everyone use a single model
 		// to prevent load hitches
 		char modelStr[MAX_QPATH];
-		char *skin;
+		const char *skin;
+		char *pskin;
 
 		if( cgs.gametype >= GT_TEAM ) {
 			Q_strncpyz( newInfo.headModelName, DEFAULT_TEAM_MODEL, sizeof( newInfo.headModelName ) );
 			Q_strncpyz( newInfo.headSkinName, "default", sizeof( newInfo.headSkinName ) );
 		} else {
 			_CG_trap_Cvar_VariableStringBuffer( "headmodel", modelStr, sizeof( modelStr ) );
-			if ( ( skin = strchr( modelStr, '/' ) ) == NULL) {
+			if ( ( pskin = strchr( modelStr, '/' ) ) == NULL) {
 				skin = "default";
 			} else {
-				*skin++ = 0;
+				*pskin++ = 0;
+				skin=pskin;
 			}
 
 			Q_strncpyz( newInfo.headSkinName, skin, sizeof( newInfo.headSkinName ) );

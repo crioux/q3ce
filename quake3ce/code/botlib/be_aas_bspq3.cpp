@@ -266,7 +266,7 @@ int AAS_BSPEntityInRange(int ent)
 // Returns:				-
 // Changes Globals:		-
 //===========================================================================
-int AAS_ValueForBSPEpairKey(int ent, char *key, char *value, int size)
+int AAS_ValueForBSPEpairKey(int ent, const char *key, char *value, int size)
 {
 	bsp_epair_t *epair;
 
@@ -289,7 +289,7 @@ int AAS_ValueForBSPEpairKey(int ent, char *key, char *value, int size)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int AAS_VectorForBSPEpairKey(int ent, char *key, bvec3_t v)
+int AAS_VectorForBSPEpairKey(int ent, const char *key, bvec3_t v)
 {
 	char buf[MAX_EPAIRKEY];
 	double v1, v2, v3;
@@ -310,7 +310,7 @@ int AAS_VectorForBSPEpairKey(int ent, char *key, bvec3_t v)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int AAS_FloatForBSPEpairKey(int ent, char *key, gfixed *value)
+int AAS_FloatForBSPEpairKey(int ent, const char *key, gfixed *value)
 {
 	char buf[MAX_EPAIRKEY];
 	
@@ -321,7 +321,7 @@ int AAS_FloatForBSPEpairKey(int ent, char *key, gfixed *value)
 } //end of the function AAS_FloatForBSPEpairKey
 
 #ifndef FIXED_IS_FLOAT
-int AAS_FloatForBSPEpairKey(int ent, char *key, afixed *value)
+int AAS_FloatForBSPEpairKey(int ent, const char *key, afixed *value)
 {
 	char buf[MAX_EPAIRKEY];
 	
@@ -330,7 +330,7 @@ int AAS_FloatForBSPEpairKey(int ent, char *key, afixed *value)
 	*value = MAKE_AFIXED(atof(buf));
 	return qtrue;
 } //end of the function AAS_FloatForBSPEpairKey
-int AAS_FloatForBSPEpairKey(int ent, char *key, bfixed *value)
+int AAS_FloatForBSPEpairKey(int ent, const char *key, bfixed *value)
 {
 	char buf[MAX_EPAIRKEY];
 	
@@ -347,7 +347,7 @@ int AAS_FloatForBSPEpairKey(int ent, char *key, bfixed *value)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int AAS_IntForBSPEpairKey(int ent, char *key, int *value)
+int AAS_IntForBSPEpairKey(int ent, const char *key, int *value)
 {
 	char buf[MAX_EPAIRKEY];
 	

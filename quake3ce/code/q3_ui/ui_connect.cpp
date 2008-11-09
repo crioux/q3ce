@@ -176,7 +176,7 @@ to prevent it from blinking away too rapidly on local or lan games.
 ========================
 */
 void UI_DrawConnectScreen( qboolean overlay ) {
-	char			*s;
+	const char			*s;
 	uiClientState_t	cstate;
 	char			info[MAX_INFO_VALUE];
 

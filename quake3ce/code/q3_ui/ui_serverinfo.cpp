@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define SERVERINFO_BACK0	"menu/art/back_0"
 #define SERVERINFO_BACK1	"menu/art/back_1"
 
-static char* serverinfo_artlist[] =
+static const char* serverinfo_artlist[] =
 {
 	SERVERINFO_FRAMEL,	
 	SERVERINFO_FRAMER,
@@ -201,7 +201,7 @@ void UI_ServerInfoMenu( void )
 	s_serverinfo.banner.generic.type  = MTYPE_BTEXT;
 	s_serverinfo.banner.generic.x	  = 320;
 	s_serverinfo.banner.generic.y	  = 16;
-	s_serverinfo.banner.string		  = "SERVER INFO";
+	s_serverinfo.banner.string		  = strdup("SERVER INFO");
 	s_serverinfo.banner.color	      = color_white;
 	s_serverinfo.banner.style	      = UI_CENTER;
 
@@ -227,7 +227,7 @@ void UI_ServerInfoMenu( void )
 	s_serverinfo.add.generic.id	      = ID_ADD;
 	s_serverinfo.add.generic.x		  = 320;
 	s_serverinfo.add.generic.y		  = 371;
-	s_serverinfo.add.string  		  = "ADD TO FAVORITES";
+	s_serverinfo.add.string  		  = strdup("ADD TO FAVORITES");
 	s_serverinfo.add.style  		  = UI_CENTER|UI_SMALLFONT;
 	s_serverinfo.add.color			  =	color_red;
 	if(FIXED_NOT_ZERO(_UI_trap_Cvar_VariableValue( "sv_running" )) ) {

@@ -296,10 +296,10 @@ void RB_ShadowFinish( void ) {
 //	GL_State( GLS_DEPTHMASK_TRUE | GLS_SRCBLEND_ONE | GLS_DSTBLEND_ZERO );
 
 	glBegin( GL_QUADS );
-	glVertex3X( REINTERPRET_GFIXED(BFIXED(-100,0)), REINTERPRET_GFIXED(BFIXED(100,0)), REINTERPRET_GFIXED(BFIXED(-10,0)) );
-	glVertex3X( REINTERPRET_GFIXED(BFIXED(100,0)), REINTERPRET_GFIXED(BFIXED(100,0)), REINTERPRET_GFIXED(BFIXED(-10,0)) );
-	glVertex3X( REINTERPRET_GFIXED(BFIXED(100,0)), REINTERPRET_GFIXED(BFIXED(-100,0)), REINTERPRET_GFIXED(BFIXED(-10,0)) );
-	glVertex3X( REINTERPRET_GFIXED(BFIXED(-100,0)), REINTERPRET_GFIXED(BFIXED(-100,0)), REINTERPRET_GFIXED(BFIXED(-10,0)) );
+	glVertex3X( GFIXED(-100,0), GFIXED(100,0), GFIXED(-10,0) );
+	glVertex3X( GFIXED(100,0), GFIXED(100,0), GFIXED(-10,0) );
+	glVertex3X( GFIXED(100,0), GFIXED(-100,0), GFIXED(-10,0) );
+	glVertex3X( GFIXED(-100,0), GFIXED(-100,0), GFIXED(-10,0) );
 	glEnd ();
 
 	glColor4X(GFIXED_1,GFIXED_1,GFIXED_1,GFIXED_1);
@@ -325,11 +325,11 @@ void RB_ProjectionShadowDeform( void ) {
 
 	xyz = ( bfixed * ) tess.xyz;
 
-	ground[0] = backEnd.or.axis[0][2];
-	ground[1] = backEnd.or.axis[1][2];
-	ground[2] = backEnd.or.axis[2][2];
+	ground[0] = backEnd._or.axis[0][2];
+	ground[1] = backEnd._or.axis[1][2];
+	ground[2] = backEnd._or.axis[2][2];
 
-	groundDist = backEnd.or.origin[2] - backEnd.currentEntity->e.shadowPlane;
+	groundDist = backEnd._or.origin[2] - backEnd.currentEntity->e.shadowPlane;
 
 	VectorCopy( backEnd.currentEntity->lightDir, lightDir );
 	d = FIXED_VEC3DOT( lightDir, ground );

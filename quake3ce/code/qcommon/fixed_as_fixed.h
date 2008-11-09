@@ -2,20 +2,39 @@
 #ifndef __INC_FIXED_AS_FIXED_H
 #define __INC_FIXED_AS_FIXED_H
 
+#include"unixdefs.h"
 
 #ifdef _DEBUG
 #define FORCEINLINE inline
-#define VERIFY_FIXEDREP 1
+//#define VERIFY_FIXEDREP 1
 //#define FIXED_REFERENCE_IMPL 1
+
+#ifndef _WIN32
+
+#define OutputDebugString(x) fprintf(stderr,"%s",x)
+#include<stdio.h>
+#include<assert.h>
+#define BREAK { assert(0); }
+#define SNWPTRING
 #else
+
+#define BREAK { __emit(0xE6000010); }
+
+#endif
+
+#else
+#ifdef _WIN32
 #define FORCEINLINE __forceinline
+#else
+#define FORCEINLINE inline
+#endif
+
 //#define FIXED_REFERENCE_IMPL 1
 #endif
 
 #pragma warning(push)
 #pragma warning(disable:4293)
 
-#define BREAK { __emit(0xE6000010); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// VERIFICATION /////////////
@@ -26,8 +45,19 @@
 #define MINFIXREPLOW ((U)0)
 
 #ifdef VERIFY_FIXEDREP 
+
+#ifdef WIN32
+
 #define VERIFYFIXREPHIGH(n) { if(!((MINFIXREPHIGH<=((INT32)n)) && (((INT32)n)<=MAXFIXREPHIGH))) { wchar_t str[256]; _snwprintf(str,256,L"VERIFYFIXREPHIGH:%8.8X:%d with %d precision\n",n,n,P); OutputDebugString(str); BREAK; } }
 #define VERIFYFIXREPLOW(d) { if(!((MINFIXREPLOW<=((UINT32)d)) && (((UINT32)d)<=MAXFIXREPLOW))) { wchar_t str[256]; _snwprintf(str,256,L"VERIFYFIXREPLOW:%8.8X:%d with %d precision\n",d,d,P); OutputDebugString(str); BREAK; } }
+
+#else
+
+#define VERIFYFIXREPHIGH(n) { if(!((MINFIXREPHIGH<=((INT32)n)) && (((INT32)n)<=MAXFIXREPHIGH))) { char str[256]; snprintf(str,256,"VERIFYFIXREPHIGH:%8.8X:%d with %d precision\n",n,n,P); OutputDebugString(str); BREAK; } }
+#define VERIFYFIXREPLOW(d) { if(!((MINFIXREPLOW<=((UINT32)d)) && (((UINT32)d)<=MAXFIXREPLOW))) { char str[256]; snprintf(str,256,"VERIFYFIXREPLOW:%8.8X:%d with %d precision\n",d,d,P); OutputDebugString(str); BREAK; } }
+
+#endif
+
 #define IS_BAD_CAST(X,FROM,TO)	\
 	((((X)<((FROM)0)) && ((((X)&~((((FROM)1)<<(sizeof(TO)*8))-(FROM)1))!=~((((FROM)1)<<(sizeof(TO)*8))-(FROM)1)) || ((TO)(X))>=((TO)0))) ||	\
 	(((X)>=((FROM)0)) && ((((X)&~((((FROM)1)<<(sizeof(TO)*8))-(FROM)1))!=((FROM)0)) || ((TO)(X))<((TO)0))))
@@ -102,16 +132,23 @@ private:
 #ifdef VERIFY_FIXEDREP 
 		if(IS_BAD_CAST(out,EXT,T))
 		{
+#ifdef _WIN32
 			wchar_t str[256];
 			_snwprintf(str,256,L"MulRep32: a=%8.8X, b=%8.8X, out=%8.8X\n",a,b,(T)out);
 			OutputDebugString(str);
 			BREAK;
+#else
+			char str[256];
+			snprintf(str,256,"MulRep32: a=%8.8X, b=%8.8X, out=%8.8X\n",a,b,(T)out);
+			OutputDebugString(str);
+			BREAK;
+#endif
 		}
 #endif
 		return (T)out;
 	}
 
-	FORCEINLINE static T fixed_base<T,U,P,EXT,S0,S1>::DivRep(T a, T b) 
+	FORCEINLINE static T DivRep(T a, T b) 
 	{
 	#ifdef VERIFY_FIXEDREP 
 		if(b==0 || ((EXT)b>>shift0)==0) { BREAK; }
@@ -139,15 +176,23 @@ public:
 	template<class X>
 	static FORCEINLINE fixed_base Construct(X otherfixed) { 
 		fixed_base f;
-		const X::basetype round=(1<<(unsigned)(X::prec-prec))>>1;
-		f.rep=(prec>X::prec) ?
-			(((basetype)otherfixed.rep)<<(unsigned)(prec-X::prec)) :
-			((basetype)((otherfixed.rep+round)>>(unsigned)(X::prec-prec))); 
+		int shiftcount=(prec-X::prec);
+		if(shiftcount>0)
+		{
+			f.rep=(((basetype)otherfixed.rep)<<shiftcount);
+		}
+		else
+		{
+			shiftcount=-shiftcount;					
+			const typename X::basetype round=(1<<shiftcount)>>1;
+			f.rep=((basetype)((otherfixed.rep+round)>>shiftcount));
+		}
+ 
 		#ifdef VERIFY_FIXEDREP
-		if(prec>X::prec)
+		if(shiftcount>0)
 		{
 			basetype test=((basetype)otherfixed.rep);
-			ubasetype bitmask=(~((~((ubasetype)0))>>(unsigned)(prec-X::prec)));
+			ubasetype bitmask=(~((~((ubasetype)0))>>shiftcount));
 			{
 				ASSERT((test & bitmask)==bitmask || (test & bitmask)==0);
 				// Ensure sign didn't change
@@ -192,6 +237,8 @@ public:
 
 	FORCEINLINE fixed_base operator-(void) const { return FromRep(-rep); }
 	FORCEINLINE fixed_base operator+(void) const { return *this; }
+
+	//FORCEINLINE fixed_base & operator=(const fixed_base & other) { rep=other.rep; return *this; } 
 
 	FORCEINLINE fixed_base operator+(const fixed_base other) const { 
 #ifdef VERIFY_FIXEDREP
@@ -309,8 +356,8 @@ typedef fixed_base<INT64,UINT64,32,INT64,16,0> lfixed;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /// UTILITY TEMPLATES
 
-template<class T> inline T fixed_fmax(const T a, const T b) { return T::FromRep(b.rep + ((a.rep - b.rep) & -(T::basetype)(a.rep > b.rep))); }
-template<class T> inline T fixed_fmin(const T a, const T b) { return T::FromRep(b.rep + ((a.rep - b.rep) & -(T::basetype)(a.rep < b.rep))); }
+template<class T> inline T fixed_fmax(const T a, const T b) { return T::FromRep(b.rep + ((a.rep - b.rep) & -(typename T::basetype)(a.rep > b.rep))); }
+template<class T> inline T fixed_fmin(const T a, const T b) { return T::FromRep(b.rep + ((a.rep - b.rep) & -(typename T::basetype)(a.rep < b.rep))); }
 template<class T> inline void fixed_fastvec3norm(T *v);
 template<class T> inline T fixed_fastvec3invlen(T *v);
 template<class B, class S> B fixed_vec2dot(const B *x, const S *y);
@@ -358,12 +405,12 @@ template<> afixed fixed_vec3dot_r<afixed,afixed>(const afixed *x, const afixed *
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-#define AFIXED(n,d) (afixed::Construct((int)(n),(unsigned int)((0.d##f)*1048576.0f)))
-#define BFIXED(n,d) (bfixed::Construct((int)(n),(unsigned int)((0.d##f)*2048.0f)))
-#define CFIXED(n,d) (cfixed::Construct((int)(n),(unsigned int)((0.d##f)*16777216.0f)))
-#define DFIXED(n,d) (dfixed::Construct((int)(n),(unsigned int)((0.d##f)*256.0f)))
-#define GFIXED(n,d) (gfixed::Construct((int)(n),(unsigned int)((0.d##f)*65536.0f)))
-#define LFIXED(n,d) (lfixed::Construct((int)(n),(unsigned int)((0.d##f)*4294967296.0f)))
+#define AFIXED(n,d) (afixed::Construct((int)(n),(unsigned int)(int)((0.##d)*1048576.0)))
+#define BFIXED(n,d) (bfixed::Construct((int)(n),(unsigned int)(int)((0.##d)*2048.0)))
+#define CFIXED(n,d) (cfixed::Construct((int)(n),(unsigned int)(int)((0.##d)*16777216.0)))
+#define DFIXED(n,d) (dfixed::Construct((int)(n),(unsigned int)(int)((0.##d)*256.0)))
+#define GFIXED(n,d) (gfixed::Construct((int)(n),(unsigned int)(int)((0.##d)*65536.0)))
+#define LFIXED(n,d) (lfixed::Construct((int)(n),(unsigned int)(int)((0.##d)*4294967296.0)))
 
 #define MAKE_FIXED_RANDOM(q,t) inline q t##_RANDOM(void) { return q::Random(); }
 #define MAKE_FIXED_ABS(q) inline q FIXED_ABS( const q &x ) { return x.abs(); }
@@ -503,9 +550,9 @@ inline B SensitiveMultiply(B b,S s)
 #ifdef VERIFY_FIXEDREP
 	ASSERT(shift1bs>=0);
 #endif
-	const B::exttype round1bs=(((B::exttype)1)<<shift1bs)>>1;
-	B::exttype out=( ((((((B::exttype)b.rep)+B::round0)>>B::shift0)*((((S::exttype)s.rep)+S::round0))>>S::shift0) + round1bs) >> shift1bs ); 
-	return B::FromRep((B::basetype)out);
+	const typename B::exttype round1bs=(((typename B::exttype)1)<<shift1bs)>>1;
+	typename B::exttype out=( ((((((typename B::exttype)b.rep)+B::round0)>>B::shift0)*((((typename S::exttype)s.rep)+S::round0))>>S::shift0) + round1bs) >> shift1bs ); 
+	return B::FromRep((typename B::basetype)out);
 }
 
 inline dfixed operator *(const dfixed &a, const bfixed &b) { return SensitiveMultiply(a,b); }
@@ -614,3 +661,4 @@ inline afixed FIXED_RATIO_A(T n, T d)
 
 
 #endif
+

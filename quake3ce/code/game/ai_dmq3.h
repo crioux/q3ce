@@ -67,15 +67,15 @@ qboolean EntityIsShooting(aas_entityinfo_t *entinfo);
 qboolean EntityHasKamikaze(aas_entityinfo_t *entinfo);
 #endif
 // set a user info key/value pair
-void BotSetUserInfo(bot_state_t *bs, char *key, char *value);
+void BotSetUserInfo(bot_state_t *bs, const char *key, const char *value);
 // set the team status (offense, defense etc.)
 void BotSetTeamStatus(bot_state_t *bs);
 //returns the name of the client
-char *ClientName(int client, char *name, int size);
+const char *ClientName(int client, char *name, int size);
 //returns an simplyfied client name
-char *EasyClientName(int client, char *name, int size);
+const char *EasyClientName(int client, char *name, int size);
 //returns the skin used by the client
-char *ClientSkin(int client, char *skin, int size);
+const char *ClientSkin(int client, char *skin, int size);
 // returns the appropriate synonym context for the current game type and situation
 int BotSynonymContext(bot_state_t *bs);
 // set last ordered task
@@ -165,14 +165,14 @@ int BotGetAlternateRouteGoal(bot_state_t *bs, int base);
 //returns either the alternate route goal or the given goal
 bot_goal_t *BotAlternateRoute(bot_state_t *bs, bot_goal_t *goal);
 //create a new waypoint
-bot_waypoint_t *BotCreateWayPoint(char *name, bvec3_t origin, int areanum);
+bot_waypoint_t *BotCreateWayPoint(const char *name, bvec3_t origin, int areanum);
 //find a waypoint with the given name
-bot_waypoint_t *BotFindWayPoint(bot_waypoint_t *waypoints, char *name);
+bot_waypoint_t *BotFindWayPoint(bot_waypoint_t *waypoints, const char *name);
 //strstr but case insensitive
-char *stristr(char *str, char *charset);
+const char *stristr(const char *str, const char *charset);
 //returns the number of the client with the given name
-int ClientFromName(char *name);
-int ClientOnSameTeamFromName(bot_state_t *bs, char *name);
+int ClientFromName(const char *name);
+int ClientOnSameTeamFromName(bot_state_t *bs, const char *name);
 //
 int BotPointAreaNum(bvec3_t origin);
 //

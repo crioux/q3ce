@@ -1363,7 +1363,7 @@ void BG_EvaluateTrajectoryDelta( const btrajectory_t *tr, int atTime, bvec3_t re
 }
 
 
-char *eventnames[] = {
+const char *eventnames[] = {
 	"EV_NONE",
 
 	"EV_FOOTSTEP",

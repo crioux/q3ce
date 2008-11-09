@@ -40,8 +40,11 @@ This is the only way control passes into the module.
 This must be the very first function compiled into the .qvm file
 ================
 */
-
+#ifdef _WIN32
 SysCallArg _UI_vmMain( int command, SysCallArgs &args) {
+#else
+EXTERN_C DLLEXPORT SysCallArg vmMain( int command, SysCallArgs &args) {
+#endif
 //	DebugBreak();
 
 	switch ( command ) {
@@ -100,8 +103,8 @@ cvars
 
 typedef struct {
 	vmCvar_t	*vmCvar;
-	char		*cvarName;
-	char		*defaultString;
+	const char		*cvarName;
+	const char		*defaultString;
 	int			cvarFlags;
 } _UI_cvarTable_t;
 

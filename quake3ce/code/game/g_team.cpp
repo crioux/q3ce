@@ -285,7 +285,7 @@ void Team_FragBonuses(gentity_t *targ, gentity_t *inflictor, gentity_t *attacker
 	int otherteam;
 	int tokens;
 	gentity_t *flag, *carrier = NULL;
-	char *c;
+	const char *c;
 	bvec3_t v1, v2;
 	int team;
 
@@ -525,7 +525,7 @@ void Team_CheckHurtCarrier(gentity_t *targ, gentity_t *attacker)
 
 
 gentity_t *Team_ResetFlag( int team ) {
-	char *c;
+	const char *c;
 	gentity_t *ent, *rent = NULL;
 
 	switch (team) {
@@ -985,7 +985,7 @@ gentity_t *SelectRandomTeamSpawnPoint( int teamstate, team_t team ) {
 	int			count;
 	int			selection;
 	gentity_t	*spots[MAX_TEAM_SPAWN_POINTS];
-	char		*classname;
+	const char		*classname;
 
 	if (teamstate == TEAM_BEGIN) {
 		if (team == TEAM_RED)

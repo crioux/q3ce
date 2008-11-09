@@ -43,6 +43,8 @@ extern "C"
 }
 
 extern bool g_no_cinematics;
+
+#ifdef USE_VIDPLAY
 	
 #define PK3FILE_ID			FOURCC('P','K','3','F')
 
@@ -449,7 +451,7 @@ void CL_PlayCinematic_f(void)
 	{
 		return;
 	}
-	char	*arg, *s;
+	const char	*arg, *s;
 	int	holdatend;
 	int bits = CIN_system;
 
@@ -782,4 +784,24 @@ void PK3FileDone()
 
 	NodeUnRegisterClass(PK3FILE_ID);
 }
+
+#else
+
+void CIN_Init(void) {}
+void CIN_CloseAllVideos(void) {}
+int CIN_HandleForVideo(void) { return 1; }
+e_status CIN_StopCinematic(int) { return FMV_IDLE; }
+e_status CIN_RunCinematic (int) { return FMV_IDLE; }
+void CIN_AdjustFrom640( gfixed *, gfixed *, gfixed *, gfixed *) {}
+int CIN_PlayCinematic( const char *, int, int, int, int, int)  { return 1;}
+void CIN_SetExtents (int, int, int, int, int)  {}
+void CIN_SetLooping(int, int)  {}
+void CIN_DrawCinematic (int) {}
+void CL_PlayCinematic_f(void) {}
+void SCR_DrawCinematic (void) {}
+void SCR_RunCinematic (void) {}
+void SCR_StopCinematic(void) {}
+void CIN_UploadCinematic(int) {}
+
+#endif
 

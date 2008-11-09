@@ -329,7 +329,7 @@ argv(0) god
 */
 void Cmd_God_f (gentity_t *ent)
 {
-	char	*msg;
+	const char	*msg;
 
 	if ( !CheatsOk( ent ) ) {
 		return;
@@ -355,7 +355,7 @@ argv(0) notarget
 ==================
 */
 void Cmd_Notarget_f( gentity_t *ent ) {
-	char	*msg;
+	const char	*msg;
 
 	if ( !CheatsOk( ent ) ) {
 		return;
@@ -379,7 +379,7 @@ argv(0) noclip
 ==================
 */
 void Cmd_Noclip_f( gentity_t *ent ) {
-	char	*msg;
+	const char	*msg;
 
 	if ( !CheatsOk( ent ) ) {
 		return;
@@ -499,7 +499,7 @@ void BroadcastTeamChange( gclient_t *client, int oldTeam )
 SetTeam
 =================
 */
-void SetTeam( gentity_t *ent, char *s ) {
+void SetTeam( gentity_t *ent, const char *s ) {
 	int					team, oldTeam;
 	gclient_t			*client;
 	int					clientNum;
@@ -958,7 +958,7 @@ static void Cmd_Tell_f( gentity_t *ent ) {
 
 static void G_VoiceTo( gentity_t *ent, gentity_t *other, int mode, const char *id, qboolean voiceonly ) {
 	int color;
-	char *cmd;
+	const char *cmd;
 
 	if (!other) {
 		return;
@@ -1154,7 +1154,7 @@ static void Cmd_VoiceTaunt_f( gentity_t *ent ) {
 
 
 
-static char	*gc_orders[] = {
+static const char	*gc_orders[] = {
 	"hold your position",
 	"hold this position",
 	"come here",

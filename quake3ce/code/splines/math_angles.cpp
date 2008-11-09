@@ -20,7 +20,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 #include"splines_pch.h"
-
+#ifndef _WIN32
+#include"float.h"
+#endif
 
 angles_t ang_zero( GFIXED_0, GFIXED_0, GFIXED_0);
 

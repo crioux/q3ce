@@ -28,6 +28,10 @@
 #  error "cannot define both DEBUG and NDEBUG"
 # endif
 
+# if defined(_LINUX) && !defined(HAVE_ASSERT_H)
+#define HAVE_ASSERT_H 1
+# endif
+
 # if defined(DEBUG)
 #  include <stdio.h>
 # endif

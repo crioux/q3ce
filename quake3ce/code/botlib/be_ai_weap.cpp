@@ -181,7 +181,7 @@ void DumpWeaponConfig(weaponconfig_t *wc)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-weaponconfig_t *LoadWeaponConfig(char *filename)
+weaponconfig_t *LoadWeaponConfig(const char *filename)
 {
 	int max_weaponinfo, max_projectileinfo;
 	token_t token;
@@ -347,7 +347,7 @@ void BotFreeWeaponWeights(int weaponstate)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int BotLoadWeaponWeights(int weaponstate, char *filename)
+int BotLoadWeaponWeights(int weaponstate, const char *filename)
 {
 	bot_weaponstate_t *ws;
 
@@ -489,7 +489,7 @@ void BotFreeWeaponState(int handle)
 //===========================================================================
 int BotSetupWeaponAI(void)
 {
-	char *file;
+	const char *file;
 
 	file = LibVarString("weaponconfig", "weapons.c");
 	weaponconfig = LoadWeaponConfig(file);

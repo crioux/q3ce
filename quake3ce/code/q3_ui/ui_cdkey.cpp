@@ -198,7 +198,7 @@ static void UI_CDKeyMenu_Init( void ) {
 	cdkeyMenuInfo.banner.generic.type				= MTYPE_BTEXT;
 	cdkeyMenuInfo.banner.generic.x					= 320;
 	cdkeyMenuInfo.banner.generic.y					= 16;
-	cdkeyMenuInfo.banner.string						= "CD KEY";
+	cdkeyMenuInfo.banner.string						= strdup("CD KEY");
 	cdkeyMenuInfo.banner.color						= color_white;
 	cdkeyMenuInfo.banner.style						= UI_CENTER;
 

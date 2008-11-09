@@ -262,7 +262,7 @@ void CL_Record_f( void ) {
 	int			len;
 	entityState_t	*ent;
 	entityState_t	nullstate;
-	char		*s;
+	const char		*s;
 
 	if ( Cmd_Argc() > 2 ) {
 		Com_Printf ("record <demoname>\n");
@@ -467,7 +467,7 @@ void CL_ReadDemoMessage( void ) {
 CL_WalkDemoExt
 ====================
 */
-static void CL_WalkDemoExt(char *arg, char *name, int *demofile)
+static void CL_WalkDemoExt(const char *arg, char *name, int *demofile)
 {
 	int i = 0;
 	*demofile = 0;
@@ -496,7 +496,7 @@ demo <demoname>
 */
 void CL_PlayDemo_f( void ) {
 	char		name[MAX_OSPATH];
-	char		*arg, *ext_test;
+	const char		*arg, *ext_test;
 	int			protocol, i;
 	char		retry[MAX_OSPATH];
 
@@ -788,7 +788,7 @@ so when they are typed in at the console, they will need to be forwarded.
 ===================
 */
 void CL_ForwardCommandToServer( const char *string ) {
-	char	*cmd;
+	const char	*cmd;
 
 	cmd = Cmd_Argv(0);
 
@@ -1029,7 +1029,7 @@ CL_Connect_f
 ================
 */
 void CL_Connect_f( void ) {
-	char	*server;
+	const char	*server;
 
 	if ( Cmd_Argc() != 2 ) {
 		Com_Printf( "usage: connect [server]\n");
@@ -1597,8 +1597,8 @@ CL_MotdPacket
 ===================
 */
 void CL_MotdPacket( netadr_t from ) {
-	char	*challenge;
-	char	*info;
+	const char	*challenge;
+	const char	*info;
 
 	// if not from our server, ignore it
 	if ( !NET_CompareAdr( from, cls.updateServer ) ) {
@@ -1772,8 +1772,8 @@ Responses to broadcasts, etc
 =================
 */
 void CL_ConnectionlessPacket( netadr_t from, msg_t *msg ) {
-	char	*s;
-	char	*c;
+	const char	*s;
+	const char	*c;
 
 	MSG_BeginReadingOOB( msg );
 	MSG_ReadLong( msg );	// skip the -1
@@ -2251,7 +2251,7 @@ void CL_InitRef( void ) {
 
 
 void CL_SetModel_f( void ) {
-	char	*arg;
+	const char	*arg;
 	char	name[256];
 
 	arg = Cmd_Argv( 1 );
@@ -2522,7 +2522,7 @@ CL_ServerInfoPacket
 void CL_ServerInfoPacket( netadr_t from, msg_t *msg ) {
 	int		i, type;
 	char	info[MAX_INFO_STRING];
-	char*	str;
+	const char*	str;
 	char	*infoString;
 	int		prot;
 
@@ -2725,7 +2725,7 @@ CL_ServerStatusResponse
 ===================
 */
 void CL_ServerStatusResponse( netadr_t from, msg_t *msg ) {
-	char	*s;
+	const char	*s;
 	char	info[MAX_INFO_STRING];
 	int		i, l, score, ping;
 	int		len;
@@ -2818,7 +2818,7 @@ CL_LocalServers_f
 ==================
 */
 void CL_LocalServers_f( void ) {
-	char		*message;
+	const char		*message;
 	int			i, j;
 	netadr_t	to;
 
@@ -3088,7 +3088,7 @@ CL_Ping_f
 void CL_Ping_f( void ) {
 	netadr_t	to;
 	ping_t*		pingptr;
-	char*		server;
+	const char*		server;
 
 	if ( Cmd_Argc() != 2 ) {
 		Com_Printf( "usage: ping [server]\n");
@@ -3228,7 +3228,7 @@ CL_ServerStatus_f
 */
 void CL_ServerStatus_f(void) {
 	netadr_t	to;
-	char		*server;
+	const char		*server;
 	serverStatus_t *serverStatus;
 
 	Com_Memset( &to, 0, sizeof(netadr_t) );

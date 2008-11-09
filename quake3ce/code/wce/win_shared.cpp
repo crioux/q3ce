@@ -159,11 +159,11 @@ extern char		*FS_BuildOSPath( const char *base, const char *game, const char *qp
 // fqpath param added 7/20/02 by T.Ray - Sys_LoadDll is only called in vm.c at this time
 // fqpath will be empty if dll not loaded, otherwise will hold fully qualified path of dll module loaded
 // fqpath buffersize must be at least MAX_QPATH+1 bytes long
-void * QDECL Sys_LoadDll( const char *name, char *fqpath , SysCallArg (QDECL **entryPoint)(int, SysCallArgs &args ),
-				  SysCallArg (QDECL *systemcalls)(int, SysCallArgs &args) ) {
+void * QDECL Sys_LoadDll( const char *name, char *fqpath , SysCallArg (QDECL **entryPoint)(int, const SysCallArgs &args ),
+				  SysCallArg (QDECL *systemcalls)(int, const SysCallArgs &args) ) {
 	static int	lastWarning = 0;
 	HINSTANCE	libHandle;
-	void (QDECL *dllEntry)( SysCallArg (QDECL *syscallptr)(int id, SysCallArgs &args) );
+	void (QDECL *dllEntry)( SysCallArg (QDECL *syscallptr)(int id, const SysCallArgs &args) );
 
 	char	*basepath;
 	char	*cdpath;

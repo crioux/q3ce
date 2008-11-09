@@ -66,8 +66,8 @@ gfixed _G_trap_Cvar_VariableValue( const char *var_name ) {
 G_ParseInfos
 ===============
 */
-int G_ParseInfos( char *buf, int max, char *infos[] ) {
-	char	*token;
+int G_ParseInfos( const char *buf, int max, char *infos[] ) {
+	const char	*token;
 	int		count;
 	char	key[MAX_TOKEN_CHARS];
 	char	info[MAX_INFO_STRING];
@@ -75,7 +75,7 @@ int G_ParseInfos( char *buf, int max, char *infos[] ) {
 	count = 0;
 
 	while ( 1 ) {
-		token = COM_Parse( &buf );
+		token = COM_Parse( (const char **)&buf );
 		if ( !token[0] ) {
 			break;
 		}
@@ -103,7 +103,7 @@ int G_ParseInfos( char *buf, int max, char *infos[] ) {
 
 			token = COM_ParseExt( &buf, qfalse );
 			if ( !token[0] ) {
-				strcpy( token, "<NULL>" );
+				token="<NULL>";
 			}
 			Info_SetValueForKey( info, key, token );
 		}
@@ -122,7 +122,7 @@ int G_ParseInfos( char *buf, int max, char *infos[] ) {
 G_LoadArenasFromFile
 ===============
 */
-static void G_LoadArenasFromFile( char *filename ) {
+static void G_LoadArenasFromFile( const char *filename ) {
 	int				len;
 	fileHandle_t	f;
 	char			buf[MAX_ARENAS_TEXT];
@@ -237,7 +237,9 @@ G_AddRandomBot
 void G_AddRandomBot( int team ) {
 	int		i, n, num;
 	gfixed	skill;
-	char	*value, netname[36], *teamstr;
+	const char	*value; 
+	char netname[36];
+	const char *teamstr;
 	gclient_t	*cl;
 
 	num = 0;
@@ -565,13 +567,13 @@ G_AddBot
 */
 static void G_AddBot( const char *name, gfixed skill, const char *team, int delay, char *altname) {
 	int				clientNum;
-	char			*botinfo;
+	const char			*botinfo;
 	gentity_t		*bot;
-	char			*key;
-	char			*s;
-	char			*botname;
-	char			*model;
-	char			*headmodel;
+	const char			*key;
+	const char			*s;
+	const char			*botname;
+	const char			*model;
+	const char			*headmodel;
 	char			userinfo[MAX_INFO_STRING];
 
 	// get the botinfo from bots.txt
@@ -798,7 +800,7 @@ void Svcmd_BotList_f( void ) {
 G_SpawnBots
 ===============
 */
-static void G_SpawnBots( char *botList, int baseDelay ) {
+static void G_SpawnBots( const char *botList, int baseDelay ) {
 	char		*bot;
 	char		*p;
 	gfixed		skill;
@@ -856,7 +858,7 @@ static void G_SpawnBots( char *botList, int baseDelay ) {
 G_LoadBotsFromFile
 ===============
 */
-static void G_LoadBotsFromFile( char *filename ) {
+static void G_LoadBotsFromFile( const char *filename ) {
 	int				len;
 	fileHandle_t	f;
 	char			buf[MAX_BOTS_TEXT];
@@ -926,7 +928,7 @@ static void G_LoadBots( void ) {
 G_GetBotInfoByNumber
 ===============
 */
-char *G_GetBotInfoByNumber( int num ) {
+const char *G_GetBotInfoByNumber( int num ) {
 	if( num < 0 || num >= g_numBots ) {
 		_G_trap_Printf( va( S_COLOR_RED "Invalid bot number: %i\n", num ) );
 		return NULL;
@@ -940,9 +942,9 @@ char *G_GetBotInfoByNumber( int num ) {
 G_GetBotInfoByName
 ===============
 */
-char *G_GetBotInfoByName( const char *name ) {
+const char *G_GetBotInfoByName( const char *name ) {
 	int		n;
-	char	*value;
+	const char	*value;
 
 	for ( n = 0; n < g_numBots ; n++ ) {
 		value = Info_ValueForKey( g_botInfos[n], "name" );
@@ -963,7 +965,7 @@ void G_InitBots( qboolean restart ) {
 	int			fragLimit;
 	int			timeLimit;
 	const char	*arenainfo;
-	char		*strValue;
+	const char		*strValue;
 	int			basedelay;
 	char		map[MAX_QPATH];
 	char		serverinfo[MAX_INFO_STRING];

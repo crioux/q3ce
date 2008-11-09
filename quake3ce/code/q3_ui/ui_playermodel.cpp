@@ -35,7 +35,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define LOW_MEMORY			(5 * 1024 * 1024)
 
-static char* playermodel_artlist[] =
+static const char* playermodel_artlist[] =
 {
 	MODEL_BACK0,	
 	MODEL_BACK1,	
@@ -535,7 +535,7 @@ static void PlayerModel_MenuInit( void )
 	s_playermodel.banner.generic.type  = MTYPE_BTEXT;
 	s_playermodel.banner.generic.x     = 320;
 	s_playermodel.banner.generic.y     = 16;
-	s_playermodel.banner.string        = "PLAYER MODEL";
+	s_playermodel.banner.string        = strdup("PLAYER MODEL");
 	s_playermodel.banner.color         = color_white;
 	s_playermodel.banner.style         = UI_CENTER;
 

@@ -483,7 +483,7 @@ typedef struct {
 } fog_t;
 
 typedef struct {
-	orientationr_t	or;
+	orientationr_t	_or;
 	orientationr_t	world;
 	bvec3_t		pvsOrigin;			// may be different than or.origin for portals
 	qboolean	isPortal;			// true if this view is through a portal
@@ -843,7 +843,7 @@ typedef struct {
 	int			smpFrame;
 	trRefdef_t	refdef;
 	viewParms_t	viewParms;
-	orientationr_t	or;
+	orientationr_t	_or;
 	backEndCounters_t	pc;
 	qboolean	isHyperspace;
 	trRefEntity_t	*currentEntity;
@@ -911,7 +911,7 @@ typedef struct {
 	int						identityLightByte;	// identityLight * 255
 	int						overbrightBits;		// r_overbrightBits->integer, but set to 0 if no hw gamma
 
-	orientationr_t			or;					// for current entity
+	orientationr_t			_or;					// for current entity
 
 	trRefdef_t				refdef;
 
@@ -1109,7 +1109,7 @@ int R_CullLocalBox (bvec3_t bounds[2]);
 int R_CullPointAndRadius( bvec3_t origin, bfixed radius );
 int R_CullLocalPointAndRadius( bvec3_t origin, bfixed radius );
 
-void R_RotateForEntity( const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *or );
+void R_RotateForEntity( const trRefEntity_t *ent, const viewParms_t *viewParms, orientationr_t *_or );
 
 /*
 ** GL wrapper/helper functions
@@ -1231,7 +1231,7 @@ void		*GLimp_RendererSleep( void );
 void		GLimp_FrontEndSleep( void );
 void		GLimp_WakeRenderer( void *data );
 
-void		GLimp_LogComment( char *comment );
+void		GLimp_LogComment( const char *comment );
 
 void		GLimp_PauseDisplay(void);
 void		GLimp_ResumeDisplay(void);
@@ -1341,7 +1341,7 @@ LIGHTS
 
 void R_DlightBmodel( bmodel_t *bmodel );
 void R_SetupEntityLighting( const trRefdef_t *refdef, trRefEntity_t *ent );
-void R_TransformDlights( int count, dlight_t *dl, orientationr_t *or );
+void R_TransformDlights( int count, dlight_t *dl, orientationr_t *_or );
 int R_LightForPoint( bvec3_t point, vec3_t ambientLight, bvec3_t directedLight, avec3_t lightDir );
 
 

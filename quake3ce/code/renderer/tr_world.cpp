@@ -141,7 +141,7 @@ static qboolean	R_CullSurface( surfaceType_t *surface, shader_t *shader ) {
 	}
 
 	sface = ( srfSurfaceFace_t * ) surface;
-	d = FIXED_VEC3DOT (tr.or.viewOrigin, sface->plane.normal);
+	d = FIXED_VEC3DOT (tr._or.viewOrigin, sface->plane.normal);
 
 	// don't cull exactly on the plane, because there are levels of rounding
 	// through the BSP, ICD, and hardware that may cause pixel gaps if an

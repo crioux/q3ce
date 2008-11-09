@@ -20,3 +20,4 @@ void Com_Parse2DMatrix( const char *(*buf_p), int y, int x, gfixed *m );
 void Com_Parse3DMatrix( const char *(*buf_p), int z, int y, int x, gfixed *m );
 
 #endif
+

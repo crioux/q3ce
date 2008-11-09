@@ -750,7 +750,7 @@ CG_DrawSnapshot
 ==================
 */
 static gfixed CG_DrawSnapshot( gfixed y ) {
-	char		*s;
+	const char		*s;
 	int			w;
 
 	s = va( "time:%i snap:%i cmd:%i", cg.snap->serverTime, 
@@ -769,7 +769,7 @@ CG_DrawFPS
 */
 #define	FPS_FRAMES	4
 static gfixed CG_DrawFPS( gfixed y ) {
-	char		*s;
+	const char		*s;
 	int			w;
 	static int	previousTimes[FPS_FRAMES];
 	static int	index;
@@ -812,7 +812,7 @@ CG_DrawTimer
 =================
 */
 static gfixed CG_DrawTimer( gfixed y ) {
-	char		*s;
+	const char		*s;
 	int			w;
 	int			mins, seconds, tens;
 	int			msec;
@@ -2070,7 +2070,7 @@ CG_DrawVote
 =================
 */
 static void CG_DrawVote(void) {
-	char	*s;
+	const char	*s;
 	int		sec;
 
 	if ( !cgs.voteTime ) {
@@ -2104,7 +2104,7 @@ CG_DrawTeamVote
 =================
 */
 static void CG_DrawTeamVote(void) {
-	char	*s;
+	const char	*s;
 	int		sec, cs_offset;
 
 	if ( cgs.clientinfo->team == TEAM_RED )

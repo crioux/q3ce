@@ -104,7 +104,7 @@ void RB_AddQuadStampExt( bvec3_t origin, bvec3_t left, bvec3_t up, byte *color, 
 
 
 	// constant normal all the way around
-	VectorSubtract(avec3_origin, backEnd.viewParms.or.axis[0], normal );
+	VectorSubtract(avec3_origin, backEnd.viewParms._or.axis[0], normal );
 
 	tess.normal[ndx][0] = tess.normal[ndx+1][0] = tess.normal[ndx+2][0] = tess.normal[ndx+3][0] = normal[0];
 	tess.normal[ndx][1] = tess.normal[ndx+1][1] = tess.normal[ndx+2][1] = tess.normal[ndx+3][1] = normal[1];
@@ -157,8 +157,8 @@ static void RB_SurfaceSprite( void ) {
 	// calculate the xyz locations for the four corners
 	radius = backEnd.currentEntity->e.radius;
 	if ( backEnd.currentEntity->e.rotation == AFIXED_0 ) {
-		FIXED_VEC3SCALE_R( backEnd.viewParms.or.axis[1], radius, left );
-		FIXED_VEC3SCALE_R( backEnd.viewParms.or.axis[2], radius, up );
+		FIXED_VEC3SCALE_R( backEnd.viewParms._or.axis[1], radius, left );
+		FIXED_VEC3SCALE_R( backEnd.viewParms._or.axis[2], radius, up );
 	} else {
 		afixed	s, c;
 		afixed	ang;
@@ -167,11 +167,11 @@ static void RB_SurfaceSprite( void ) {
 		s = FIXED_SIN( ang );
 		c = FIXED_COS( ang );
 
-		FIXED_VEC3SCALE_R( backEnd.viewParms.or.axis[1], c * radius, left );
-		FIXED_VEC3MA_R( left, -s * radius, backEnd.viewParms.or.axis[2], left );
+		FIXED_VEC3SCALE_R( backEnd.viewParms._or.axis[1], c * radius, left );
+		FIXED_VEC3MA_R( left, -s * radius, backEnd.viewParms._or.axis[2], left );
 
-		FIXED_VEC3SCALE_R( backEnd.viewParms.or.axis[2], c * radius, up );
-		FIXED_VEC3MA_R( up, s * radius, backEnd.viewParms.or.axis[1], up );
+		FIXED_VEC3SCALE_R( backEnd.viewParms._or.axis[2], c * radius, up );
+		FIXED_VEC3MA_R( up, s * radius, backEnd.viewParms._or.axis[1], up );
 	}
 	if ( backEnd.viewParms.isMirror ) {
 		VectorSubtract( bvec3_origin, left, left );
@@ -512,9 +512,9 @@ void RB_SurfaceRailCore( void ) {
 	len = FIXED_TO_INT(VectorNormalize( vec ));
 
 	// compute side vector
-	VectorSubtract( start, backEnd.viewParms.or.origin, v1 );
+	VectorSubtract( start, backEnd.viewParms._or.origin, v1 );
 	VectorNormalize( v1 );
-	VectorSubtract( end, backEnd.viewParms.or.origin, v2 );
+	VectorSubtract( end, backEnd.viewParms._or.origin, v2 );
 	VectorNormalize( v2 );
 	CrossProduct( v1, v2, tmp );
 	VectorNormalizeB2A( tmp, right );
@@ -544,9 +544,9 @@ void RB_SurfaceLightningBolt( void ) {
 	len = FIXED_TO_INT(VectorNormalizeB2A(tmp, vec ));
 
 	// compute side vector
-	VectorSubtract( start, backEnd.viewParms.or.origin, tmp);
+	VectorSubtract( start, backEnd.viewParms._or.origin, tmp);
 	VectorNormalizeB2A(tmp, v1 );
-	VectorSubtract( end, backEnd.viewParms.or.origin, tmp );
+	VectorSubtract( end, backEnd.viewParms._or.origin, tmp );
 	VectorNormalizeB2A(tmp, v2 );
 	CrossProduct( v1, v2, right );
 	VectorNormalize( right );
@@ -835,15 +835,15 @@ static bfixed	LodErrorForVolume( bvec3_t local, bfixed radius ) {
 		return BFIXED_0;
 	}
 
-	world[0] = local[0] * backEnd.or.axis[0][0] + local[1] * backEnd.or.axis[1][0] + 
-		local[2] * backEnd.or.axis[2][0] + backEnd.or.origin[0];
-	world[1] = local[0] * backEnd.or.axis[0][1] + local[1] * backEnd.or.axis[1][1] + 
-		local[2] * backEnd.or.axis[2][1] + backEnd.or.origin[1];
-	world[2] = local[0] * backEnd.or.axis[0][2] + local[1] * backEnd.or.axis[1][2] + 
-		local[2] * backEnd.or.axis[2][2] + backEnd.or.origin[2];
+	world[0] = local[0] * backEnd._or.axis[0][0] + local[1] * backEnd._or.axis[1][0] + 
+		local[2] * backEnd._or.axis[2][0] + backEnd._or.origin[0];
+	world[1] = local[0] * backEnd._or.axis[0][1] + local[1] * backEnd._or.axis[1][1] + 
+		local[2] * backEnd._or.axis[2][1] + backEnd._or.origin[1];
+	world[2] = local[0] * backEnd._or.axis[0][2] + local[1] * backEnd._or.axis[1][2] + 
+		local[2] * backEnd._or.axis[2][2] + backEnd._or.origin[2];
 
-	VectorSubtract( world, backEnd.viewParms.or.origin, world );
-	d = FIXED_VEC3DOT( world, backEnd.viewParms.or.axis[0] );
+	VectorSubtract( world, backEnd.viewParms._or.origin, world );
+	d = FIXED_VEC3DOT( world, backEnd.viewParms._or.axis[0] );
 
 	if ( d < BFIXED_0 ) {
 		d = -d;
@@ -1096,8 +1096,8 @@ void RB_SurfaceFlare( srfFlare_t *surf ) {
 
 	// calculate the xyz locations for the four corners
 	radius = 30;
-	FIXED_VEC3SCALE( backEnd.viewParms.or.axis[1], radius, left );
-	FIXED_VEC3SCALE( backEnd.viewParms.or.axis[2], radius, up );
+	FIXED_VEC3SCALE( backEnd.viewParms._or.axis[1], radius, left );
+	FIXED_VEC3SCALE( backEnd.viewParms._or.axis[2], radius, up );
 	if ( backEnd.viewParms.isMirror ) {
 		VectorSubtract( vec3_origin, left, left );
 	}
@@ -1105,7 +1105,7 @@ void RB_SurfaceFlare( srfFlare_t *surf ) {
 	color[0] = color[1] = color[2] = color[3] = 255;
 
 	FIXED_VEC3MA( surf->origin, GFIXED(3,0), surf->normal, origin );
-	VectorSubtract( origin, backEnd.viewParms.or.origin, dir );
+	VectorSubtract( origin, backEnd.viewParms._or.origin, dir );
 	VectorNormalize( dir );
 	FIXED_VEC3MA( origin, r_ignore->value, dir, origin );
 

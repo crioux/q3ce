@@ -31,8 +31,8 @@ static bfixed ProjectRadius( bfixed r, bvec3_t location )
 	bvec3_t	p;
 	bfixed	projected[4];
 
-	c = FIXED_VEC3DOT_R( tr.viewParms.or.axis[0], tr.viewParms.or.origin );
-	dist = FIXED_VEC3DOT_R( tr.viewParms.or.axis[0], location ) - c;
+	c = FIXED_VEC3DOT_R( tr.viewParms._or.axis[0], tr.viewParms._or.origin );
+	dist = FIXED_VEC3DOT_R( tr.viewParms._or.axis[0], location ) - c;
 
 	if ( dist <= BFIXED_0 )
 		return BFIXED_0;
