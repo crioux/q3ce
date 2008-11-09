@@ -122,7 +122,7 @@ static const char *sortkey_items[] = {
 	0
 };
 
-static char* gamenames[] = {
+static const char* gamenames[] = {
 	"DM ",	// deathmatch
 	"1v1",	// tournament
 	"SP ",	// single player
@@ -139,7 +139,7 @@ static char* gamenames[] = {
 	0
 };
 
-static char* netnames[] = {
+static const char* netnames[] = {
 	"???",
 	"UDP",
 	"IPX",
@@ -216,7 +216,7 @@ typedef struct {
 
 	pinglist_t			pinglist[MAX_PINGREQUESTS];
 	table_t				table[MAX_LISTBOXITEMS];
-	char*				items[MAX_LISTBOXITEMS];
+	const char*				items[MAX_LISTBOXITEMS];
 	int					numqueriedservers;
 	int					*numservers;
 	servernode_t		*serverlist;	
@@ -380,14 +380,14 @@ static void ArenaServers_UpdateMenu( void ) {
 	char*			buff;
 	servernode_t*	servernodeptr;
 	table_t*		tableptr;
-	char			*pingColor;
+	const char			*pingColor;
 
 	if( s_arenaservers.numqueriedservers > 0 ) {
 		// servers found
 		if( s_arenaservers.refreshservers && ( s_arenaservers.currentping <= s_arenaservers.numqueriedservers ) ) {
 			// show progress
 			Com_sprintf( s_arenaservers.status.string, MAX_STATUSLENGTH, "%d of %d Arena Servers.", s_arenaservers.currentping, s_arenaservers.numqueriedservers);
-			s_arenaservers.statusbar.string  = "Press SPACE to stop";
+			s_arenaservers.statusbar.string  = strdup("Press SPACE to stop");
 			qsort( s_arenaservers.serverlist, *s_arenaservers.numservers, sizeof( servernode_t ), ArenaServers_Compare);
 		}
 		else {
@@ -407,7 +407,7 @@ static void ArenaServers_UpdateMenu( void ) {
 				s_arenaservers.statusbar.string = quake3worldMessage;
 			}
 			else {
-				s_arenaservers.statusbar.string = "";
+				s_arenaservers.statusbar.string = strdup("");
 			}
 
 		}
@@ -416,7 +416,7 @@ static void ArenaServers_UpdateMenu( void ) {
 		// no servers found
 		if( s_arenaservers.refreshservers ) {
 			strcpy( s_arenaservers.status.string,"Scanning For Servers." );
-			s_arenaservers.statusbar.string = "Press SPACE to stop";
+			s_arenaservers.statusbar.string = strdup("Press SPACE to stop");
 
 			// disable controls during refresh
 			s_arenaservers.master.generic.flags		|= QMF_GRAYED;
@@ -442,7 +442,7 @@ static void ArenaServers_UpdateMenu( void ) {
 				s_arenaservers.statusbar.string = quake3worldMessage;
 			}
 			else {
-				s_arenaservers.statusbar.string = "";
+				s_arenaservers.statusbar.string = strdup("");
 			}
 
 			// end of refresh - set control state
@@ -611,7 +611,7 @@ ArenaServers_Insert
 static void ArenaServers_Insert( char* adrstr, char* info, int pingtime )
 {
 	servernode_t*	servernodeptr;
-	char*			s;
+	const char*			s;
 	int				i;
 
 
@@ -1344,7 +1344,7 @@ static void ArenaServers_MenuInit( void ) {
 	s_arenaservers.banner.generic.flags = QMF_CENTER_JUSTIFY;
 	s_arenaservers.banner.generic.x	    = 320;
 	s_arenaservers.banner.generic.y	    = 16;
-	s_arenaservers.banner.string  		= "ARENA SERVERS";
+	s_arenaservers.banner.string  		= strdup("ARENA SERVERS");
 	s_arenaservers.banner.style  	    = UI_CENTER;
 	s_arenaservers.banner.color  	    = color_white;
 
@@ -1459,7 +1459,7 @@ static void ArenaServers_MenuInit( void ) {
 	s_arenaservers.statusbar.generic.type   = MTYPE_TEXT;
 	s_arenaservers.statusbar.generic.x	    = 320;
 	s_arenaservers.statusbar.generic.y	    = y;
-	s_arenaservers.statusbar.string	        = "";
+	s_arenaservers.statusbar.string	        = strdup("");
 	s_arenaservers.statusbar.style	        = UI_CENTER|UI_SMALLFONT;
 	s_arenaservers.statusbar.color	        = text_color_normal;
 

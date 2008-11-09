@@ -67,7 +67,7 @@ void ExitLevel( void );
 BotAI_Print
 ==================
 */
-void QDECL BotAI_Print(int type, char *fmt, ...) {
+void QDECL BotAI_Print(int type, const char *fmt, ...) {
 	char str[2048];
 	va_list ap;
 
@@ -190,11 +190,11 @@ int BotAI_GetSnapshotEntity( int clientNum, int sequence, entityState_t *state )
 BotAI_BotInitialChat
 ==================
 */
-void QDECL BotAI_BotInitialChat( bot_state_t *bs, char *type, ... ) {
+void QDECL BotAI_BotInitialChat( bot_state_t *bs, const char *type, ... ) {
 	int		i, mcontext;
 	va_list	ap;
 	char	*p;
-	char	*vars[MAX_MATCHVARIABLES];
+	const char	*vars[MAX_MATCHVARIABLES];
 
 	memset(vars, 0, sizeof(vars));
 	va_start(ap, type);
@@ -251,7 +251,8 @@ BotReportStatus
 void BotReportStatus(bot_state_t *bs) {
 	char goalname[MAX_MESSAGE_SIZE];
 	char netname[MAX_MESSAGE_SIZE];
-	char *leader, flagstatus[32];
+	const char *leader;
+	char flagstatus[32];
 	//
 	ClientName(bs->client, netname, sizeof(netname));
 	if (Q_stricmp(netname, bs->teamleader) == 0) leader = "L";
@@ -400,7 +401,9 @@ void BotSetInfoConfigString(bot_state_t *bs) {
 	char goalname[MAX_MESSAGE_SIZE];
 	char netname[MAX_MESSAGE_SIZE];
 	char action[MAX_MESSAGE_SIZE];
-	char *leader, carrying[32], *cs;
+	const char *leader; 
+	char carrying[32];
+	const char *cs;
 	bot_goal_t goal;
 	//
 	ClientName(bs->client, netname, sizeof(netname));

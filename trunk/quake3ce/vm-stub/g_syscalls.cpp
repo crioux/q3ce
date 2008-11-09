@@ -21,10 +21,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 //
 #include"game_pch.h"
-#include"..\qcommon\qcommon.h"
-#include"..\server\server.h"
-#include"..\qcommon\cm_public.h"
-#include"..\game\botlib.h"
+#include"qcommon.h"
+#include"server.h"
+#include"cm_public.h"
+#include"botlib.h"
 
 
 extern botlib_export_t	*botlib_export;
@@ -222,7 +222,7 @@ void _G_trap_GetUsercmd( int clientNum, usercmd_t *cmd ) {
 qboolean _G_trap_GetEntityToken( char *buffer, int bufferSize ) {
 	const char	*s;
 
-	s = COM_Parse( &sv.entityParsePoint );
+	s = COM_Parse( (const char **)&sv.entityParsePoint );
 	Q_strncpyz( buffer, s, bufferSize);
 	if ( !sv.entityParsePoint && !s[0] ) {
 		return qfalse;
@@ -264,7 +264,7 @@ int _G_trap_BotLibVarGet(char *var_name, char *value, int size) {
 	return botlib_export->BotLibVarGet(var_name, value, size );
 }
 
-int _G_trap_BotLibDefine(char *string) {
+int _G_trap_BotLibDefine(const char *string) {
 	return botlib_export->PC_AddGlobalDefine( string);
 }
 
@@ -340,19 +340,19 @@ int _G_trap_AAS_NextBSPEntity(int ent) {
 	return botlib_export->aas.AAS_NextBSPEntity( ent );
 }
 
-int _G_trap_AAS_ValueForBSPEpairKey(int ent, char *key, char *value, int size) {
+int _G_trap_AAS_ValueForBSPEpairKey(int ent, const char *key, char *value, int size) {
 	return botlib_export->aas.AAS_ValueForBSPEpairKey( ent, key, value, size );
 }
 
-int _G_trap_AAS_VectorForBSPEpairKey(int ent, char *key, bvec3_t v) {
+int _G_trap_AAS_VectorForBSPEpairKey(int ent, const char *key, bvec3_t v) {
 	return botlib_export->aas.AAS_VectorForBSPEpairKey( ent, key, v  );
 }
 
-int _G_trap_AAS_FloatForBSPEpairKey(int ent, char *key, gfixed *value) {
+int _G_trap_AAS_FloatForBSPEpairKey(int ent, const char *key, gfixed *value) {
 	return botlib_export->aas.AAS_FloatForBSPEpairKey( ent, key, value );
 }
 
-int _G_trap_AAS_IntForBSPEpairKey(int ent, char *key, int *value) {
+int _G_trap_AAS_IntForBSPEpairKey(int ent, const char *key, int *value) {
 	return botlib_export->aas.AAS_IntForBSPEpairKey( ent, key, value  );
 }
 
@@ -388,15 +388,15 @@ int _G_trap_AAS_PredictClientMovement(void /* struct aas_clientmove_s */ *move, 
 	return botlib_export->aas.AAS_PredictClientMovement( (aas_clientmove_s*)move, entnum, origin, presencetype, onground, velocity, cmdmove, cmdframes, maxframes, frametime, stopevent, stopareanum, visualize );
 }
 
-void _G_trap_EA_Say(int client, char *str) {
+void _G_trap_EA_Say(int client, const char *str) {
 	botlib_export->ea.EA_Say( client, str  );
 }
 
-void _G_trap_EA_SayTeam(int client, char *str) {
+void _G_trap_EA_SayTeam(int client, const char *str) {
 	botlib_export->ea.EA_SayTeam( client,str);
 }
 
-void _G_trap_EA_Command(int client, char *command) {
+void _G_trap_EA_Command(int client, const char *command) {
 	botlib_export->ea.EA_Command( client,command );
 }
 
@@ -485,7 +485,7 @@ void _G_trap_EA_ResetInput(int client) {
 	botlib_export->ea.EA_ResetInput( client );
 }
 
-int _G_trap_BotLoadCharacter(char *charfile, gfixed skill) {
+int _G_trap_BotLoadCharacter(const char *charfile, gfixed skill) {
 	return botlib_export->ai.BotLoadCharacter( charfile, skill );
 }
 
@@ -521,7 +521,7 @@ void _G_trap_BotFreeChatState(int handle) {
 	botlib_export->ai.BotFreeChatState( handle );
 }
 
-void _G_trap_BotQueueConsoleMessage(int chatstate, int type, char *message) {
+void _G_trap_BotQueueConsoleMessage(int chatstate, int type, const char *message) {
 	botlib_export->ai.BotQueueConsoleMessage( chatstate, type, message );
 }
 
@@ -537,7 +537,7 @@ int _G_trap_BotNumConsoleMessages(int chatstate) {
 	return botlib_export->ai.BotNumConsoleMessages( chatstate );
 }
 
-void _G_trap_BotInitialChat(int chatstate, char *type, int mcontext, char *var0, char *var1, char *var2, char *var3, char *var4, char *var5, char *var6, char *var7 ) {
+void _G_trap_BotInitialChat(int chatstate, const char *type, int mcontext, const char *var0, const char *var1, const char *var2, const char *var3, const char *var4, const char *var5, const char *var6, const char *var7 ) {
 	botlib_export->ai.BotInitialChat( chatstate, type, mcontext, var0, var1, var2, var3, var4, var5, var6, var7);
 }
 
@@ -545,7 +545,7 @@ int	_G_trap_BotNumInitialChats(int chatstate, char *type) {
 	return botlib_export->ai.BotNumInitialChats( chatstate, type);
 }
 
-int _G_trap_BotReplyChat(int chatstate, char *message, int mcontext, int vcontext, char *var0, char *var1, char *var2, char *var3, char *var4, char *var5, char *var6, char *var7 ) {
+int _G_trap_BotReplyChat(int chatstate, const char *message, int mcontext, int vcontext, const char *var0, const char *var1, const char *var2, const char *var3, const char *var4, const char *var5, const char *var6, const char *var7 ) {
 	return botlib_export->ai.BotReplyChat( chatstate, message, mcontext, vcontext, var0, var1, var2, var3, var4, var5, var6, var7);
 }
 
@@ -561,11 +561,11 @@ void _G_trap_BotGetChatMessage(int chatstate, char *buf, int size) {
 	botlib_export->ai.BotGetChatMessage( chatstate, buf, size );
 }
 
-int _G_trap_StringContains(char *str1, char *str2, int casesensitive) {
+int _G_trap_StringContains(const char *str1, const char *str2, int casesensitive) {
 	return botlib_export->ai.StringContains( str1, str2, casesensitive  );
 }
 
-int _G_trap_BotFindMatch(char *str, void /* struct bot_match_s */ *match, unsigned long int context) {
+int _G_trap_BotFindMatch(const char *str, void /* struct bot_match_s */ *match, unsigned long int context) {
 	return botlib_export->ai.BotFindMatch( str, (struct bot_match_s *)match,context );
 }
 
@@ -581,7 +581,7 @@ void _G_trap_BotReplaceSynonyms(char *string, unsigned long int context) {
 	botlib_export->ai.BotReplaceSynonyms( string, context );
 }
 
-int _G_trap_BotLoadChatFile(int chatstate, char *chatfile, char *chatname) {
+int _G_trap_BotLoadChatFile(int chatstate, const char *chatfile, const char *chatname) {
 	return botlib_export->ai.BotLoadChatFile( chatstate, chatfile, chatname );
 }
 
@@ -589,7 +589,7 @@ void _G_trap_BotSetChatGender(int chatstate, int gender) {
 	botlib_export->ai.BotSetChatGender( chatstate, gender );
 }
 
-void _G_trap_BotSetChatName(int chatstate, char *name, int client) {
+void _G_trap_BotSetChatName(int chatstate, const char *name, int client) {
 	botlib_export->ai.BotSetChatName( chatstate, name, client );
 }
 
@@ -653,7 +653,7 @@ int _G_trap_BotItemGoalInVisButNotVisible(int viewer, bvec3_t eye, avec3_t viewa
 	return botlib_export->ai.BotItemGoalInVisButNotVisible( viewer, eye, viewangles, (bot_goal_s *)goal );
 }
 
-int _G_trap_BotGetLevelItemGoal(int index, char *classname, void /* struct bot_goal_s */ *goal) {
+int _G_trap_BotGetLevelItemGoal(int index, const char *classname, void /* struct bot_goal_s */ *goal) {
 	return botlib_export->ai.BotGetLevelItemGoal( index, classname,(bot_goal_s*)goal );
 }
 
@@ -681,7 +681,7 @@ void _G_trap_BotUpdateEntityItems(void) {
 	botlib_export->ai.BotUpdateEntityItems();
 }
 
-int _G_trap_BotLoadItemWeights(int goalstate, char *filename) {
+int _G_trap_BotLoadItemWeights(int goalstate, const char *filename) {
 	return botlib_export->ai.BotLoadItemWeights( goalstate, filename  );
 }
 
@@ -693,7 +693,7 @@ void _G_trap_BotInterbreedGoalFuzzyLogic(int parent1, int parent2, int child) {
 	botlib_export->ai.BotInterbreedGoalFuzzyLogic( parent1, parent2, child);
 }
 
-void _G_trap_BotSaveGoalFuzzyLogic(int goalstate, char *filename) {
+void _G_trap_BotSaveGoalFuzzyLogic(int goalstate, const char *filename) {
 	botlib_export->ai.BotSaveGoalFuzzyLogic( goalstate, filename );
 }
 
@@ -765,7 +765,7 @@ void _G_trap_BotGetWeaponInfo(int weaponstate, int weapon, void /* struct weapon
 	botlib_export->ai.BotGetWeaponInfo( weaponstate, weapon, (weaponinfo_s *)weaponinfo );
 }
 
-int _G_trap_BotLoadWeaponWeights(int weaponstate, char *filename) {
+int _G_trap_BotLoadWeaponWeights(int weaponstate, const char *filename) {
 	return botlib_export->ai.BotLoadWeaponWeights( weaponstate, filename );
 }
 

@@ -276,21 +276,21 @@ typedef struct
 typedef struct
 {
 	menucommon_s	generic;
-	char*			focuspic;	
-	char*			errorpic;
-	qhandle_t		shader;
-	qhandle_t		focusshader;
-	int				width;
-	int				height;
-	gfixed*			focuscolor;
+	const char*	focuspic;	
+	const char*	errorpic;
+	qhandle_t	shader;
+	qhandle_t	focusshader;
+	int		width;
+	int		height;
+	gfixed*		focuscolor;
 } menubitmap_s;
 
 typedef struct
 {
 	menucommon_s	generic;
-	char*			string;
-	int				style;
-	gfixed*			color;
+	char *	string;
+	int		style;
+	gfixed*		color;
 } menutext_s;
 
 extern void			Menu_Cache( void );
@@ -509,9 +509,9 @@ typedef struct {
 
 	gfixed		backlerp;
 
-	gfixed		yawAngle;
+	afixed		yawAngle;
 	qboolean	yawing;
-	gfixed		pitchAngle;
+	afixed		pitchAngle;
 	qboolean	pitching;
 
 	int			animationNumber;	// may include ANIM_TOGGLEBIT
@@ -541,8 +541,8 @@ typedef struct {
 	int				muzzleFlashTime;
 
 	// currently in use drawing parms
-	bvec3_t			viewAngles;
-	bvec3_t			moveAngles;
+	avec3_t			viewAngles;
+	avec3_t			moveAngles;
 	weapon_t		currentWeapon;
 	int				legsAnim;
 	int				torsoAnim;
@@ -562,15 +562,15 @@ typedef struct {
 	qboolean		newModel;
 
 	qboolean		barrelSpinning;
-	gfixed			barrelAngle;
+	afixed			barrelAngle;
 	int				barrelTime;
 
 	int				realWeapon;
 } playerInfo_t;
 
 void UI_DrawPlayer( gfixed x, gfixed y, gfixed w, gfixed h, playerInfo_t *pi, int time );
-void UI_PlayerInfo_SetModel( playerInfo_t *pi, const char *model, const char *headmodel, char *teamName );
-void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, bvec3_t viewAngles, bvec3_t moveAngles, weapon_t weaponNum, qboolean chat );
+void UI_PlayerInfo_SetModel( playerInfo_t *pi, const char *model, const char *headmodel, const char *teamName );
+void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, avec3_t viewAngles, avec3_t moveAngles, weapon_t weaponNum, qboolean chat );
 qboolean UI_RegisterClientModelname( playerInfo_t *pi, const char *modelSkinName , const char *headName, const char *teamName);
 
 //
@@ -743,7 +743,7 @@ typedef struct {
 
 typedef struct {
 	char address[MAX_ADDRESSLENGTH];
-	char *lines[MAX_SERVERSTATUS_LINES][4];
+	const char *lines[MAX_SERVERSTATUS_LINES][4];
 	char text[MAX_SERVERSTATUS_TEXT];
 	char pings[MAX_CLIENTS * 3];
 	int numLines;
@@ -1071,7 +1071,7 @@ char *UI_GetBotInfoByNumber( int num );
 char *UI_GetBotInfoByName( const char *name );
 int UI_GetNumBots( void );
 void UI_LoadBots( void );
-char *UI_GetBotNameByNumber( int num );
+const char *UI_GetBotNameByNumber( int num );
 
 void UI_GetBestScore( int level, int *score, int *skill );
 void UI_SetBestScore( int level, int score );

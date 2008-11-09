@@ -649,7 +649,7 @@ Key_GetBindingBuf
 ====================
 */
 void Key_GetBindingBuf( int keynum, char *buf, int buflen ) {
-	char	*value;
+	const char	*value;
 
 	value = Key_GetBinding( keynum );
 	if ( value ) {
@@ -749,7 +749,7 @@ CL_UISystemCalls
 The ui module is making a system call
 ====================
 */
-SysCallArg CL_UISystemCalls( int callnum, SysCallArgs &args ) {
+SysCallArg CL_UISystemCalls( int callnum, const SysCallArgs &args ) {
 	switch( callnum ) {
 	case UI_ERROR:
 		Com_Error( ERR_DROP, "%s", (const void *)args[0] );
@@ -870,7 +870,7 @@ SysCallArg CL_UISystemCalls( int callnum, SysCallArgs &args ) {
 		re.DrawStretchPic( args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7], args[8] );
 		return SysCallArg();
 
-  case UI_R_MODELBOUNDS:
+  	case UI_R_MODELBOUNDS:
 		re.ModelBounds( args[0], args[1], args[2] );
 		return SysCallArg();
 
@@ -879,8 +879,7 @@ SysCallArg CL_UISystemCalls( int callnum, SysCallArgs &args ) {
 		return SysCallArg();
 
 	case UI_CM_LERPTAG:
-		re.LerpTag( args[0], args[1], args[2], args[3], args[4], args[5] );
-		return SysCallArg();
+		return SysCallArg::Int(re.LerpTag( args[0], args[1], args[2], args[3], args[4], args[5] ));
 
 	case UI_S_REGISTERSOUND:
 		return SysCallArg::Int(S_RegisterSound( args[0], args[1] ));

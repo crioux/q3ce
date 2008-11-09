@@ -270,7 +270,7 @@ void RB_ClipSkyPolygons( shaderCommands_t *input )
 		for (j = 0 ; j < 3 ; j++) 
 		{
 			VectorSubtract( input->xyz[input->indexes[i+j]],
-							backEnd.viewParms.or.origin, 
+							backEnd.viewParms._or.origin, 
 							p[j] );
 		}
 		ClipSkyPolygon( 3, p[0], 0 );
@@ -479,7 +479,7 @@ static void FillCloudySkySide( const int mins[2], const int maxs[2], qboolean ad
 	{
 		for ( s = mins[0]+HALF_SKY_SUBDIVISIONS; s <= maxs[0]+HALF_SKY_SUBDIVISIONS; s++ )
 		{
-			VectorAdd( s_skyPoints[t][s], backEnd.viewParms.or.origin, tess.xyz[tess.numVertexes] );
+			VectorAdd( s_skyPoints[t][s], backEnd.viewParms._or.origin, tess.xyz[tess.numVertexes] );
 			tess.texCoords[tess.numVertexes][0][0] = s_skyTexCoords[t][s][0];
 			tess.texCoords[tess.numVertexes][0][1] = s_skyTexCoords[t][s][1];
 
@@ -732,9 +732,9 @@ void RB_DrawSun( void ) {
 		return;
 	}
 	glLoadMatrixX( backEnd.viewParms.world.modelMatrix );
-	glTranslateX ( REINTERPRET_GFIXED(backEnd.viewParms.or.origin[0]), 
-				   REINTERPRET_GFIXED(backEnd.viewParms.or.origin[1]), 
-				   REINTERPRET_GFIXED(backEnd.viewParms.or.origin[2]));
+	glTranslateX ( REINTERPRET_GFIXED(backEnd.viewParms._or.origin[0]), 
+				   REINTERPRET_GFIXED(backEnd.viewParms._or.origin[1]), 
+				   REINTERPRET_GFIXED(backEnd.viewParms._or.origin[2]));
 
 	dist = 	backEnd.viewParms.zFar / BFIXED(1,75);		// div sqrt(3)
 	size = dist * BFIXED(0,4);
@@ -845,9 +845,9 @@ void RB_StageIteratorSky( void ) {
 		
 		glPushMatrix ();
 		GL_State( 0 );
-		glTranslateX (REINTERPRET_GFIXED(backEnd.viewParms.or.origin[0]), 
-              		  REINTERPRET_GFIXED(backEnd.viewParms.or.origin[1]), 
-			          REINTERPRET_GFIXED(backEnd.viewParms.or.origin[2]));
+		glTranslateX (REINTERPRET_GFIXED(backEnd.viewParms._or.origin[0]), 
+              		  REINTERPRET_GFIXED(backEnd.viewParms._or.origin[1]), 
+			          REINTERPRET_GFIXED(backEnd.viewParms._or.origin[2]));
 
 		DrawSkyBox( tess.shader );
 

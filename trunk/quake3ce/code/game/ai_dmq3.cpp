@@ -90,7 +90,7 @@ int blue_numaltroutegoals;
 BotSetUserInfo
 ==================
 */
-void BotSetUserInfo(bot_state_t *bs, char *key, char *value) {
+void BotSetUserInfo(bot_state_t *bs, const char *key, const char *value) {
 	char userinfo[MAX_INFO_STRING];
 
 	_G_trap_GetUserinfo(bs->client, userinfo, sizeof(userinfo));
@@ -1363,7 +1363,7 @@ int BotPointAreaNum(bvec3_t origin) {
 ClientName
 ==================
 */
-char *ClientName(int client, char *name, int size) {
+const char *ClientName(int client, char *name, int size) {
 	char buf[MAX_INFO_STRING];
 
 	if (client < 0 || client >= MAX_CLIENTS) {
@@ -1382,7 +1382,7 @@ char *ClientName(int client, char *name, int size) {
 ClientSkin
 ==================
 */
-char *ClientSkin(int client, char *skin, int size) {
+const char *ClientSkin(int client, char *skin, int size) {
 	char buf[MAX_INFO_STRING];
 
 	if (client < 0 || client >= MAX_CLIENTS) {
@@ -1400,7 +1400,7 @@ char *ClientSkin(int client, char *skin, int size) {
 ClientFromName
 ==================
 */
-int ClientFromName(char *name) {
+int ClientFromName(const char *name) {
 	int i;
 	char buf[MAX_INFO_STRING];
 	static int maxclients;
@@ -1420,7 +1420,7 @@ int ClientFromName(char *name) {
 ClientOnSameTeamFromName
 ==================
 */
-int ClientOnSameTeamFromName(bot_state_t *bs, char *name) {
+int ClientOnSameTeamFromName(bot_state_t *bs, const char *name) {
 	int i;
 	char buf[MAX_INFO_STRING];
 	static int maxclients;
@@ -1442,7 +1442,7 @@ int ClientOnSameTeamFromName(bot_state_t *bs, char *name) {
 stristr
 ==================
 */
-char *stristr(char *str, char *charset) {
+const char *stristr(const char *str, const char *charset) {
 	int i;
 
 	while(*str) {
@@ -1460,7 +1460,7 @@ char *stristr(char *str, char *charset) {
 EasyClientName
 ==================
 */
-char *EasyClientName(int client, char *buf, int size) {
+const char *EasyClientName(int client, char *buf, int size) {
 	int i;
 	char *str1, *str2, *ptr, c;
 	char name[128];
@@ -2094,7 +2094,7 @@ qboolean BotInLavaOrSlime(bot_state_t *bs) {
 BotCreateWayPoint
 ==================
 */
-bot_waypoint_t *BotCreateWayPoint(char *name, bvec3_t origin, int areanum) {
+bot_waypoint_t *BotCreateWayPoint(const char *name, bvec3_t origin, int areanum) {
 	bot_waypoint_t *wp;
 	bvec3_t waypointmins = {-BFIXED(8,0), -BFIXED(8,0), -BFIXED(8,0)}, waypointmaxs = {BFIXED(8,0), BFIXED(8,0), BFIXED(8,0)};
 
@@ -2120,7 +2120,7 @@ bot_waypoint_t *BotCreateWayPoint(char *name, bvec3_t origin, int areanum) {
 BotFindWayPoint
 ==================
 */
-bot_waypoint_t *BotFindWayPoint(bot_waypoint_t *waypoints, char *name) {
+bot_waypoint_t *BotFindWayPoint(bot_waypoint_t *waypoints, const char *name) {
 	bot_waypoint_t *wp;
 
 	for (wp = waypoints; wp; wp = wp->next) {
@@ -2514,7 +2514,7 @@ int BotWantsToCamp(bot_state_t *bs) {
 BotDontAvoid
 ==================
 */
-void BotDontAvoid(bot_state_t *bs, char *itemname) {
+void BotDontAvoid(bot_state_t *bs, const char *itemname) {
 	bot_goal_t goal;
 	int num;
 
@@ -5319,7 +5319,7 @@ void BotDeathmatchAI(bot_state_t *bs, gfixed thinktime) {
 BotSetEntityNumForGoalWithModel
 ==================
 */
-void BotSetEntityNumForGoalWithModel(bot_goal_t *goal, int eType, char *modelname) {
+void BotSetEntityNumForGoalWithModel(bot_goal_t *goal, int eType, const char *modelname) {
 	gentity_t *ent;
 	int i, modelindex;
 	bvec3_t dir;
@@ -5351,7 +5351,7 @@ void BotSetEntityNumForGoalWithModel(bot_goal_t *goal, int eType, char *modelnam
 BotSetEntityNumForGoal
 ==================
 */
-void BotSetEntityNumForGoal(bot_goal_t *goal, char *classname) {
+void BotSetEntityNumForGoal(bot_goal_t *goal, const char *classname) {
 	gentity_t *ent;
 	int i;
 	bvec3_t dir;
@@ -5379,7 +5379,7 @@ void BotSetEntityNumForGoal(bot_goal_t *goal, char *classname) {
 BotGoalForBSPEntity
 ==================
 */
-int BotGoalForBSPEntity( char *classname, bot_goal_t *goal ) {
+int BotGoalForBSPEntity( const char *classname, bot_goal_t *goal ) {
 	char value[MAX_INFO_STRING];
 	bvec3_t origin, start, end;
 	int ent, numareas, areas[10];

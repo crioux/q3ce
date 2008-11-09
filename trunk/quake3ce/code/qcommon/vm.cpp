@@ -211,7 +211,8 @@ VM_LoadSymbols
 */
 void VM_LoadSymbols( vm_t *vm ) {
 	int		len;
-	char	*mapfile, *text_p, *token;
+	char	*mapfile;
+	const char *text_p, *token;
 	char	name[MAX_QPATH];
 	char	symbols[MAX_QPATH];
 	vmSymbol_t	**prev, *sym;
@@ -325,7 +326,7 @@ Dlls will call this directly
  
 ============
 */
-SysCallArg QDECL VM_DllSyscall(int callnum, SysCallArgs &args)
+SysCallArg QDECL VM_DllSyscall(int callnum, const SysCallArgs &args)
 {
   return currentVM->systemCall(callnum,args);
 }
@@ -348,7 +349,7 @@ vm_t *VM_Restart( vm_t *vm ) {
 	// DLL's can't be restarted in place
 	if ( vm->dllHandle ) {
 		char	name[MAX_QPATH];
-		SysCallArg	(QDECL *systemCall)( int callnum, SysCallArgs &args);
+		SysCallArg	(QDECL *systemCall)( int callnum, const SysCallArgs &args);
 		
 		systemCall = vm->systemCall;	
 		Q_strncpyz( name, vm->name, sizeof( name ) );
@@ -419,7 +420,7 @@ it will attempt to load as a system dll
 #define	STACK_SIZE	0x20000
 
 vm_t *VM_Create( const char *module,
-				SysCallArg (*systemCalls)(int callnum, SysCallArgs &args),
+				SysCallArg (*systemCalls)(int callnum, const SysCallArgs &args),
 				vmInterpret_t interpret ) 
 {
 	vm_t		*vm;
@@ -630,9 +631,26 @@ void *VM_ExplicitArgPtr( vm_t *vm, void *value ) {
 		return (void *)(vm->dataBase + (((int)value) & vm->dataMask));
 	}
 }
+const void *VM_ExplicitArgConstPtr( vm_t *vm, const void *value ) {
+	if ( !value ) {
+		return NULL;
+	}
+
+	// bk010124 - currentVM is missing on reconnect here as well?
+	if ( currentVM==NULL )
+	  return NULL;
+
+	//
+	if ( vm->entryPoint ) {
+		return (const void *)(vm->dataBase + (int)value);
+	}
+	else {
+		return (const void *)(vm->dataBase + (((int)value) & vm->dataMask));
+	}
+}
 
 
-SysCallArg QDECL VM_Call( vm_t *vm, int callnum, SysCallArgs &args) 
+SysCallArg QDECL VM_Call( vm_t *vm, int callnum, const SysCallArgs &args) 
 {
 	vm_t	*oldVM;
 	SysCallArg r;

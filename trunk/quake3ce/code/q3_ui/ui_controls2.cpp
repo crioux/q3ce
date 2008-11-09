@@ -38,8 +38,8 @@ CONTROLS MENU
 
 
 typedef struct {
-	char	*command;
-	char	*label;
+	const char	*command;
+	const char	*label;
 	int		id;
 	int		anim;
 	int		defaultbind1;
@@ -50,7 +50,7 @@ typedef struct {
 
 typedef struct
 {
-	char*	name;
+	const char*	name;
 	lfixed	defaultvalue;
 	lfixed	value;	
 } configcvar_t;
@@ -376,7 +376,7 @@ static void Controls_InitCvars( void )
 Controls_GetCvarDefault
 =================
 */
-static gfixed Controls_GetCvarDefault( char* name )
+static gfixed Controls_GetCvarDefault( const char* name )
 {
 	configcvar_t*	cvarptr;
 	int				i;
@@ -399,7 +399,7 @@ static gfixed Controls_GetCvarDefault( char* name )
 Controls_GetCvarValue
 =================
 */
-static gfixed Controls_GetCvarValue( char* name )
+static gfixed Controls_GetCvarValue( const char* name )
 {
 	configcvar_t*	cvarptr;
 	int				i;
@@ -756,7 +756,7 @@ static void Controls_DrawPlayer( void *self ) {
 Controls_GetKeyAssignment
 =================
 */
-static void Controls_GetKeyAssignment (char *command, int *twokeys)
+static void Controls_GetKeyAssignment (const char *command, int *twokeys)
 {
 	int		count;
 	int		j;
@@ -1202,7 +1202,7 @@ static void Controls_MenuInit( void )
 	s_controls.banner.generic.flags	= QMF_CENTER_JUSTIFY;
 	s_controls.banner.generic.x		= 320;
 	s_controls.banner.generic.y		= 16;
-	s_controls.banner.string		= "CONTROLS";
+	s_controls.banner.string		= strdup("CONTROLS");
 	s_controls.banner.color			= color_white;
 	s_controls.banner.style			= UI_CENTER;
 
@@ -1228,7 +1228,7 @@ static void Controls_MenuInit( void )
 	s_controls.looking.generic.callback	= Controls_MenuEvent;
 	s_controls.looking.generic.x	    = 152;
 	s_controls.looking.generic.y	    = 240 - 2 * PROP_HEIGHT;
-	s_controls.looking.string			= "LOOK";
+	s_controls.looking.string			= strdup("LOOK");
 	s_controls.looking.style			= UI_RIGHT;
 	s_controls.looking.color			= color_red;
 
@@ -1238,7 +1238,7 @@ static void Controls_MenuInit( void )
 	s_controls.movement.generic.callback = Controls_MenuEvent;
 	s_controls.movement.generic.x	     = 152;
 	s_controls.movement.generic.y	     = 240 - PROP_HEIGHT;
-	s_controls.movement.string			= "MOVE";
+	s_controls.movement.string			= strdup("MOVE");
 	s_controls.movement.style			= UI_RIGHT;
 	s_controls.movement.color			= color_red;
 
@@ -1248,7 +1248,7 @@ static void Controls_MenuInit( void )
 	s_controls.weapons.generic.callback	= Controls_MenuEvent;
 	s_controls.weapons.generic.x	    = 152;
 	s_controls.weapons.generic.y	    = 240;
-	s_controls.weapons.string			= "SHOOT";
+	s_controls.weapons.string			= strdup("SHOOT");
 	s_controls.weapons.style			= UI_RIGHT;
 	s_controls.weapons.color			= color_red;
 
@@ -1258,7 +1258,7 @@ static void Controls_MenuInit( void )
 	s_controls.misc.generic.callback = Controls_MenuEvent;
 	s_controls.misc.generic.x		 = 152;
 	s_controls.misc.generic.y		 = 240 + PROP_HEIGHT;
-	s_controls.misc.string			= "MISC";
+	s_controls.misc.string			= strdup("MISC");
 	s_controls.misc.style			= UI_RIGHT;
 	s_controls.misc.color			= color_red;
 
@@ -1620,8 +1620,8 @@ static void Controls_MenuInit( void )
 
 	Menu_AddItem( &s_controls.menu, &s_controls.back );
 
-	_UI_trap_Cvar_VariableStringBuffer( "name", s_controls.name.string, 16 );
-	Q_CleanStr( s_controls.name.string );
+	_UI_trap_Cvar_VariableStringBuffer( "name", playername, 16 );
+	Q_CleanStr( playername );
 
 	// initialize the configurable cvars
 	Controls_InitCvars();

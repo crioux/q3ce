@@ -1,4 +1,10 @@
+
+
 #include"fixed.h"
+#ifndef _WIN32
+#include"math.h"
+#include"unixdefs.h"
+#endif
 
 #ifndef FIXED_IS_FLOAT
 
@@ -38,8 +44,7 @@ bfixed fixed_vec3dot_r<bfixed,afixed>(const afixed *x, const bfixed *y)
 {
 	bfixed out;
 	VEC3DOT32_20((INT32 *)&(y[0].rep),(INT32 *)&(x[0].rep),&(out.rep));
-	return out;
-}
+	return out;s
 
 template<> 
 afixed fixed_vec3dot<afixed,afixed>(const afixed *x, const afixed *y)
@@ -63,3 +68,4 @@ afixed fixed_vec3dot_r<afixed,afixed>(const afixed *x, const afixed *y)
 #endif
 
 #endif
+

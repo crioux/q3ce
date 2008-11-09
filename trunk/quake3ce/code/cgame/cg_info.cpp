@@ -95,7 +95,8 @@ CG_LoadingClient
 */
 void CG_LoadingClient( int clientNum ) {
 	const char		*info;
-	char			*skin;
+	char			*pskin;
+	const char		*skin;
 	char			personality[MAX_QPATH];
 	char			model[MAX_QPATH];
 	char			iconName[MAX_QPATH];
@@ -104,9 +105,10 @@ void CG_LoadingClient( int clientNum ) {
 
 	if ( loadingPlayerIconCount < MAX_LOADING_PLAYER_ICONS ) {
 		Q_strncpyz( model, Info_ValueForKey( info, "model" ), sizeof( model ) );
-		skin = Q_strrchr( model, '/' );
-		if ( skin ) {
-			*skin++ = '\0';
+		pskin = Q_strrchr( model, '/' );
+		if ( pskin ) {
+			*pskin++ = '\0';
+			skin=pskin;
 		} else {
 			skin = "default";
 		}

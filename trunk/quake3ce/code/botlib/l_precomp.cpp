@@ -43,7 +43,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //directive name with parse function
 typedef struct directive_s
 {
-	char *name;
+	const char *name;
 	int (*func)(source_t *source);
 } directive_t;
 
@@ -67,7 +67,7 @@ define_t *globaldefines;
 // Returns:					-
 // Changes Globals:		-
 //============================================================================
-void QDECL SourceError(source_t *source, char *str, ...)
+void QDECL SourceError(source_t *source, const char *str, ...)
 {
 	char text[1024];
 	va_list ap;
@@ -91,7 +91,7 @@ void QDECL SourceError(source_t *source, char *str, ...)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void QDECL SourceWarning(source_t *source, char *str, ...)
+void QDECL SourceWarning(source_t *source, const char *str, ...)
 {
 	char text[1024];
 	va_list ap;
@@ -609,7 +609,7 @@ void PC_AddBuiltinDefines(source_t *source)
 	define_t *define;
 	struct builtin
 	{
-		char *string;
+		const char *string;
 		int _builtin;
 	} builtin[] = { // bk001204 - brackets
 		{ "__LINE__",	BUILTIN_LINE },
@@ -1257,7 +1257,7 @@ int PC_Directive_define(source_t *source)
 // Returns:					-
 // Changes Globals:		-
 //============================================================================
-define_t *PC_DefineFromString(char *string)
+define_t *PC_DefineFromString(const char *string)
 {
 	script_t *script;
 	source_t src;
@@ -1315,7 +1315,7 @@ define_t *PC_DefineFromString(char *string)
 // Returns:					-
 // Changes Globals:		-
 //============================================================================
-int PC_AddDefine(source_t *source, char *string)
+int PC_AddDefine(source_t *source, const char *string)
 {
 	define_t *define;
 
@@ -1336,7 +1336,7 @@ int PC_AddDefine(source_t *source, char *string)
 // Returns:					-
 // Changes Globals:		-
 //============================================================================
-int PC_AddGlobalDefine(char *string)
+int PC_AddGlobalDefine(const char *string)
 {
 	define_t *define;
 
@@ -2723,7 +2723,7 @@ int PC_ReadToken(source_t *source, token_t *token)
 // Returns:					-
 // Changes Globals:		-
 //============================================================================
-int PC_ExpectTokenString(source_t *source, char *string)
+int PC_ExpectTokenString(source_t *source, const char *string)
 {
 	token_t token;
 
@@ -2817,7 +2817,7 @@ int PC_ExpectAnyToken(source_t *source, token_t *token)
 // Returns:					-
 // Changes Globals:		-
 //============================================================================
-int PC_CheckTokenString(source_t *source, char *string)
+int PC_CheckTokenString(source_t *source, const char *string)
 {
 	token_t tok;
 
@@ -2856,7 +2856,7 @@ int PC_CheckTokenType(source_t *source, int type, int subtype, token_t *token)
 // Returns:					-
 // Changes Globals:		-
 //============================================================================
-int PC_SkipUntilString(source_t *source, char *string)
+int PC_SkipUntilString(source_t *source, const char *string)
 {
 	token_t token;
 
@@ -2892,7 +2892,7 @@ void PC_UnreadToken(source_t *source, token_t *token)
 // Returns:					-
 // Changes Globals:		-
 //============================================================================
-void PC_SetIncludePath(source_t *source, char *path)
+void PC_SetIncludePath(source_t *source, const char *path)
 {
 	strncpy(source->includepath, path, MAX_PATH);
 	//add trailing path seperator
@@ -2952,7 +2952,7 @@ source_t *LoadSourceFile(const char *filename)
 // Returns:					-
 // Changes Globals:		-
 //============================================================================
-source_t *LoadSourceMemory(char *ptr, int length, char *name)
+source_t *LoadSourceMemory(const char *ptr, int length, const char *name)
 {
 	source_t *source;
 	script_t *script;
@@ -3140,7 +3140,7 @@ int PC_SourceFileAndLine(int handle, char *filename, int *line)
 // Returns:				-
 // Changes Globals:		-
 //============================================================================
-void PC_SetBaseFolder(char *path)
+void PC_SetBaseFolder(const char *path)
 {
 	PS_SetBaseFolder(path);
 } //end of the function PC_SetBaseFolder

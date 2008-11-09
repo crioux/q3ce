@@ -31,35 +31,7 @@ int*     snd_p;
 int      snd_linear_count;
 short*   snd_out;
 
-#if !( (defined __linux__ || defined __FreeBSD__ ) && (defined __i386__) ) // rb010123
-#if	!id386
-
-void S_WriteLinearBlastStereo16 (void)
-{
-	int		i;
-	int		val;
-
-	for (i=0 ; i<snd_linear_count ; i+=2)
-	{
-		val = snd_p[i]>>8;
-		if (val > 0x7fff)
-			snd_out[i] = 0x7fff;
-		else if (val < -32768)
-			snd_out[i] = -32768;
-		else
-			snd_out[i] = val;
-
-		val = snd_p[i+1]>>8;
-		if (val > 0x7fff)
-			snd_out[i+1] = 0x7fff;
-		else if (val < -32768)
-			snd_out[i+1] = -32768;
-		else
-			snd_out[i+1] = val;
-	}
-}
-#else
-
+#if defined(_WIN32) && defined(_M_IX86)
 __declspec( naked ) void S_WriteLinearBlastStereo16 (void)
 {
 	__asm {
@@ -104,7 +76,32 @@ LClampDone2:
 	}
 }
 
-#endif
+#elif defined(_LINUX) && defined(_M_IX86)
+
+void S_WriteLinearBlastStereo16 (void)
+{
+	int		i;
+	int		val;
+
+	for (i=0 ; i<snd_linear_count ; i+=2)
+	{
+		val = snd_p[i]>>8;
+		if (val > 0x7fff)
+			snd_out[i] = 0x7fff;
+		else if (val < -32768)
+			snd_out[i] = -32768;
+		else
+			snd_out[i] = val;
+
+		val = snd_p[i+1]>>8;
+		if (val > 0x7fff)
+			snd_out[i+1] = 0x7fff;
+		else if (val < -32768)
+			snd_out[i+1] = -32768;
+		else
+			snd_out[i+1] = val;
+	}
+}
 #else
 // forward declare, implementation somewhere else
 void S_WriteLinearBlastStereo16 (void);

@@ -104,7 +104,7 @@ int VidPlay_Open(const char *svName, int x, int y, int w, int h, int loop)
 	
 	Player = Context()->Player;
 
-	Notify.Func = PlayerNotify;
+	Notify.Func = (notifyfunc) PlayerNotify;
 	Notify.This = Player;
 	Player->Set(Player,PLAYER_NOTIFY,&Notify,sizeof(Notify));
 

@@ -171,7 +171,7 @@ void UI_ResetMenu(void) {
 	s_reset.yes.generic.id			= ID_YES;
 	s_reset.yes.generic.x			= l1;
 	s_reset.yes.generic.y			= 264;
-	s_reset.yes.string				= "YES";
+	s_reset.yes.string				= strdup("YES");
 	s_reset.yes.color				= color_red;
 	s_reset.yes.style				= UI_LEFT;
 
@@ -181,7 +181,7 @@ void UI_ResetMenu(void) {
 	s_reset.no.generic.id			= ID_NO;
 	s_reset.no.generic.x		    = l3;
 	s_reset.no.generic.y		    = 264;
-	s_reset.no.string				= "NO";
+	s_reset.no.string				= strdup("NO");
 	s_reset.no.color			    = color_red;
 	s_reset.no.style			    = UI_LEFT;
 

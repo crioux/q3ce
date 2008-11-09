@@ -63,7 +63,7 @@ const char * const jpeg_std_message_table[] = {
  * or jpeg_destroy) at some point.
  */
 
-EXTERN_C METHODDEF void
+EXTERN_C void
 error_exit (j_common_ptr cinfo)
 {
   char buffer[JMSG_LENGTH_MAX];
@@ -84,7 +84,7 @@ error_exit (j_common_ptr cinfo)
  * other than stderr.
  */
 
-EXTERN_C METHODDEF void
+EXTERN_C void
 output_message (j_common_ptr cinfo)
 {
   char buffer[JMSG_LENGTH_MAX];
@@ -108,7 +108,7 @@ output_message (j_common_ptr cinfo)
  * or change the policy about which messages to display.
  */
 
-EXTERN_C METHODDEF void
+EXTERN_C void
 emit_message (j_common_ptr cinfo, int msg_level)
 {
   struct jpeg_error_mgr * err = cinfo->err;
@@ -137,7 +137,7 @@ emit_message (j_common_ptr cinfo, int msg_level)
  * Few applications should need to override this method.
  */
 
-EXTERN_C METHODDEF void
+EXTERN_C void
 format_message (j_common_ptr cinfo, char * buffer)
 {
   struct jpeg_error_mgr * err = cinfo->err;
@@ -192,7 +192,7 @@ format_message (j_common_ptr cinfo, char * buffer)
  * this method if it has additional error processing state.
  */
 
-EXTERN_C METHODDEF void
+EXTERN_C void
 reset_error_mgr (j_common_ptr cinfo)
 {
   cinfo->err->num_warnings = 0;

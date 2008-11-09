@@ -47,7 +47,7 @@ qkey_t		keys[MAX_KEYS];
 
 
 typedef struct {
-	char	*name;
+	const char	*name;
 	int		keynum;
 } keyname_t;
 
@@ -684,7 +684,7 @@ the K_* names are matched up.
 to be configured even if they don't have defined names.
 ===================
 */
-int Key_StringToKeynum( char *str ) {
+int Key_StringToKeynum( const char *str ) {
 	keyname_t	*kn;
 	
 	if ( !str || !str[0] ) {
@@ -736,7 +736,7 @@ Returns a string (either a single ascii char, a K_* name, or a 0x11 hex string) 
 given keynum.
 ===================
 */
-char *Key_KeynumToString( int keynum ) {
+const char *Key_KeynumToString( int keynum ) {
 	keyname_t	*kn;	
 	static	char	tinystr[5];
 	int			i, j;
@@ -806,7 +806,7 @@ void Key_SetBinding( int keynum, const char *binding ) {
 Key_GetBinding
 ===================
 */
-char *Key_GetBinding( int keynum ) {
+const char *Key_GetBinding( int keynum ) {
 	if ( keynum == -1 ) {
 		return "";
 	}
@@ -991,7 +991,14 @@ void CL_AddKeyUpCommands( int key, char *kb ) {
 			if ( button[0] == '+') {
 				// button commands add keynum and time as parms so that multiple
 				// sources can be discriminated and subframe corrected
+#ifdef _WIN32				
 				Com_sprintf (cmd, sizeof(cmd), "-%s %i %i\n", button+1, key, GetTickCount());
+#else
+				time_t tm;
+				time(&tm);
+				Com_sprintf (cmd, sizeof(cmd), "-%s %i %i\n", button+1, key, tm);
+#endif
+				
 				Cbuf_AddText (cmd);
 				keyevent = qtrue;
 			} else {
@@ -1048,7 +1055,7 @@ void CL_KeyEvent (int key, qboolean down, unsigned time) {
       if (keys[K_ALT].down)
       {
         Key_ClearStates();
-        if (Cvar_VariableValue("r_fullscreen") == 0)
+        if (Cvar_VariableValue("r_fullscreen") == LFIXED_0)
         {
           Com_Printf("Switching to fullscreen rendering\n");
           Cvar_Set("r_fullscreen", "1");

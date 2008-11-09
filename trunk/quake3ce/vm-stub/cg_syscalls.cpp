@@ -21,11 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include"cgame_pch.h"
-#include"..\qcommon\qcommon.h"
-#include"..\client\client.h"
-#include"..\qcommon\cm_public.h"
-#include"..\client\snd_public.h"
-#include"..\game\botlib.h"
+#include"qcommon.h"
+#include"client.h"
+#include"cm_public.h"
+#include"snd_public.h"
+#include"botlib.h"
 
 extern botlib_export_t	*botlib_export;
 
@@ -269,7 +269,7 @@ void	_CG_trap_R_AddPolysToScene( qhandle_t hShader , int numVerts, const polyVer
 	re.AddPolyToScene( hShader, numVerts, verts, num );
 }
 
-int		_CG_trap_R_LightForPoint( bvec3_t point, vec3_t ambientLight, vec3_t directedLight, avec3_t lightDir ) {
+int		_CG_trap_R_LightForPoint( bvec3_t point, vec3_t ambientLight, bvec3_t directedLight, avec3_t lightDir ) {
 	return re.LightForPoint( point, ambientLight, directedLight, lightDir );
 }
 
@@ -359,7 +359,7 @@ int _CG_trap_Key_GetKey( const char *binding ) {
 	return Key_GetKey( binding );
 }
 
-int _CG_trap_PC_AddGlobalDefine( char *define ) {
+int _CG_trap_PC_AddGlobalDefine(const char *define ) {
 	return botlib_export->PC_AddGlobalDefine( define );
 }
 

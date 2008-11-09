@@ -35,9 +35,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #define JUMP_HEIGHT				56
 
-#define SWINGSPEED				GFIXED(0,3)
+#define SWINGSPEED				AFIXED(0,3)
 
-#define SPIN_SPEED				GFIXED(0,9)
+#define SPIN_SPEED				AFIXED(0,9)
 #define COAST_TIME				1000
 
 
@@ -102,47 +102,47 @@ tryagain:
 
 	switch( weaponNum ) {
 	case WP_GAUNTLET:
-		MAKERGB( pi->flashDlightColor, GFIXED(0,6), GFIXED(0,6), 1 );
+		MAKERGB( pi->flashDlightColor, BFIXED(0,6), BFIXED(0,6), BFIXED_1 );
 		break;
 
 	case WP_MACHINEGUN:
-		MAKERGB( pi->flashDlightColor, 1, 1, 0 );
+		MAKERGB( pi->flashDlightColor, BFIXED_1, BFIXED_1, BFIXED_0 );
 		break;
 
 	case WP_SHOTGUN:
-		MAKERGB( pi->flashDlightColor, 1, 1, 0 );
+		MAKERGB( pi->flashDlightColor, BFIXED_1, BFIXED_1, BFIXED_0 );
 		break;
 
 	case WP_GRENADE_LAUNCHER:
-		MAKERGB( pi->flashDlightColor, 1, GFIXED(0,7), GFIXED(0,5) );
+		MAKERGB( pi->flashDlightColor, BFIXED_1, BFIXED(0,7), BFIXED(0,5) );
 		break;
 
 	case WP_ROCKET_LAUNCHER:
-		MAKERGB( pi->flashDlightColor, 1, GFIXED(0,75), 0 );
+		MAKERGB( pi->flashDlightColor, BFIXED_1, BFIXED(0,75), BFIXED_0 );
 		break;
 
 	case WP_LIGHTNING:
-		MAKERGB( pi->flashDlightColor, GFIXED(0,6), GFIXED(0,6), 1 );
+		MAKERGB( pi->flashDlightColor, BFIXED(0,6), BFIXED(0,6), BFIXED_1 );
 		break;
 
 	case WP_RAILGUN:
-		MAKERGB( pi->flashDlightColor, 1, GFIXED(0,5), 0 );
+		MAKERGB( pi->flashDlightColor, BFIXED_1, BFIXED(0,5), BFIXED_0 );
 		break;
 
 	case WP_PLASMAGUN:
-		MAKERGB( pi->flashDlightColor, GFIXED(0,6), GFIXED(0,6), 1 );
+		MAKERGB( pi->flashDlightColor, BFIXED(0,6), BFIXED(0,6), BFIXED_1 );
 		break;
 
 	case WP_BFG:
-		MAKERGB( pi->flashDlightColor, 1, GFIXED(0,7), 1 );
+		MAKERGB( pi->flashDlightColor, BFIXED_1, BFIXED(0,7), BFIXED_1 );
 		break;
 
 	case WP_GRAPPLING_HOOK:
-		MAKERGB( pi->flashDlightColor, GFIXED(0,6), GFIXED(0,6), 1 );
+		MAKERGB( pi->flashDlightColor, BFIXED(0,6), BFIXED(0,6), BFIXED_1 );
 		break;
 
 	default:
-		MAKERGB( pi->flashDlightColor, 1, 1, 1 );
+		MAKERGB( pi->flashDlightColor, BFIXED_1, BFIXED_1, BFIXED_1 );
 		break;
 	}
 }
@@ -266,7 +266,7 @@ static void UI_LegsSequencing( playerInfo_t *pi ) {
 
 	if ( pi->legsAnimationTimer > 0 ) {
 		if ( currentAnim == LEGS_JUMP ) {
-			jumpHeight = JUMP_HEIGHT * sin( GFIXED_PI * ( UI_TIMER_JUMP - pi->legsAnimationTimer ) / UI_TIMER_JUMP );
+			jumpHeight = GFIXED(JUMP_HEIGHT,0) * FIXED_SIN( GFIXED_PI * FIXED_INT32RATIO_G( UI_TIMER_JUMP - pi->legsAnimationTimer, UI_TIMER_JUMP ));
 		}
 		return;
 	}
@@ -274,7 +274,7 @@ static void UI_LegsSequencing( playerInfo_t *pi ) {
 	if ( currentAnim == LEGS_JUMP ) {
 		UI_ForceLegsAnim( pi, LEGS_LAND );
 		pi->legsAnimationTimer = UI_TIMER_LAND;
-		jumpHeight = 0;
+		jumpHeight = GFIXED_0;
 		return;
 	}
 
@@ -291,7 +291,7 @@ UI_PositionEntityOnTag
 ======================
 */
 static void UI_PositionEntityOnTag( refEntity_t *entity, const refEntity_t *parent, 
-							clipHandle_t parentModel, char *tagName ) {
+							clipHandle_t parentModel, const char *tagName ) {
 	int				i;
 	orientation_t	lerped;
 	
@@ -302,7 +302,7 @@ static void UI_PositionEntityOnTag( refEntity_t *entity, const refEntity_t *pare
 	// FIXME: allow origin offsets along tag?
 	VectorCopy( parent->origin, entity->origin );
 	for ( i = 0 ; i < 3 ; i++ ) {
-		FIXED_VEC3MA( entity->origin, lerped.origin[i], parent->axis[i], entity->origin );
+		FIXED_VEC3MA_R( entity->origin, lerped.origin[i], parent->axis[i], entity->origin );
 	}
 
 	// cast away const because of compiler problems
@@ -317,10 +317,10 @@ UI_PositionRotatedEntityOnTag
 ======================
 */
 static void UI_PositionRotatedEntityOnTag( refEntity_t *entity, const refEntity_t *parent, 
-							clipHandle_t parentModel, char *tagName ) {
+							clipHandle_t parentModel, const char *tagName ) {
 	int				i;
 	orientation_t	lerped;
-	bvec3_t			tempAxis[3];
+	avec3_t			tempAxis[3];
 
 	// lerp the tag
 	_UI_trap_CM_LerpTag( &lerped, parentModel, parent->oldframe, parent->frame,
@@ -329,7 +329,7 @@ static void UI_PositionRotatedEntityOnTag( refEntity_t *entity, const refEntity_
 	// FIXME: allow origin offsets along tag?
 	VectorCopy( parent->origin, entity->origin );
 	for ( i = 0 ; i < 3 ; i++ ) {
-		FIXED_VEC3MA( entity->origin, lerped.origin[i], parent->axis[i], entity->origin );
+		FIXED_VEC3MA_R( entity->origin, lerped.origin[i], parent->axis[i], entity->origin );
 	}
 
 	// cast away const because of compiler problems
@@ -415,7 +415,7 @@ static void UI_RunLerpFrame( playerInfo_t *ci, lerpFrame_t *lf, int newAnimation
 	}
 	// calculate current lerp value
 	if ( lf->frameTime == lf->oldFrameTime ) {
-		lf->backlerp = 0;
+		lf->backlerp = GFIXED_0;
 	} else {
 		lf->backlerp = GFIXED_1 - FIXED_INT32RATIO_G( dp_realtime - lf->oldFrameTime, lf->frameTime - lf->oldFrameTime);
 	}
@@ -467,16 +467,16 @@ static void UI_PlayerAnimation( playerInfo_t *pi, int *legsOld, int *legs, gfixe
 UI_SwingAngles
 ==================
 */
-static void UI_SwingAngles( gfixed destination, gfixed swingTolerance, gfixed clampTolerance,
-					gfixed speed, gfixed *angle, qboolean *swinging ) {
-	gfixed	swing;
-	gfixed	move;
-	gfixed	scale;
+static void UI_SwingAngles( afixed destination, afixed swingTolerance, afixed clampTolerance,
+					afixed speed, afixed *angle, qboolean *swinging ) {
+	afixed	swing;
+	bfixed	move;
+	afixed	scale;
 
 	if ( !*swinging ) {
 		// see if a swing should be started
-		swing = AngleSubtract( *angle, destination );
-		if ( swing > swingTolerance || swing < -swingTolerance ) {
+		swing = AngleSubtract( MAKE_AFIXED(*angle), MAKE_AFIXED(destination) );
+		if ( swing > MAKE_AFIXED(swingTolerance) || swing < -MAKE_AFIXED(swingTolerance) ) {
 			*swinging = qtrue;
 		}
 	}
@@ -487,39 +487,39 @@ static void UI_SwingAngles( gfixed destination, gfixed swingTolerance, gfixed cl
 	
 	// modify the speed depending on the delta
 	// so it doesn't seem so linear
-	swing = AngleSubtract( destination, *angle );
+	swing = AngleSubtract( MAKE_AFIXED(destination), MAKE_AFIXED(*angle) );
 	scale = FIXED_ABS( swing );
-	if ( scale < swingTolerance * GFIXED(0,5) ) {
-		scale = GFIXED(0,5);
-	} else if ( scale < swingTolerance ) {
-		scale = GFIXED_1;
+	if ( scale < MAKE_AFIXED(swingTolerance) * AFIXED(0,5) ) {
+		scale = AFIXED(0,5);
+	} else if ( scale < MAKE_AFIXED(swingTolerance) ) {
+		scale = AFIXED_1;
 	} else {
-		scale = GFIXED(2,0);
+		scale = AFIXED(2,0);
 	}
 
 	// swing towards the destination angle
-	if ( swing >= 0 ) {
-		move = uiInfo.uiDC.frameTime * scale * speed;
-		if ( move >= swing ) {
-			move = swing;
+	if ( swing >= AFIXED_0 ) {
+		move = MAKE_BFIXED(uiInfo.uiDC.frameTime) * MAKE_BFIXED(scale) * MAKE_BFIXED(speed);
+		if ( move >= MAKE_BFIXED(swing) ) {
+			move = MAKE_BFIXED(swing);
 			*swinging = qfalse;
 		}
-		*angle = AngleMod( *angle + move );
-	} else if ( swing < 0 ) {
-		move = uiInfo.uiDC.frameTime * scale * -speed;
-		if ( move <= swing ) {
-			move = swing;
+		*angle = AngleMod( MAKE_AFIXED(*angle) + MAKE_AFIXED(move) );
+	} else if ( swing < AFIXED_0 ) {
+		move = MAKE_BFIXED(uiInfo.uiDC.frameTime) * MAKE_BFIXED(scale) * -MAKE_BFIXED(speed);
+		if ( move <= MAKE_BFIXED(swing) ) {
+			move = MAKE_BFIXED(swing);
 			*swinging = qfalse;
 		}
-		*angle = AngleMod( *angle + move );
+		*angle = AngleMod( MAKE_AFIXED(*angle) + MAKE_AFIXED(move) );
 	}
 
 	// clamp to no more than tolerance
-	swing = AngleSubtract( destination, *angle );
-	if ( swing > clampTolerance ) {
-		*angle = AngleMod( destination - (clampTolerance - 1) );
-	} else if ( swing < -clampTolerance ) {
-		*angle = AngleMod( destination + (clampTolerance - 1) );
+	swing = AngleSubtract( MAKE_AFIXED(destination), MAKE_AFIXED(*angle) );
+	if ( swing > MAKE_AFIXED(clampTolerance) ) {
+		*angle = AngleMod( MAKE_AFIXED(destination - (clampTolerance - AFIXED_1) ));
+	} else if ( swing < -MAKE_AFIXED(clampTolerance) ) {
+		*angle = AngleMod( MAKE_AFIXED(destination + (clampTolerance - AFIXED_1) ));
 	}
 }
 
@@ -530,41 +530,41 @@ UI_MovedirAdjustment
 ======================
 */
 static gfixed UI_MovedirAdjustment( playerInfo_t *pi ) {
-	bvec3_t		relativeAngles;
-	bvec3_t		moveVector;
-
+	avec3_t		relativeAngles;
+	avec3_t		moveVector;
+	
 	VectorSubtract( pi->viewAngles, pi->moveAngles, relativeAngles );
 	AngleVectors( relativeAngles, moveVector, NULL, NULL );
-	if ( FIXED_ABS( moveVector[0] ) < GFIXED(0,01) ) {
-		moveVector[0] = GFIXED_0;
+	if ( FIXED_ABS( moveVector[0] ) < AFIXED(0,01) ) {
+		moveVector[0] = AFIXED_0;
 	}
-	if ( FIXED_ABS( moveVector[1] ) < GFIXED(0,01) ) {
-		moveVector[1] = GFIXED_0;
-	}
-
-	if ( moveVector[1] == 0 && moveVector[0] > 0 ) {
-		return 0;
-	}
-	if ( moveVector[1] < 0 && moveVector[0] > 0 ) {
-		return 22;
-	}
-	if ( moveVector[1] < 0 && moveVector[0] == 0 ) {
-		return 45;
-	}
-	if ( moveVector[1] < 0 && moveVector[0] < 0 ) {
-		return -22;
-	}
-	if ( moveVector[1] == 0 && moveVector[0] < 0 ) {
-		return 0;
-	}
-	if ( moveVector[1] > 0 && moveVector[0] < 0 ) {
-		return 22;
-	}
-	if ( moveVector[1] > 0 && moveVector[0] == 0 ) {
-		return  -45;
+	if ( FIXED_ABS( moveVector[1] ) < AFIXED(0,01) ) {
+		moveVector[1] = AFIXED_0;
 	}
 
-	return -22;
+	if ( moveVector[1] == AFIXED_0 && moveVector[0] > AFIXED_0 ) {
+		return GFIXED(0,0);
+	}
+	if ( moveVector[1] < AFIXED_0 && moveVector[0] > AFIXED_0 ) {
+		return GFIXED(22,0);
+	}
+	if ( moveVector[1] < AFIXED_0 && moveVector[0] == AFIXED_0 ) {
+		return GFIXED(45,0);
+	}
+	if ( moveVector[1] < AFIXED_0 && moveVector[0] < AFIXED_0 ) {
+		return -GFIXED(22,0);
+	}
+	if ( moveVector[1] == AFIXED_0 && moveVector[0] < AFIXED_0 ) {
+		return GFIXED(0,0);
+	}
+	if ( moveVector[1] > AFIXED_0 && moveVector[0] < AFIXED_0 ) {
+		return GFIXED(22,0);
+	}
+	if ( moveVector[1] > AFIXED_0 && moveVector[0] == AFIXED_0 ) {
+		return  -GFIXED(45,0);
+	}
+
+	return -GFIXED(22,0);
 }
 
 
@@ -573,12 +573,12 @@ static gfixed UI_MovedirAdjustment( playerInfo_t *pi ) {
 UI_PlayerAngles
 ===============
 */
-static void UI_PlayerAngles( playerInfo_t *pi, bvec3_t legs[3], bvec3_t torso[3], bvec3_t head[3] ) {
-	bvec3_t		legsAngles, torsoAngles, headAngles;
-	gfixed		dest;
+static void UI_PlayerAngles( playerInfo_t *pi, avec3_t legs[3], avec3_t torso[3], avec3_t head[3] ) {
+	avec3_t		legsAngles, torsoAngles, headAngles;
+	afixed		dest;
 	gfixed		adjust;
 
-	VectorCopy( pi->viewAngles, headAngles );
+	VectorCopy(pi->viewAngles,headAngles);
 	headAngles[YAW] = AngleMod( headAngles[YAW] );
 	VectorClear( legsAngles );
 	VectorClear( torsoAngles );
@@ -596,26 +596,26 @@ static void UI_PlayerAngles( playerInfo_t *pi, bvec3_t legs[3], bvec3_t torso[3]
 
 	// adjust legs for movement dir
 	adjust = UI_MovedirAdjustment( pi );
-	legsAngles[YAW] = headAngles[YAW] + adjust;
-	torsoAngles[YAW] = headAngles[YAW] + GFIXED(0,25) * adjust;
+	legsAngles[YAW] = headAngles[YAW] + MAKE_AFIXED(adjust);
+	torsoAngles[YAW] = headAngles[YAW] + MAKE_AFIXED(GFIXED(0,25) * adjust);
 
 
 	// torso
-	UI_SwingAngles( torsoAngles[YAW], 25, 90, SWINGSPEED, &pi->torso.yawAngle, &pi->torso.yawing );
-	UI_SwingAngles( legsAngles[YAW], 40, 90, SWINGSPEED, &pi->legs.yawAngle, &pi->legs.yawing );
+	UI_SwingAngles( torsoAngles[YAW], AFIXED(25,0), AFIXED(90,0), SWINGSPEED, &pi->torso.yawAngle, &pi->torso.yawing );
+ 	UI_SwingAngles( legsAngles[YAW], AFIXED(40,0), AFIXED(90,0), SWINGSPEED, &pi->legs.yawAngle, &pi->legs.yawing );
 
-	torsoAngles[YAW] = pi->torso.yawAngle;
-	legsAngles[YAW] = pi->legs.yawAngle;
+	torsoAngles[YAW] =MAKE_AFIXED( pi->torso.yawAngle);
+	legsAngles[YAW] = MAKE_AFIXED(pi->legs.yawAngle);
 
 	// --------- pitch -------------
 
 	// only show a fraction of the pitch angle in the torso
-	if ( headAngles[PITCH] > 180 ) {
-		dest = (-360 + headAngles[PITCH]) * GFIXED(0,75);
+	if ( headAngles[PITCH] > AFIXED(180,0) ) {
+		dest = (-AFIXED(360,0) + headAngles[PITCH]) * AFIXED(0,75);
 	} else {
-		dest = headAngles[PITCH] * GFIXED(0,75);
+		dest = headAngles[PITCH] * AFIXED(0,75);
 	}
-	UI_SwingAngles( dest, 15, 30, GFIXED(0,1), &pi->torso.pitchAngle, &pi->torso.pitching );
+	UI_SwingAngles( dest, AFIXED(15,0), AFIXED(30,0), AFIXED(0,1), &pi->torso.pitchAngle, &pi->torso.pitching );
 	torsoAngles[PITCH] = pi->torso.pitchAngle;
 
 	// pull the angles back out of the hierarchial chain
@@ -637,10 +637,10 @@ static void UI_PlayerFloatSprite( playerInfo_t *pi, bvec3_t origin, qhandle_t sh
 
 	memset( &ent, 0, sizeof( ent ) );
 	VectorCopy( origin, ent.origin );
-	ent.origin[2] += 48;
+	ent.origin[2] += BFIXED(48,0);
 	ent.reType = RT_SPRITE;
 	ent.customShader = shader;
-	ent.radius = 10;
+	ent.radius = BFIXED(10,0);
 	ent.renderfx = 0;
 	_UI_trap_R_AddRefEntityToScene( &ent );
 }
@@ -651,22 +651,22 @@ static void UI_PlayerFloatSprite( playerInfo_t *pi, bvec3_t origin, qhandle_t sh
 UI_MachinegunSpinAngle
 ======================
 */
-gfixed	UI_MachinegunSpinAngle( playerInfo_t *pi ) {
+afixed	UI_MachinegunSpinAngle( playerInfo_t *pi ) {
 	int		delta;
-	gfixed	angle;
-	gfixed	speed;
+	afixed	angle;
+	afixed	speed;
 	int		torsoAnim;
 
 	delta = dp_realtime - pi->barrelTime;
 	if ( pi->barrelSpinning ) {
-		angle = pi->barrelAngle + delta * SPIN_SPEED;
+		angle = pi->barrelAngle + MAKE_AFIXED(delta) * SPIN_SPEED;
 	} else {
 		if ( delta > COAST_TIME ) {
 			delta = COAST_TIME;
 		}
 
-		speed = GFIXED(0,5) * ( SPIN_SPEED + MAKE_GFIXED( COAST_TIME - delta ) / COAST_TIME );
-		angle = pi->barrelAngle + delta * speed;
+		speed = AFIXED(0,5) * ( SPIN_SPEED + MAKE_AFIXED( COAST_TIME - delta ) / MAKE_AFIXED(COAST_TIME) );
+		angle = pi->barrelAngle + MAKE_AFIXED(delta) * speed;
 	}
 
 	torsoAnim = pi->torsoAnim  & ~ANIM_TOGGLEBIT;
@@ -700,15 +700,15 @@ void UI_DrawPlayer( gfixed x, gfixed y, gfixed w, gfixed h, playerInfo_t *pi, in
 	int				renderfx;
 	bvec3_t			mins = {-16, -16, -24};
 	bvec3_t			maxs = {16, 16, 32};
-	gfixed			len;
-	gfixed			xx;
+	bfixed			len;
+	afixed			xx;
 
 	if ( !pi->legsModel || !pi->torsoModel || !pi->headModel || !pi->animations[0].numFrames ) {
 		return;
 	}
 
 	// this allows the ui to cache the player model on the main menu
-	if (w == 0 || h == 0) {
+	if (w == GFIXED_0 || h == GFIXED_0) {
 		return;
 	}
 
@@ -717,7 +717,7 @@ void UI_DrawPlayer( gfixed x, gfixed y, gfixed w, gfixed h, playerInfo_t *pi, in
 	if ( pi->pendingWeapon != -1 && dp_realtime > pi->weaponTimer ) {
 		pi->weapon = pi->pendingWeapon;
 		pi->lastWeapon = pi->pendingWeapon;
-		pi->pendingWeapon = -1;
+		pi->pendingWeapon = (weapon_t)-1;
 		pi->weaponTimer = 0;
 		if( pi->currentWeapon != pi->weapon ) {
 			_UI_trap_S_StartLocalSound( weaponChangeSound, CHAN_LOCAL );
@@ -737,21 +737,21 @@ void UI_DrawPlayer( gfixed x, gfixed y, gfixed w, gfixed h, playerInfo_t *pi, in
 
 	AxisClear( refdef.viewaxis );
 
-	refdef.x = x;
-	refdef.y = y;
-	refdef.width = w;
-	refdef.height = h;
+	refdef.x = FIXED_TO_INT(x);
+	refdef.y = FIXED_TO_INT(y);
+	refdef.width = FIXED_TO_INT(w);
+	refdef.height = FIXED_TO_INT(h);
 
-	refdef.fov_x = FIXED_TO_INT(MAKE_GFIXEDrefdef.width / GFIXED(640,0) * GFIXED(90,0));
-	xx = refdef.width / tan( refdef.fov_x / 360 * GFIXED_PI );
-	refdef.fov_y = atan2( refdef.height, xx );
-	refdef.fov_y *= ( 360 / GFIXED_PI );
+	refdef.fov_x = MAKE_AFIXED(refdef.width) / AFIXED(640,0) * AFIXED(90,0);
+	xx = MAKE_AFIXED(refdef.width) / FIXED_TAN( refdef.fov_x / AFIXED(360,0) * AFIXED_PI );
+	refdef.fov_y = FIXED_ATAN2( MAKE_AFIXED(refdef.height), xx );
+	refdef.fov_y *= AFIXED(360,0) / AFIXED_PI;
 
 	// calculate distance so the player nearly fills the box
-	len = GFIXED(0,7) * ( maxs[2] - mins[2] );		
-	origin[0] = len / tan( DEG2RAD_A(refdef.fov_x) * GFIXED(0,5) );
-	origin[1] = GFIXED(0,5) * ( mins[1] + maxs[1] );
-	origin[2] = -GFIXED(0,5) * ( mins[2] + maxs[2] );
+	len = BFIXED(0,7) * ( maxs[2] - mins[2] );		
+	origin[0] = MAKE_BFIXED(len / FIXED_TAN( MAKE_BFIXED(DEG2RAD_A(refdef.fov_x)) * BFIXED(0,5) ));
+	origin[1] = MAKE_BFIXED(BFIXED(0,5) * ( mins[1] + maxs[1] ));
+	origin[2] = MAKE_BFIXED(-BFIXED(0,5) * ( mins[2] + maxs[2] ));
 
 	refdef.time = dp_realtime;
 
@@ -835,19 +835,19 @@ void UI_DrawPlayer( gfixed x, gfixed y, gfixed w, gfixed h, playerInfo_t *pi, in
 	// add the spinning barrel
 	//
 	if ( pi->realWeapon == WP_MACHINEGUN || pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG ) {
-		bvec3_t	angles;
+		avec3_t	angles;
 
 		memset( &barrel, 0, sizeof(barrel) );
 		VectorCopy( origin, barrel.lightingOrigin );
 		barrel.renderfx = renderfx;
 
 		barrel.hModel = pi->barrelModel;
-		angles[YAW] = 0;
-		angles[PITCH] = 0;
-		angles[ROLL] = UI_MachinegunSpinAngle( pi );
+		angles[YAW] = AFIXED_0;
+		angles[PITCH] = AFIXED_0;
+		angles[ROLL] = MAKE_AFIXED(UI_MachinegunSpinAngle( pi ));
 		if( pi->realWeapon == WP_GAUNTLET || pi->realWeapon == WP_BFG ) {
 			angles[PITCH] = angles[ROLL];
-			angles[ROLL] = 0;
+			angles[ROLL] = AFIXED_0;
 		}
 		AnglesToAxis( angles, barrel.axis );
 
@@ -870,9 +870,9 @@ void UI_DrawPlayer( gfixed x, gfixed y, gfixed w, gfixed h, playerInfo_t *pi, in
 		}
 
 		// make a dlight for the flash
-		if ( pi->flashDlightColor[0] || pi->flashDlightColor[1] || pi->flashDlightColor[2] ) {
-			_UI_trap_R_AddLightToScene( flash.origin, 200 + (rand()&31), pi->flashDlightColor[0],
-				pi->flashDlightColor[1], pi->flashDlightColor[2] );
+		if ( FIXED_TO_INT(pi->flashDlightColor[0]) || FIXED_TO_INT(pi->flashDlightColor[1]) || FIXED_TO_INT(pi->flashDlightColor[2]) ) {
+			_UI_trap_R_AddLightToScene( flash.origin, MAKE_GFIXED(200 + (rand()&31)), MAKE_GFIXED(pi->flashDlightColor[0]),
+				MAKE_GFIXED(pi->flashDlightColor[1]), MAKE_GFIXED(pi->flashDlightColor[2]) );
 		}
 	}
 
@@ -886,15 +886,15 @@ void UI_DrawPlayer( gfixed x, gfixed y, gfixed w, gfixed h, playerInfo_t *pi, in
 	//
 	// add an accent light
 	//
-	origin[0] -= 100;	// + = behind, - = in front
-	origin[1] += 100;	// + = left, - = right
-	origin[2] += 100;	// + = above, - = below
-	_UI_trap_R_AddLightToScene( origin, 500, GFIXED_1, GFIXED_1, GFIXED_1 );
+	origin[0] -= BFIXED(100,0);	// + = behind, - = in front
+	origin[1] += BFIXED(100,0);	// + = left, - = right
+	origin[2] += BFIXED(100,0);	// + = above, - = below
+	_UI_trap_R_AddLightToScene( origin, GFIXED(500,0), GFIXED_1, GFIXED_1, GFIXED_1 );
 
-	origin[0] -= 100;
-	origin[1] -= 100;
-	origin[2] -= 100;
-	_UI_trap_R_AddLightToScene( origin, 500, GFIXED_1, GFIXED_0, GFIXED_0 );
+	origin[0] -= BFIXED(100,0);
+	origin[1] -= BFIXED(100,0);
+	origin[2] -= BFIXED(100,0);
+	_UI_trap_R_AddLightToScene( origin, GFIXED(500,0), GFIXED_1, GFIXED_0, GFIXED_0 );
 
 	_UI_trap_R_RenderScene( &refdef );
 }
@@ -920,7 +920,7 @@ UI_FindClientHeadFile
 ==========================
 */
 static qboolean	UI_FindClientHeadFile( char *filename, int length, const char *teamName, const char *headModelName, const char *headSkinName, const char *base, const char *ext ) {
-	char *team, *headsFolder;
+	const char *team, *headsFolder;
 	int i;
 
 	team = "default";
@@ -1022,10 +1022,10 @@ UI_ParseAnimationFile
 ======================
 */
 static qboolean UI_ParseAnimationFile( const char *filename, animation_t *animations ) {
-	char		*text_p, *prev;
+	const char		*text_p, *prev;
 	int			len;
 	int			i;
-	char		*token;
+	const char		*token;
 	gfixed		fps;
 	int			skip;
 	char		text[20000];
@@ -1122,12 +1122,12 @@ static qboolean UI_ParseAnimationFile( const char *filename, animation_t *animat
 		if ( !token ) {
 			break;
 		}
-		fps = atof( token );
-		if ( fps == 0 ) {
-			fps = 1;
+		fps = MAKE_GFIXED(atof( token ));
+		if ( fps == GFIXED_0 ) {
+			fps = GFIXED_1;
 		}
-		animations[i].frameLerp = 1000 / fps;
-		animations[i].initialLerp = 1000 / fps;
+		animations[i].frameLerp = FIXED_TO_INT(GFIXED(1000,0) / fps);
+		animations[i].initialLerp = FIXED_TO_INT(GFIXED(1000,0) / fps);
 	}
 
 	if ( i != MAX_ANIMATIONS ) {
@@ -1247,13 +1247,13 @@ qboolean UI_RegisterClientModelname( playerInfo_t *pi, const char *modelSkinName
 UI_PlayerInfo_SetModel
 ===============
 */
-void UI_PlayerInfo_SetModel( playerInfo_t *pi, const char *model, const char *headmodel, char *teamName ) {
+void UI_PlayerInfo_SetModel( playerInfo_t *pi, const char *model, const char *headmodel, const char *teamName ) {
 	memset( pi, 0, sizeof(*pi) );
 	UI_RegisterClientModelname( pi, model, headmodel, teamName );
 	pi->weapon = WP_MACHINEGUN;
 	pi->currentWeapon = pi->weapon;
 	pi->lastWeapon = pi->weapon;
-	pi->pendingWeapon = -1;
+	pi->pendingWeapon = (weapon_t)-1;
 	pi->weaponTimer = 0;
 	pi->chat = qfalse;
 	pi->newModel = qtrue;
@@ -1266,7 +1266,7 @@ void UI_PlayerInfo_SetModel( playerInfo_t *pi, const char *model, const char *he
 UI_PlayerInfo_SetInfo
 ===============
 */
-void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, bvec3_t viewAngles, bvec3_t moveAngles, weapon_t weaponNumber, qboolean chat ) {
+void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, avec3_t viewAngles, avec3_t moveAngles, weapon_t weaponNumber, qboolean chat ) {
 	int			currentAnim;
 	weapon_t	weaponNum;
 
@@ -1281,7 +1281,7 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, bvec3
 	if ( pi->newModel ) {
 		pi->newModel = qfalse;
 
-		jumpHeight = 0;
+		jumpHeight = GFIXED_0;
 		pi->pendingLegsAnim = 0;
 		UI_ForceLegsAnim( pi, legsAnim );
 		pi->legs.yawAngle = viewAngles[YAW];
@@ -1296,7 +1296,7 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, bvec3
 			pi->weapon = weaponNumber;
 			pi->currentWeapon = weaponNumber;
 			pi->lastWeapon = weaponNumber;
-			pi->pendingWeapon = -1;
+			pi->pendingWeapon = (weapon_t)-1;
 			pi->weaponTimer = 0;
 			UI_PlayerInfo_SetWeapon( pi, pi->weapon );
 		}
@@ -1306,7 +1306,7 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, bvec3
 
 	// weapon
 	if ( weaponNumber == -1 ) {
-		pi->pendingWeapon = -1;
+		pi->pendingWeapon = (weapon_t)-1;
 		pi->weaponTimer = 0;
 	}
 	else if ( weaponNumber != WP_NONE ) {
@@ -1321,7 +1321,7 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, bvec3
 		pi->weapon = pi->currentWeapon = WP_NONE;
 		UI_PlayerInfo_SetWeapon( pi, pi->weapon );
 
-		jumpHeight = 0;
+		jumpHeight = GFIXED_0;
 		pi->pendingLegsAnim = 0;
 		UI_ForceLegsAnim( pi, legsAnim );
 
@@ -1337,7 +1337,7 @@ void UI_PlayerInfo_SetInfo( playerInfo_t *pi, int legsAnim, int torsoAnim, bvec3
 		pi->pendingLegsAnim = legsAnim;
 	}
 	else if ( legsAnim != currentAnim ) {
-		jumpHeight = 0;
+		jumpHeight = GFIXED_0;
 		pi->pendingLegsAnim = 0;
 		UI_ForceLegsAnim( pi, legsAnim );
 	}

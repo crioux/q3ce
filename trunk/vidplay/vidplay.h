@@ -24,3 +24,4 @@ int VidPlay_SetLoop(int handle, int loop);
 #endif
 
 #endif
+

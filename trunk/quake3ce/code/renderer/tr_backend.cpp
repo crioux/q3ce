@@ -498,10 +498,10 @@ void RB_BeginDrawingView (void) {
 		plane[2] = backEnd.viewParms.portalPlane.normal[2];
 		planedist = backEnd.viewParms.portalPlane.dist;
 
-		plane2[0] = MAKE_GFIXED(FIXED_VEC3DOT(backEnd.viewParms.or.axis[0], plane));
-		plane2[1] = MAKE_GFIXED(FIXED_VEC3DOT(backEnd.viewParms.or.axis[1], plane));
-		plane2[2] = MAKE_GFIXED(FIXED_VEC3DOT(backEnd.viewParms.or.axis[2], plane));
-		plane2[3] = REINTERPRET_GFIXED(FIXED_VEC3DOT_R(plane, backEnd.viewParms.or.origin) - planedist);
+		plane2[0] = MAKE_GFIXED(FIXED_VEC3DOT(backEnd.viewParms._or.axis[0], plane));
+		plane2[1] = MAKE_GFIXED(FIXED_VEC3DOT(backEnd.viewParms._or.axis[1], plane));
+		plane2[2] = MAKE_GFIXED(FIXED_VEC3DOT(backEnd.viewParms._or.axis[2], plane));
+		plane2[3] = REINTERPRET_GFIXED(FIXED_VEC3DOT_R(plane, backEnd.viewParms._or.origin) - planedist);
 
 		glLoadMatrixX( s_flipMatrix );
 		glClipPlaneX (GL_CLIP_PLANE0, plane2);
@@ -604,11 +604,11 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 				tess.shaderTime = backEnd.refdef.floatTime - tess.shader->timeOffset;
 
 				// set up the transformation matrix
-				R_RotateForEntity( backEnd.currentEntity, &backEnd.viewParms, &backEnd.or );
+				R_RotateForEntity( backEnd.currentEntity, &backEnd.viewParms, &backEnd._or );
 
 				// set up the dynamic lighting if needed
 				if ( backEnd.currentEntity->needDlights ) {
-					R_TransformDlights( backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.or );
+					R_TransformDlights( backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd._or );
 				}
 
 				if ( backEnd.currentEntity->e.renderfx & RF_DEPTHHACK ) {
@@ -618,14 +618,14 @@ void RB_RenderDrawSurfList( drawSurf_t *drawSurfs, int numDrawSurfs ) {
 			} else {
 				backEnd.currentEntity = &tr.worldEntity;
 				backEnd.refdef.floatTime = originalTime;
-				backEnd.or = backEnd.viewParms.world;
+				backEnd._or = backEnd.viewParms.world;
 				// we have to reset the shaderTime as well otherwise image animations on
 				// the world (like water) continue with the wrong frame
 				tess.shaderTime = backEnd.refdef.floatTime - tess.shader->timeOffset;
-				R_TransformDlights( backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd.or );
+				R_TransformDlights( backEnd.refdef.num_dlights, backEnd.refdef.dlights, &backEnd._or );
 			}
 
-			glLoadMatrixX( backEnd.or.modelMatrix );
+			glLoadMatrixX( backEnd._or.modelMatrix );
 
 			//
 			// change depthrange if needed

@@ -164,7 +164,7 @@ string will be returned if the next token is
 a newline.
 ==============
 */
-static char *Com_ParseExt( const char *(*data_p), qboolean allowLineBreaks ) {
+static const char *Com_ParseExt( const char *(*data_p), qboolean allowLineBreaks ) {
 	int c = 0, len;
 	qboolean hasNewLines = qfalse;
 	const char *data;

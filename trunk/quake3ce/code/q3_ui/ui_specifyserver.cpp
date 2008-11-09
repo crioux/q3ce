@@ -36,7 +36,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ID_SPECIFYSERVERBACK	102
 #define ID_SPECIFYSERVERGO		103
 
-static char* specifyserver_artlist[] =
+static const char* specifyserver_artlist[] =
 {
 	SPECIFYSERVER_FRAMEL,
 	SPECIFYSERVER_FRAMER,
@@ -113,7 +113,7 @@ void SpecifyServer_MenuInit( void )
 	s_specifyserver.banner.generic.type	 = MTYPE_BTEXT;
 	s_specifyserver.banner.generic.x     = 320;
 	s_specifyserver.banner.generic.y     = 16;
-	s_specifyserver.banner.string		 = "SPECIFY SERVER";
+	s_specifyserver.banner.string		 = strdup("SPECIFY SERVER");
 	s_specifyserver.banner.color  		 = color_white;
 	s_specifyserver.banner.style  		 = UI_CENTER;
 

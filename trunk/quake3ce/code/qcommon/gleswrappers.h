@@ -1,7 +1,7 @@
 #pragma once
 
 #include"../qcommon/fixed.h"
-#include"GLES/egl.h"
+//#include"GLES/egl.h"
 #include"GLES/gl.h"
 
 #define GLFLOAT_1 (1.0f)

@@ -66,7 +66,7 @@ void R_GammaCorrect( byte *buffer, int bufSize ) {
 }
 
 typedef struct {
-	char *name;
+	const char *name;
 	int	minimize, maximize;
 } textureMode_t;
 
@@ -1592,7 +1592,7 @@ static void LoadJPG( const char *filename, unsigned char **pic, int *width, int 
 
   /* Step 2: specify data source (eg, a file) */
 
-  jpeg_stdio_src(&cinfo, fbuffer);
+  jpeg_stdio_src(&cinfo, (unsigned char *)fbuffer);
 
   /* Step 3: read file parameters with jpeg_read_header() */
 
@@ -2138,12 +2138,20 @@ static void R_CreateDlightImage( void ) {
 
 			d = ( GFIXED(DLIGHT_SIZE/2,0) - GFIXED(0,5) - MAKE_GFIXED(x) ) * ( GFIXED(DLIGHT_SIZE/2,0) - GFIXED(0,5) - MAKE_GFIXED(x) ) +
 				( GFIXED(DLIGHT_SIZE/2,0) - GFIXED(0,5) - MAKE_GFIXED(y) ) * ( GFIXED(DLIGHT_SIZE/2,0) - GFIXED(0,5) - MAKE_GFIXED(y) );
-			b = FIXED_TO_INT(GFIXED(4000,0) / d);
-			if (b > 255) {
-				b = 255;
-			} else if ( b < 75 ) {
-				b = 0;
+			if(d!=GFIXED_0)
+			{
+				b = FIXED_TO_INT(GFIXED(4000,0) / d);
+				if (b > 255) {
+					b = 255;
+				} else if ( b < 75 ) {
+					b = 0;
+				}			
+			} 
+			else
+			{
+				b=255;
 			}
+			
 			data[y][x][0] = 
 			data[y][x][1] = 
 			data[y][x][2] = b;
@@ -2405,12 +2413,12 @@ void R_SetColorMappings( void ) {
 		}
 		s_intensitytable[i] = j;
 	}
-/*
+
 	if ( glConfig.deviceSupportsGamma )
 	{
 		GLimp_SetGamma( s_gammatable, s_gammatable, s_gammatable );
 	}
-*/
+
 }
 
 /*
@@ -2467,7 +2475,7 @@ This is unfortunate, but the skin files aren't
 compatable with our normal parsing rules.
 ==================
 */
-static char *CommaParse( char **data_p ) {
+static const char *CommaParse( char **data_p ) {
 	int c = 0, len;
 	char *data;
 	static	char	com_token[MAX_TOKEN_CHARS];
@@ -2578,7 +2586,7 @@ qhandle_t RE_RegisterSkin( const char *name ) {
 	skin_t		*skin;
 	skinSurface_t	*surf;
 	char		*text, *text_p;
-	char		*token;
+	const char		*token;
 	char		surfName[MAX_QPATH];
 
 	if ( !name || !name[0] ) {

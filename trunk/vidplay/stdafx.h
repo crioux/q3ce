@@ -1,12 +1,13 @@
 #ifndef __INC_STDAFX_H
 #define __INC_STDAFX_H
 
-
+#ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #ifndef STRICT
 #define STRICT
 #endif
 #include <windows.h>
+#endif
 
 #include "common/common.h"
 #include "ati3200/ati3200.h"

@@ -290,8 +290,8 @@ extern gfixed floattime;
 #define FloatTime() floattime
 
 // from the game source
-void	QDECL BotAI_Print(int type, char *fmt, ...);
-void	QDECL QDECL BotAI_BotInitialChat( bot_state_t *bs, char *type, ... );
+void	BotAI_Print(int type, const char *fmt, ...);
+void	BotAI_BotInitialChat( bot_state_t *bs, const char *type, ... );
 void	BotAI_Trace(bsp_trace_t *bsptrace, bvec3_t start, bvec3_t mins, bvec3_t maxs, bvec3_t end, int passent, int contentmask);
 int		BotAI_GetClientState( int clientNum, playerState_t *state );
 int		BotAI_GetEntityState( int entityNum, entityState_t *state );

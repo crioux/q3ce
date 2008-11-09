@@ -83,7 +83,7 @@ struct gentity_s {
 
 	qboolean	inuse;
 
-	char		*classname;			// set in QuakeEd
+	const char		*classname;			// set in QuakeEd
 	int			spawnflags;			// set in QuakeEd
 
 	qboolean	neverFree;			// if true, FreeEntity will only unlink
@@ -91,8 +91,8 @@ struct gentity_s {
 
 	int			flags;				// FL_* variables
 
-	char		*model;
-	char		*model2;
+	const char		*model;
+	const char		*model2;
 	int			freetime;			// level.time when the object was freed
 	
 	int			eventTime;			// events will be cleared EVENT_VALID_MSEC after set
@@ -441,7 +441,7 @@ char *G_NewString( const char *string );
 void Cmd_Score_f (gentity_t *ent);
 void StopFollowing( gentity_t *ent );
 void BroadcastTeamChange( gclient_t *client, int oldTeam );
-void SetTeam( gentity_t *ent, char *s );
+void SetTeam( gentity_t *ent, const char *s );
 void Cmd_FollowCycle_f( gentity_t *ent, int dir );
 
 //
@@ -470,12 +470,12 @@ void SaveRegisteredItems( void );
 //
 // g_utils.c
 //
-int G_ModelIndex( char *name );
-int		G_SoundIndex( char *name );
-void	G_TeamCommand( team_t team, char *cmd );
+int G_ModelIndex( const char *name );
+int		G_SoundIndex( const char *name );
+void	G_TeamCommand( team_t team, const char *cmd );
 void	G_KillBox (gentity_t *ent);
 gentity_t *G_Find (gentity_t *from, int fieldofs, const char *match);
-gentity_t *G_PickTarget (char *targetname);
+gentity_t *G_PickTarget (const char *targetname);
 void	G_UseTargets (gentity_t *ent, gentity_t *activator);
 void	G_SetMovedir ( avec3_t angles, avec3_t movedir);
 
@@ -597,7 +597,7 @@ qboolean SpotWouldTelefrag( gentity_t *spot );
 //
 qboolean	ConsoleCommand( void );
 void G_ProcessIPBans(void);
-qboolean G_FilterPacket (char *from);
+qboolean G_FilterPacket (const char *from);
 
 //
 // g_weapon.c
@@ -638,7 +638,7 @@ void QDECL G_Error( const char *fmt, ... );
 //
 // g_client.c
 //
-char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot );
+const char *ClientConnect( int clientNum, qboolean firstTime, qboolean isBot );
 void ClientUserinfoChanged( int clientNum );
 void ClientDisconnect( int clientNum );
 void ClientBegin( int clientNum );
@@ -685,8 +685,8 @@ void Svcmd_AbortPodium_f( void );
 // g_bot.c
 //
 void G_InitBots( qboolean restart );
-char *G_GetBotInfoByNumber( int num );
-char *G_GetBotInfoByName( const char *name );
+const char *G_GetBotInfoByNumber( int num );
+const char *G_GetBotInfoByName( const char *name );
 void G_CheckBotSpawn( void );
 void G_RemoveQueuedBotBegin( int clientNum );
 qboolean G_BotConnect( int clientNum, qboolean restart );
@@ -820,9 +820,9 @@ void	_G_trap_DebugPolygonDelete(int id);
 
 int		_G_trap_BotLibSetup( void );
 int		_G_trap_BotLibShutdown( void );
-int		_G_trap_BotLibVarSet(char *var_name, char *value);
-int		_G_trap_BotLibVarGet(char *var_name, char *value, int size);
-int		_G_trap_BotLibDefine(char *string);
+int		_G_trap_BotLibVarSet(const char *var_name, const char *value);
+int		_G_trap_BotLibVarGet(const char *var_name, char *value, int size);
+int		_G_trap_BotLibDefine(const char *string);
 int		_G_trap_BotLibStartFrame(gfixed time);
 int		_G_trap_BotLibLoadMap(const char *mapname);
 int		_G_trap_BotLibUpdateEntity(int ent, void /* struct bot_updateentity_s */ *bue);
@@ -846,10 +846,10 @@ int		_G_trap_AAS_TraceAreas(bvec3_t start, bvec3_t end, int *areas, bvec3_t *poi
 
 int		_G_trap_AAS_PointContents(bvec3_t point);
 int		_G_trap_AAS_NextBSPEntity(int ent);
-int		_G_trap_AAS_ValueForBSPEpairKey(int ent, char *key, char *value, int size);
-int		_G_trap_AAS_VectorForBSPEpairKey(int ent, char *key, bvec3_t v);
-int		_G_trap_AAS_FloatForBSPEpairKey(int ent, char *key, gfixed *value);
-int		_G_trap_AAS_IntForBSPEpairKey(int ent, char *key, int *value);
+int		_G_trap_AAS_ValueForBSPEpairKey(int ent, const char *key, char *value, int size);
+int		_G_trap_AAS_VectorForBSPEpairKey(int ent, const char *key, bvec3_t v);
+int		_G_trap_AAS_FloatForBSPEpairKey(int ent, const char *key, gfixed *value);
+int		_G_trap_AAS_IntForBSPEpairKey(int ent, const char *key, int *value);
 
 int		_G_trap_AAS_AreaReachability(int areanum);
 
@@ -866,9 +866,9 @@ int		_G_trap_AAS_Swimming(bvec3_t origin);
 int		_G_trap_AAS_PredictClientMovement(void /* aas_clientmove_s */ *move, int entnum, bvec3_t origin, int presencetype, int onground, bvec3_t velocity, bvec3_t cmdmove, int cmdframes, int maxframes, gfixed frametime, int stopevent, int stopareanum, int visualize);
 
 
-void	_G_trap_EA_Say(int client, char *str);
-void	_G_trap_EA_SayTeam(int client, char *str);
-void	_G_trap_EA_Command(int client, char *command);
+void	_G_trap_EA_Say(int client, const char *str);
+void	_G_trap_EA_SayTeam(int client, const char *str);
+void	_G_trap_EA_Command(int client, const char *command);
 
 void	_G_trap_EA_Action(int client, int action);
 void	_G_trap_EA_Gesture(int client);
@@ -894,7 +894,7 @@ void	_G_trap_EA_GetInput(int client, gfixed thinktime, void /* struct bot_input_
 void	_G_trap_EA_ResetInput(int client);
 
 
-int		_G_trap_BotLoadCharacter(char *charfile, gfixed skill);
+int		_G_trap_BotLoadCharacter(const char *charfile, gfixed skill);
 void	_G_trap_BotFreeCharacter(int character);
 gfixed	_G_trap_Characteristic_Float(int character, int index);
 gfixed	_G_trap_Characteristic_BFloat(int character, int index, gfixed min, gfixed max);
@@ -904,24 +904,24 @@ void	_G_trap_Characteristic_String(int character, int index, char *buf, int size
 
 int		_G_trap_BotAllocChatState(void);
 void	_G_trap_BotFreeChatState(int handle);
-void	_G_trap_BotQueueConsoleMessage(int chatstate, int type, char *message);
+void	_G_trap_BotQueueConsoleMessage(int chatstate, int type, const char *message);
 void	_G_trap_BotRemoveConsoleMessage(int chatstate, int handle);
 int		_G_trap_BotNextConsoleMessage(int chatstate, void /* struct bot_consolemessage_s */ *cm);
 int		_G_trap_BotNumConsoleMessages(int chatstate);
-void	_G_trap_BotInitialChat(int chatstate, char *type, int mcontext, char *var0, char *var1, char *var2, char *var3, char *var4, char *var5, char *var6, char *var7 );
-int		_G_trap_BotNumInitialChats(int chatstate, char *type);
-int		_G_trap_BotReplyChat(int chatstate, char *message, int mcontext, int vcontext, char *var0, char *var1, char *var2, char *var3, char *var4, char *var5, char *var6, char *var7 );
+void	_G_trap_BotInitialChat(int chatstate, const char *type, int mcontext, const char *var0, const char *var1, const char *var2, const char *var3, const char *var4, const char *var5, const char *var6, const char *var7 );
+int		_G_trap_BotNumInitialChats(int chatstate, const char *type);
+int		_G_trap_BotReplyChat(int chatstate, const char *message, int mcontext, int vcontext, const char *var0, const char *var1, const char *var2, const char *var3, const char *var4, const char *var5, const char *var6, const char *var7 );
 int		_G_trap_BotChatLength(int chatstate);
 void	_G_trap_BotEnterChat(int chatstate, int client, int sendto);
 void	_G_trap_BotGetChatMessage(int chatstate, char *buf, int size);
-int		_G_trap_StringContains(char *str1, char *str2, int casesensitive);
-int		_G_trap_BotFindMatch(char *str, void /* struct bot_match_s */ *match, unsigned long int context);
+int		_G_trap_StringContains(const char *str1, const char *str2, int casesensitive);
+int		_G_trap_BotFindMatch(const char *str, void /* struct bot_match_s */ *match, unsigned long int context);
 void	_G_trap_BotMatchVariable(void /* struct bot_match_s */ *match, int variable, char *buf, int size);
 void	_G_trap_UnifyWhiteSpaces(char *string);
 void	_G_trap_BotReplaceSynonyms(char *string, unsigned long int context);
-int		_G_trap_BotLoadChatFile(int chatstate, char *chatfile, char *chatname);
+int		_G_trap_BotLoadChatFile(int chatstate, const char *chatfile, const char *chatname);
 void	_G_trap_BotSetChatGender(int chatstate, int gender);
-void	_G_trap_BotSetChatName(int chatstate, char *name, int client);
+void	_G_trap_BotSetChatName(int chatstate, const char *name, int client);
 void	_G_trap_BotResetGoalState(int goalstate);
 void	_G_trap_BotRemoveFromAvoidGoals(int goalstate, int number);
 void	_G_trap_BotResetAvoidGoals(int goalstate);
@@ -939,15 +939,15 @@ int		_G_trap_BotTouchingGoal(bvec3_t origin, void /* struct bot_goal_s */ *goal)
 int		_G_trap_BotItemGoalInVisButNotVisible(int viewer, bvec3_t eye, avec3_t viewangles, void /* struct bot_goal_s */ *goal);
 int		_G_trap_BotGetNextCampSpotGoal(int num, void /* struct bot_goal_s */ *goal);
 int		_G_trap_BotGetMapLocationGoal(char *name, void /* struct bot_goal_s */ *goal);
-int		_G_trap_BotGetLevelItemGoal(int index, char *classname, void /* struct bot_goal_s */ *goal);
+int		_G_trap_BotGetLevelItemGoal(int index, const char *classname, void /* struct bot_goal_s */ *goal);
 gfixed	_G_trap_BotAvoidGoalTime(int goalstate, int number);
 void	_G_trap_BotSetAvoidGoalTime(int goalstate, int number, gfixed avoidtime);
 void	_G_trap_BotInitLevelItems(void);
 void	_G_trap_BotUpdateEntityItems(void);
-int		_G_trap_BotLoadItemWeights(int goalstate, char *filename);
+int	_G_trap_BotLoadItemWeights(int goalstate, const char *filename);
 void	_G_trap_BotFreeItemWeights(int goalstate);
 void	_G_trap_BotInterbreedGoalFuzzyLogic(int parent1, int parent2, int child);
-void	_G_trap_BotSaveGoalFuzzyLogic(int goalstate, char *filename);
+void	_G_trap_BotSaveGoalFuzzyLogic(int goalstate, const char *filename);
 void	_G_trap_BotMutateGoalFuzzyLogic(int goalstate, gfixed range);
 int		_G_trap_BotAllocGoalState(int state);
 void	_G_trap_BotFreeGoalState(int handle);
@@ -967,7 +967,7 @@ void	_G_trap_BotAddAvoidSpot(int movestate, bvec3_t origin, bfixed radius, int t
 
 int		_G_trap_BotChooseBestFightWeapon(int weaponstate, int *inventory);
 void	_G_trap_BotGetWeaponInfo(int weaponstate, int weapon, void /* struct weaponinfo_s */ *weaponinfo);
-int		_G_trap_BotLoadWeaponWeights(int weaponstate, char *filename);
+int		_G_trap_BotLoadWeaponWeights(int weaponstate, const char *filename);
 int		_G_trap_BotAllocWeaponState(void);
 void	_G_trap_BotFreeWeaponState(int weaponstate);
 void	_G_trap_BotResetWeaponState(int weaponstate);

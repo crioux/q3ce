@@ -56,7 +56,13 @@ int botlibsetup = qfalse;
 //===========================================================================
 int Sys_MilliSeconds(void)
 {
+#ifdef _WIN32
 	return GetTickCount();
+#else
+	time_t tm;
+	time(&tm);
+	return (int)tm;
+#endif
 } //end of the function Sys_MilliSeconds
 //===========================================================================
 //
@@ -81,7 +87,7 @@ qboolean ValidClientNumber(int num, char *str)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-qboolean ValidEntityNumber(int num, char *str)
+qboolean ValidEntityNumber(int num, const char *str)
 {
 	if (num < 0 || num > botlibglobals.maxentities)
 	{
@@ -97,7 +103,7 @@ qboolean ValidEntityNumber(int num, char *str)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-qboolean BotLibSetup(char *str)
+qboolean BotLibSetup(const char *str)
 {
 	if (!botlibglobals.botlibsetup)
 	{
@@ -195,7 +201,7 @@ int Export_BotLibShutdown(void)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int Export_BotLibVarSet(char *var_name, char *value)
+int Export_BotLibVarSet(const char *var_name, const char *value)
 {
 	LibVarSet(var_name, value);
 	return BLERR_NOERROR;
@@ -206,9 +212,9 @@ int Export_BotLibVarSet(char *var_name, char *value)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int Export_BotLibVarGet(char *var_name, char *value, int size)
+int Export_BotLibVarGet(const char *var_name, char *value, int size)
 {
-	char *varvalue;
+	const char *varvalue;
 
 	varvalue = LibVarGetString(var_name);
 	strncpy(value, varvalue, size-1);

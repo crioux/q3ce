@@ -115,10 +115,10 @@ static void UI_ServerOptionsMenu( qboolean multiplayer );
 GametypeBits
 =================
 */
-static int GametypeBits( char *string ) {
+static int GametypeBits( const char *string ) {
 	int		bits;
-	char	*p;
-	char	*token;
+	const char	*p;
+	const char	*token;
 
 	bits = 0;
 	p = string;
@@ -397,7 +397,7 @@ static void StartServer_MenuInit( void ) {
 	s_startserver.banner.generic.type  = MTYPE_BTEXT;
 	s_startserver.banner.generic.x	   = 320;
 	s_startserver.banner.generic.y	   = 16;
-	s_startserver.banner.string        = "GAME SERVER";
+	s_startserver.banner.string        = strdup("GAME SERVER");
 	s_startserver.banner.color         = color_white;
 	s_startserver.banner.style         = UI_CENTER;
 
@@ -892,13 +892,13 @@ static void ServerOptions_SetPlayerItems( void ) {
 
 	// names
 	if( s_serveroptions.dedicated.curvalue == 0 ) {
-		s_serveroptions.player0.string = "Human";
+		s_serveroptions.player0.string = strdup("Human");
 		s_serveroptions.playerName[0].generic.flags &= ~QMF_HIDDEN;
 
 		start = 1;
 	}
 	else {
-		s_serveroptions.player0.string = "Open";
+		s_serveroptions.player0.string = strdup("Open");
 		start = 0;
 	}
 	for( n = start; n < PLAYER_SLOTS; n++ ) {
@@ -1031,7 +1031,7 @@ static void ServerOptions_InitBotNames( void ) {
 	const char	*arenaInfo;
 	const char	*botInfo;
 	char		*p;
-	char		*bot;
+	const char		*bot;
 	char		bots[MAX_INFO_STRING];
 
 	if( s_serveroptions.gametype >= GT_TEAM ) {
@@ -1239,7 +1239,7 @@ static void ServerOptions_MenuInit( qboolean multiplayer ) {
 	s_serveroptions.banner.generic.type			= MTYPE_BTEXT;
 	s_serveroptions.banner.generic.x			= 320;
 	s_serveroptions.banner.generic.y			= 16;
-	s_serveroptions.banner.string  				= "GAME SERVER";
+	s_serveroptions.banner.string  				= strdup("GAME SERVER");
 	s_serveroptions.banner.color  				= color_white;
 	s_serveroptions.banner.style  				= UI_CENTER;
 
@@ -1601,13 +1601,15 @@ ServerPlayerIcon
 =================
 */
 static void ServerPlayerIcon( const char *modelAndSkin, char *iconName, int iconNameMaxSize ) {
-	char	*skin;
+	const char	*skin;
+	char *pskin;
 	char	model[MAX_QPATH];
 
 	Q_strncpyz( model, modelAndSkin, sizeof(model));
-	skin = Q_strrchr( model, '/' );
-	if ( skin ) {
-		*skin++ = '\0';
+	pskin = Q_strrchr( model, '/' );
+	if ( pskin ) {
+		*pskin++ = '\0';
+		skin=pskin;
 	}
 	else {
 		skin = "default";
@@ -1843,7 +1845,7 @@ static void UI_BotSelectMenu_Init( char *bot ) {
 	botSelectInfo.banner.generic.type	= MTYPE_BTEXT;
 	botSelectInfo.banner.generic.x		= 320;
 	botSelectInfo.banner.generic.y		= 16;
-	botSelectInfo.banner.string			= "SELECT BOT";
+	botSelectInfo.banner.string			= strdup("SELECT BOT");
 	botSelectInfo.banner.color			= color_white;
 	botSelectInfo.banner.style			= UI_CENTER;
 

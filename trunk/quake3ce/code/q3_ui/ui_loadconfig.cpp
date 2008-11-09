@@ -126,7 +126,7 @@ static void LoadConfig_MenuInit( void ) {
 	s_configs.banner.generic.type	= MTYPE_BTEXT;
 	s_configs.banner.generic.x		= 320;
 	s_configs.banner.generic.y		= 16;
-	s_configs.banner.string			= "LOAD CONFIG";
+	s_configs.banner.string			= strdup("LOAD CONFIG");
 	s_configs.banner.color			= color_white;
 	s_configs.banner.style			= UI_CENTER;
 

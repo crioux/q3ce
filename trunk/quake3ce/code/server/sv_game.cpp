@@ -313,7 +313,7 @@ The module is making a system call
 
 #define	VMF(x)	((float *)args)[x]
 
-SysCallArg SV_GameSystemCalls( int callnum, SysCallArgs &args) {
+SysCallArg SV_GameSystemCalls( int callnum, const SysCallArgs &args) {
 	switch( callnum ) {
 	case G_PRINT:
 		Com_Printf( "%s", (const void *)args[0] );
@@ -433,7 +433,7 @@ SysCallArg SV_GameSystemCalls( int callnum, SysCallArgs &args) {
 		{
 			const char	*s;
 
-			s = COM_Parse( &sv.entityParsePoint );
+			s = COM_Parse( (const char **) &sv.entityParsePoint );
 			Q_strncpyz( args[0], s, args[1] );
 			if ( !sv.entityParsePoint && !s[0] ) {
 				return SysCallArg::Int(qfalse);
@@ -845,7 +845,7 @@ SysCallArg SV_GameSystemCalls( int callnum, SysCallArgs &args) {
 		return SysCallArg();
 
 	case TRAP_ANGLEVECTORS:
-		AngleVectors( args[0], args[1], args[2], args[3] );
+		AngleVectors( *(avec3_t*)(void *)args[0], *(avec3_t*)(void *)args[1], *(avec3_t*)(void *)args[2], *(avec3_t*)(void *)args[3] );
 		return SysCallArg();
 
 	case TRAP_PERPENDICULARVECTOR_A:

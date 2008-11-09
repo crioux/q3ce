@@ -42,7 +42,7 @@ extern "C" {
 
 #define DLL 
 
-#if _WIN32_WCE < 400
+#if defined(_WIN32) && (_WIN32_WCE < 400)
 #ifndef NDEBUG
 extern DLL void _Assert(const char* Exp, const char* File, int Line);
 #define assert(x) if (!(x)) _Assert(#x,__FILE__,__LINE__);

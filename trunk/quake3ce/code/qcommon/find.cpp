@@ -1,7 +1,6 @@
 #include"common_pch.h"
 
-
-int __cdecl _findfirst(
+int _findfirst(
          const char * szWild,
         struct _finddata_t * pfd
         )
@@ -45,7 +44,7 @@ int __cdecl _findfirst(
 }
 
 
-int __cdecl _findnext(int hFile, struct _finddata_t * pfd)
+int _findnext(int hFile, struct _finddata_t * pfd)
 {
     WIN32_FIND_DATA wfd;
     DWORD           err;
@@ -81,7 +80,7 @@ int __cdecl _findnext(int hFile, struct _finddata_t * pfd)
 }
 
 
-int __cdecl _findclose(int hFile)
+int _findclose(int hFile)
 {
     if (!FindClose((HANDLE)hFile)) {
         return (-1);

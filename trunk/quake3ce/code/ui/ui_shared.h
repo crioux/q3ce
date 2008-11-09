@@ -98,12 +98,12 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #define ASSET_SCROLL_THUMB          "ui/assets/scrollbar_thumb.tga"
 #define ASSET_SLIDER_BAR						"ui/assets/slider2.tga"
 #define ASSET_SLIDER_THUMB					"ui/assets/sliderbutt_1.tga"
-#define SCROLLBAR_SIZE GFIXED(16,0)
-#define SLIDER_WIDTH GFIXED(96,0)
-#define SLIDER_HEIGHT GFIXED(16,0)
-#define SLIDER_THUMB_WIDTH GFIXED(12,0)
-#define SLIDER_THUMB_HEIGHT GFIXED(20,0)
-#define	NUM_CROSSHAIRS			10
+#define SCROLLBAR_SIZE 16
+#define SLIDER_WIDTH 96
+#define SLIDER_HEIGHT 16
+#define SLIDER_THUMB_WIDTH 12
+#define SLIDER_THUMB_HEIGHT 20
+#define	NUM_CROSSHAIRS 10
 
 typedef struct {
   const char *command;
@@ -312,7 +312,7 @@ typedef struct {
 
 typedef struct {
   const char *name;
-  void (*handler) (itemDef_t *item, char** args);
+  void (*handler) (itemDef_t *item, const char** args);
 } commandDef_t;
 
 typedef struct {
@@ -336,10 +336,10 @@ typedef struct {
   void (*ownerDrawItem) (gfixed x, gfixed y, gfixed w, gfixed h, gfixed text_x, gfixed text_y, int ownerDraw, int ownerDrawFlags, int align, gfixed special, gfixed scale, vec4_t color, qhandle_t shader, int textStyle);
 	gfixed (*getValue) (int ownerDraw);
 	qboolean (*ownerDrawVisible) (int flags);
-  void (*runScript)(char **p);
+  void (*runScript)(const char **p);
   void (*getTeamColor)(vec4_t *color);
   void (*getCVarString)(const char *cvar, char *buffer, int bufsize);
-  gfixed (*getCVarValue)(const char *cvar);
+  lfixed (*getCVarValue)(const char *cvar);
   void (*setCVar)(const char *cvar, const char *value);
   void (*drawTextWithCursor)(gfixed x, gfixed y, gfixed scale, vec4_t color, const char *text, int cursorPos, char cursor, int limit, int style);
   void (*setOverstrikeMode)(qboolean b);
@@ -397,13 +397,14 @@ menuDef_t *Menu_GetFocused();
 void Menu_HandleKey(menuDef_t *menu, int key, qboolean down);
 void Menu_HandleMouseMove(menuDef_t *menu, gfixed x, gfixed y);
 void Menu_ScrollFeeder(menuDef_t *menu, int feeder, qboolean down);
-qboolean Float_Parse(char **p, gfixed *f);
-qboolean Color_Parse(char **p, vec4_t *c);
-qboolean Int_Parse(char **p, int *i);
-qboolean Rect_Parse(char **p, rectDef_t *r);
-qboolean String_Parse(char **p, const char **out);
-qboolean Script_Parse(char **p, const char **out);
+qboolean Float_Parse(const char **p, gfixed *f);
+qboolean Color_Parse(const char **p, vec4_t *c);
+qboolean Int_Parse(const char **p, int *i);
+qboolean Rect_Parse(const char **p, rectDef_t *r);
+qboolean String_Parse(const char **p, const char **out);
+qboolean Script_Parse(const char **p, const char **out);
 qboolean PC_Float_Parse(int handle, gfixed *f);
+qboolean PC_Float_ParseB(int handle, bfixed *f);
 qboolean PC_Color_Parse(int handle, vec4_t *c);
 qboolean PC_Int_Parse(int handle, int *i);
 qboolean PC_Rect_Parse(int handle, rectDef_t *r);
@@ -441,7 +442,7 @@ void Controls_GetConfig( void );
 void Controls_SetConfig(qboolean restart);
 void Controls_SetDefaults( void );
 
-int			_UI_trap_PC_AddGlobalDefine( char *define );
+int			_UI_trap_PC_AddGlobalDefine(const char *define );
 int			_UI_trap_PC_LoadSource( const char *filename );
 int			_UI_trap_PC_FreeSource( int handle );
 int			_UI_trap_PC_ReadToken( int handle, pc_token_t *pc_token );

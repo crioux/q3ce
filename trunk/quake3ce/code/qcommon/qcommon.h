@@ -19,11 +19,14 @@ along with Foobar; if not, write to the Free Software
 Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
-// qcommon.h -- definitions common between client and server, but not game.or ref modules
+// qcommon.h -- definitions common between client and server, but not game._or ref modules
 #ifndef _QCOMMON_H_
 #define _QCOMMON_H_
 
+#ifdef _WIN32 
 #include <windows.h>
+#endif
+
 #include "../qcommon/cm_public.h"
 
 //#define	PRE_RELEASE_DEMO
@@ -334,12 +337,12 @@ void	Cmd_CommandCompletion( void(*callback)(const char *s) );
 // callback with each valid string
 
 int		Cmd_Argc (void);
-char	*Cmd_Argv (int arg);
+const char	*Cmd_Argv (int arg);
 void	Cmd_ArgvBuffer( int arg, char *buffer, int bufferLength );
-char	*Cmd_Args (void);
-char	*Cmd_ArgsFrom( int arg );
+const char	*Cmd_Args (void);
+const char	*Cmd_ArgsFrom( int arg );
 void	Cmd_ArgsBuffer( char *buffer, int bufferLength );
-char	*Cmd_Cmd (void);
+const char	*Cmd_Cmd (void);
 // The functions that execute commands get their parameters with these
 // functions. Cmd_Argv () will return an empty string, not a NULL
 // if arg > argc, so string operations are allways safe.
@@ -410,7 +413,7 @@ gfixed	Cvar_VariableFixedValue( const char *var_name );
 int		Cvar_VariableIntegerValue( const char *var_name );
 // returns 0 if not defined or non numeric
 
-char	*Cvar_VariableString( const char *var_name );
+const char	*Cvar_VariableString( const char *var_name );
 void	Cvar_VariableStringBuffer( const char *var_name, char *buffer, int bufsize );
 // returns an empty string if not defined
 
@@ -585,7 +588,7 @@ EXTERN_C void FS_PureServerSetLoadedPaks( const char *pakSums, const char *pakNa
 // separated checksums will be checked for files, with the
 // sole exception of .cfg files.
 
-EXTERN_C qboolean FS_idPak( char *pak, char *base );
+EXTERN_C qboolean FS_idPak( const char *pak, const char *base );
 EXTERN_C qboolean FS_ComparePaks( char *neededpaks, int len, qboolean dlstring );
 
 EXTERN_C void FS_Rename( const char *from, const char *to );
@@ -664,9 +667,9 @@ int			Com_EventLoop( void );
 int			Com_Milliseconds( void );	// will be journaled properly
 unsigned	Com_BlockChecksum( const void *buffer, int length );
 unsigned	Com_BlockChecksumKey (void *buffer, int length, int key);
-int			Com_HashKey(char *string, int maxlen);
-int			Com_Filter(char *filter, char *name, int casesensitive);
-int			Com_FilterPath(char *filter, char *name, int casesensitive);
+int			Com_HashKey(const char *string, int maxlen);
+int			Com_Filter(const char *filter, const char *name, int casesensitive);
+int			Com_FilterPath(const char *filter, const char *name, int casesensitive);
 int			Com_RealTime(qtime_t *qtime);
 qboolean	Com_SafeMode( void );
 
@@ -745,8 +748,8 @@ extern "C" {
 #ifdef ZONE_DEBUG
 #define Z_TagMalloc(size, tag)			Z_TagMallocDebug(size, tag, #size, __FILE__, __LINE__)
 #define Z_Malloc(size)					Z_MallocDebug(size, #size, __FILE__, __LINE__)
-void *Z_TagMallocDebug( int size, int tag, char *label, char *file, int line );	// NOT 0 filled memory
-void *Z_MallocDebug( int size, char *label, char *file, int line );			// returns 0 filled memory
+void *Z_TagMallocDebug( int size, int tag, const char *label, const char *file, int line );	// NOT 0 filled memory
+void *Z_MallocDebug( int size, const char *label, const char *file, int line );			// returns 0 filled memory
 #else
 void *Z_TagMalloc( int size, int tag );	// NOT 0 filled memory
 void *Z_Malloc( int size );			// returns 0 filled memory
@@ -771,7 +774,7 @@ void Hunk_Log( void);
 #endif
 
 // commandLine should not include the executable name (argv[0])
-void Com_Init( char *commandLine );
+void Com_Init( const char *commandLine );
 void Com_Frame( void );
 void Com_Shutdown( void );
 
@@ -845,7 +848,7 @@ void SCR_DebugGraph (gfixed value, int color);	// FIXME: move logging to common?
 // server interface
 //
 void SV_Init( void );
-void SV_Shutdown( char *finalmsg );
+void SV_Shutdown( const char *finalmsg );
 void SV_Frame( int msec );
 void SV_PacketEvent( netadr_t from, msg_t *msg );
 qboolean SV_GameCommand( void );
@@ -898,8 +901,8 @@ sysEvent_t	Sys_GetEvent( void );
 
 void	Sys_Init (void);
 
-void	* QDECL Sys_LoadDll( const char *name, char *fqpath , SysCallArg (QDECL **entryPoint)(int, SysCallArgs &),
-				  SysCallArg (QDECL *systemcalls)(int, SysCallArgs &) );
+void	* QDECL Sys_LoadDll( const char *name, char *fqpath , SysCallArg (QDECL **entryPoint)(int, const SysCallArgs &),
+				  SysCallArg (QDECL *systemcalls)(int, const SysCallArgs &) );
 void	Sys_UnloadDll( void *dllHandle );
 
 void	Sys_UnloadGame( void );
@@ -915,7 +918,7 @@ void	*Sys_GetUIAPI( void );
 void	Sys_UnloadBotLib( void );
 void	*Sys_GetBotLibAPI( void *parms );
 
-char	*Sys_GetCurrentUser( void );
+const char	*Sys_GetCurrentUser( void );
 
 void	QDECL Sys_Error( const char *error, ...);
 void	Sys_Quit (void);
@@ -953,15 +956,15 @@ void		Sys_ShowIP(void);
 qboolean	Sys_CheckCD( void );
 
 void	Sys_Mkdir( const char *path );
-char	*Sys_Cwd( void );
+const char	*Sys_Cwd( void );
 void	Sys_SetDefaultCDPath(const char *path);
-char	*Sys_DefaultCDPath(void);
+const char	*Sys_DefaultCDPath(void);
 void	Sys_SetDefaultInstallPath(const char *path);
-char	*Sys_DefaultInstallPath(void);
+const char	*Sys_DefaultInstallPath(void);
 void  Sys_SetDefaultHomePath(const char *path);
-char	*Sys_DefaultHomePath(void);
+const char	*Sys_DefaultHomePath(void);
 
-char **Sys_ListFiles( const char *directory, const char *extension, char *filter, int *numfiles, qboolean wantsubs );
+char **Sys_ListFiles( const char *directory, const char *extension, const char *filter, int *numfiles, qboolean wantsubs );
 void	Sys_FreeFileList( char **list );
 
 void	Sys_BeginProfiling( void );
@@ -1068,16 +1071,17 @@ typedef enum {
 // VM
 
 void	VM_Init( void );
-vm_t	*VM_Create( const char *module, SysCallArg (*systemCalls)(int callnum, SysCallArgs &), vmInterpret_t interpret );
+vm_t	*VM_Create( const char *module, SysCallArg (*systemCalls)(int callnum, const SysCallArgs &), vmInterpret_t interpret );
 // module should be bare: "cgame", not "cgame.dll" or "vm/cgame.qvm"
 
 void	VM_Free( vm_t *vm );
 void	VM_Clear(void);
 void	*VM_ArgPtr( void * value );
 void	*VM_ExplicitArgPtr( vm_t *vm, void * value );
+const void	*VM_ExplicitArgConstPtr( vm_t *vm, const void * value );
 vm_t	*VM_Restart( vm_t *vm );
 
-SysCallArg QDECL VM_Call( vm_t *vm, int callNum, SysCallArgs &args );
+SysCallArg QDECL VM_Call( vm_t *vm, int callNum, const SysCallArgs &args );
 
 void	VM_Debug( int level );
 

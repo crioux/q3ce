@@ -345,11 +345,17 @@ qboolean R_GetModeInfo( int *width, int *height, gfixed *windowAspect, int mode 
 	
 	if ( mode == 0 ) 
 	{
+#ifdef _WIN32
 		HDC hDC = GetDC( GetDesktopWindow() );
 		*width = GetDeviceCaps( hDC, HORZRES );
 		*height = GetDeviceCaps( hDC, VERTRES );
 		ReleaseDC( GetDesktopWindow(), hDC );	
 		*windowAspect = GFIXED_1;
+#else
+		*width = 640;
+		*height = 480;
+		*windowAspect = GFIXED_1;
+#endif
 		return qtrue;
 	}
 	

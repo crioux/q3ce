@@ -67,10 +67,10 @@ int R_CullLocalBox (bvec3_t bounds[2]) {
 		v[1] = bounds[(i>>1)&1][1];
 		v[2] = bounds[(i>>2)&1][2];
 
-		VectorCopy( tr.or.origin, transformed[i] );
-		FIXED_VEC3MA_R( transformed[i], v[0], tr.or.axis[0], transformed[i] );
-		FIXED_VEC3MA_R( transformed[i], v[1], tr.or.axis[1], transformed[i] );
-		FIXED_VEC3MA_R( transformed[i], v[2], tr.or.axis[2], transformed[i] );
+		VectorCopy( tr._or.origin, transformed[i] );
+		FIXED_VEC3MA_R( transformed[i], v[0], tr._or.axis[0], transformed[i] );
+		FIXED_VEC3MA_R( transformed[i], v[1], tr._or.axis[1], transformed[i] );
+		FIXED_VEC3MA_R( transformed[i], v[2], tr._or.axis[2], transformed[i] );
 	}
 
 	// check against frustum planes
@@ -162,9 +162,9 @@ R_LocalNormalToWorld
 =================
 */
 void R_LocalNormalToWorld (avec3_t local, avec3_t world) {
-	world[0] = local[0] * tr.or.axis[0][0] + local[1] * tr.or.axis[1][0] + local[2] * tr.or.axis[2][0];
-	world[1] = local[0] * tr.or.axis[0][1] + local[1] * tr.or.axis[1][1] + local[2] * tr.or.axis[2][1];
-	world[2] = local[0] * tr.or.axis[0][2] + local[1] * tr.or.axis[1][2] + local[2] * tr.or.axis[2][2];
+	world[0] = local[0] * tr._or.axis[0][0] + local[1] * tr._or.axis[1][0] + local[2] * tr._or.axis[2][0];
+	world[1] = local[0] * tr._or.axis[0][1] + local[1] * tr._or.axis[1][1] + local[2] * tr._or.axis[2][1];
+	world[2] = local[0] * tr._or.axis[0][2] + local[1] * tr._or.axis[1][2] + local[2] * tr._or.axis[2][2];
 }
 
 /*
@@ -174,9 +174,9 @@ R_LocalPointToWorld
 =================
 */
 void R_LocalPointToWorld (bvec3_t local, bvec3_t world) {
-	world[0] = local[0] * tr.or.axis[0][0] + local[1] * tr.or.axis[1][0] + local[2] * tr.or.axis[2][0] + tr.or.origin[0];
-	world[1] = local[0] * tr.or.axis[0][1] + local[1] * tr.or.axis[1][1] + local[2] * tr.or.axis[2][1] + tr.or.origin[1];
-	world[2] = local[0] * tr.or.axis[0][2] + local[1] * tr.or.axis[1][2] + local[2] * tr.or.axis[2][2] + tr.or.origin[2];
+	world[0] = local[0] * tr._or.axis[0][0] + local[1] * tr._or.axis[1][0] + local[2] * tr._or.axis[2][0] + tr._or.origin[0];
+	world[1] = local[0] * tr._or.axis[0][1] + local[1] * tr._or.axis[1][1] + local[2] * tr._or.axis[2][1] + tr._or.origin[1];
+	world[2] = local[0] * tr._or.axis[0][2] + local[1] * tr._or.axis[1][2] + local[2] * tr._or.axis[2][2] + tr._or.origin[2];
 }
 
 /*
@@ -186,9 +186,9 @@ R_WorldToLocal
 =================
 */
 void R_WorldToLocal (bvec3_t world, bvec3_t local) {
-	local[0] = FIXED_VEC3DOT(world, tr.or.axis[0]);
-	local[1] = FIXED_VEC3DOT(world, tr.or.axis[1]);
-	local[2] = FIXED_VEC3DOT(world, tr.or.axis[2]);
+	local[0] = FIXED_VEC3DOT(world, tr._or.axis[0]);
+	local[1] = FIXED_VEC3DOT(world, tr._or.axis[1]);
+	local[2] = FIXED_VEC3DOT(world, tr._or.axis[2]);
 }
 
 /*
@@ -268,47 +268,47 @@ Called by both the front end and the back end
 =================
 */
 void R_RotateForEntity( const trRefEntity_t *ent, const viewParms_t *viewParms,
-					   orientationr_t *or ) {
+					   orientationr_t *_or ) {
 	gfixed	glMatrix[16];
 	bvec3_t	delta;
 	afixed	axisLength;
 
 	if ( ent->e.reType != RT_MODEL ) {
-		*or = viewParms->world;
+		*_or = viewParms->world;
 		return;
 	}
 
-	VectorCopy( ent->e.origin, or->origin );
+	VectorCopy( ent->e.origin, _or->origin );
 
-	VectorCopy( ent->e.axis[0], or->axis[0] );
-	VectorCopy( ent->e.axis[1], or->axis[1] );
-	VectorCopy( ent->e.axis[2], or->axis[2] );
+	VectorCopy( ent->e.axis[0], _or->axis[0] );
+	VectorCopy( ent->e.axis[1], _or->axis[1] );
+	VectorCopy( ent->e.axis[2], _or->axis[2] );
 
-	glMatrix[0] = MAKE_GFIXED(or->axis[0][0]);
-	glMatrix[4] = MAKE_GFIXED(or->axis[1][0]);
-	glMatrix[8] = MAKE_GFIXED(or->axis[2][0]);
-	glMatrix[12] = REINTERPRET_GFIXED(or->origin[0]);
+	glMatrix[0] = MAKE_GFIXED(_or->axis[0][0]);
+	glMatrix[4] = MAKE_GFIXED(_or->axis[1][0]);
+	glMatrix[8] = MAKE_GFIXED(_or->axis[2][0]);
+	glMatrix[12] = REINTERPRET_GFIXED(_or->origin[0]);
 
-	glMatrix[1] = MAKE_GFIXED(or->axis[0][1]);
-	glMatrix[5] = MAKE_GFIXED(or->axis[1][1]);
-	glMatrix[9] = MAKE_GFIXED(or->axis[2][1]);
-	glMatrix[13] = REINTERPRET_GFIXED(or->origin[1]);
+	glMatrix[1] = MAKE_GFIXED(_or->axis[0][1]);
+	glMatrix[5] = MAKE_GFIXED(_or->axis[1][1]);
+	glMatrix[9] = MAKE_GFIXED(_or->axis[2][1]);
+	glMatrix[13] = REINTERPRET_GFIXED(_or->origin[1]);
 
-	glMatrix[2] = MAKE_GFIXED(or->axis[0][2]);
-	glMatrix[6] = MAKE_GFIXED(or->axis[1][2]);
-	glMatrix[10] = MAKE_GFIXED(or->axis[2][2]);
-	glMatrix[14] = REINTERPRET_GFIXED(or->origin[2]);
+	glMatrix[2] = MAKE_GFIXED(_or->axis[0][2]);
+	glMatrix[6] = MAKE_GFIXED(_or->axis[1][2]);
+	glMatrix[10] = MAKE_GFIXED(_or->axis[2][2]);
+	glMatrix[14] = REINTERPRET_GFIXED(_or->origin[2]);
 
 	glMatrix[3] = GFIXED_0;
 	glMatrix[7] = GFIXED_0;
 	glMatrix[11] = GFIXED_0;
 	glMatrix[15] = GFIXED_1;
 
-	myGlMultMatrix( glMatrix, viewParms->world.modelMatrix, or->modelMatrix );
+	myGlMultMatrix( glMatrix, viewParms->world.modelMatrix, _or->modelMatrix );
 
 	// calculate the viewer origin in the model's space
 	// needed for fog, specular, and environment mapping
-	VectorSubtract( viewParms->or.origin, or->origin, delta );
+	VectorSubtract( viewParms->_or.origin, _or->origin, delta );
 
 	// compensate for scale in the axes if necessary
 	if ( ent->e.nonNormalizedAxes ) {
@@ -322,9 +322,9 @@ void R_RotateForEntity( const trRefEntity_t *ent, const viewParms_t *viewParms,
 		axisLength = AFIXED_1;
 	}
 
-	or->viewOrigin[0] = FIXED_VEC3DOT( delta, or->axis[0] ) * axisLength;
-	or->viewOrigin[1] = FIXED_VEC3DOT( delta, or->axis[1] ) * axisLength;
-	or->viewOrigin[2] = FIXED_VEC3DOT( delta, or->axis[2] ) * axisLength;
+	_or->viewOrigin[0] = FIXED_VEC3DOT( delta, _or->axis[0] ) * axisLength;
+	_or->viewOrigin[1] = FIXED_VEC3DOT( delta, _or->axis[1] ) * axisLength;
+	_or->viewOrigin[2] = FIXED_VEC3DOT( delta, _or->axis[2] ) * axisLength;
 }
 
 /*
@@ -339,30 +339,30 @@ void R_RotateForViewer (void)
 	gfixed	viewerMatrix[16];
 	vec3_t	origin;
 
-	Com_Memset (&tr.or, 0, sizeof(tr.or));
-	tr.or.axis[0][0] = AFIXED_1;
-	tr.or.axis[1][1] = AFIXED_1;
-	tr.or.axis[2][2] = AFIXED_1;
-	VectorCopy (tr.viewParms.or.origin, tr.or.viewOrigin);
+	Com_Memset (&tr._or, 0, sizeof(tr._or));
+	tr._or.axis[0][0] = AFIXED_1;
+	tr._or.axis[1][1] = AFIXED_1;
+	tr._or.axis[2][2] = AFIXED_1;
+	VectorCopy (tr.viewParms._or.origin, tr._or.viewOrigin);
 
 	// transform by the camera placement
-	origin[0]=REINTERPRET_GFIXED(tr.viewParms.or.origin[0]);
-	origin[1]=REINTERPRET_GFIXED(tr.viewParms.or.origin[1]);
-	origin[2]=REINTERPRET_GFIXED(tr.viewParms.or.origin[2]);
+	origin[0]=REINTERPRET_GFIXED(tr.viewParms._or.origin[0]);
+	origin[1]=REINTERPRET_GFIXED(tr.viewParms._or.origin[1]);
+	origin[2]=REINTERPRET_GFIXED(tr.viewParms._or.origin[2]);
 
-	viewerMatrix[0] = MAKE_GFIXED( tr.viewParms.or.axis[0][0] );
-	viewerMatrix[4] = MAKE_GFIXED( tr.viewParms.or.axis[0][1] );
-	viewerMatrix[8] = MAKE_GFIXED( tr.viewParms.or.axis[0][2] );
+	viewerMatrix[0] = MAKE_GFIXED( tr.viewParms._or.axis[0][0] );
+	viewerMatrix[4] = MAKE_GFIXED( tr.viewParms._or.axis[0][1] );
+	viewerMatrix[8] = MAKE_GFIXED( tr.viewParms._or.axis[0][2] );
 	viewerMatrix[12] = -origin[0] * viewerMatrix[0] + -origin[1] * viewerMatrix[4] + -origin[2] * viewerMatrix[8];
 
-	viewerMatrix[1] = MAKE_GFIXED( tr.viewParms.or.axis[1][0] );
-	viewerMatrix[5] = MAKE_GFIXED( tr.viewParms.or.axis[1][1] );
-	viewerMatrix[9] = MAKE_GFIXED( tr.viewParms.or.axis[1][2] );
+	viewerMatrix[1] = MAKE_GFIXED( tr.viewParms._or.axis[1][0] );
+	viewerMatrix[5] = MAKE_GFIXED( tr.viewParms._or.axis[1][1] );
+	viewerMatrix[9] = MAKE_GFIXED( tr.viewParms._or.axis[1][2] );
 	viewerMatrix[13] = -origin[0] * viewerMatrix[1] + -origin[1] * viewerMatrix[5] + -origin[2] * viewerMatrix[9];
 
-	viewerMatrix[2] = MAKE_GFIXED( tr.viewParms.or.axis[2][0] );
-	viewerMatrix[6] = MAKE_GFIXED( tr.viewParms.or.axis[2][1] );
-	viewerMatrix[10] = MAKE_GFIXED( tr.viewParms.or.axis[2][2] );
+	viewerMatrix[2] = MAKE_GFIXED( tr.viewParms._or.axis[2][0] );
+	viewerMatrix[6] = MAKE_GFIXED( tr.viewParms._or.axis[2][1] );
+	viewerMatrix[10] = MAKE_GFIXED( tr.viewParms._or.axis[2][2] );
 	viewerMatrix[14] = -origin[0] * viewerMatrix[2] + -origin[1] * viewerMatrix[6] + -origin[2] * viewerMatrix[10];
 
 	viewerMatrix[3] = GFIXED_0;
@@ -372,9 +372,9 @@ void R_RotateForViewer (void)
 
 	// convert from our coordinate system (looking down X)
 	// to OpenGL's coordinate system (looking down -Z)
-	myGlMultMatrix( viewerMatrix, s_flipMatrix, tr.or.modelMatrix );
+	myGlMultMatrix( viewerMatrix, s_flipMatrix, tr._or.modelMatrix );
 
-	tr.viewParms.world = tr.or;
+	tr.viewParms.world = tr._or;
 
 }
 
@@ -430,9 +430,9 @@ static void SetFarClip( void )
 			v[2] = tr.viewParms.visBounds[1][2];
 		}
 
-		vecTo[0]=MAKE_LFIXED(v[0]-tr.viewParms.or.origin[0]);
-		vecTo[1]=MAKE_LFIXED(v[1]-tr.viewParms.or.origin[1]);
-		vecTo[2]=MAKE_LFIXED(v[2]-tr.viewParms.or.origin[2]);
+		vecTo[0]=MAKE_LFIXED(v[0]-tr.viewParms._or.origin[0]);
+		vecTo[1]=MAKE_LFIXED(v[1]-tr.viewParms._or.origin[1]);
+		vecTo[2]=MAKE_LFIXED(v[2]-tr.viewParms._or.origin[2]);
 		
 		distance = FIXED_VEC3LEN_SQ(vecTo);
 
@@ -511,25 +511,25 @@ void R_SetupFrustum (void) {
 	xs = FIXED_SIN( ang );
 	xc = FIXED_COS( ang );
 
-	FIXED_VEC3SCALE( tr.viewParms.or.axis[0], xs, tr.viewParms.frustum[0].normal );
-	FIXED_VEC3MA( tr.viewParms.frustum[0].normal, xc, tr.viewParms.or.axis[1], tr.viewParms.frustum[0].normal );
+	FIXED_VEC3SCALE( tr.viewParms._or.axis[0], xs, tr.viewParms.frustum[0].normal );
+	FIXED_VEC3MA( tr.viewParms.frustum[0].normal, xc, tr.viewParms._or.axis[1], tr.viewParms.frustum[0].normal );
 
-	FIXED_VEC3SCALE( tr.viewParms.or.axis[0], xs, tr.viewParms.frustum[1].normal );
-	FIXED_VEC3MA( tr.viewParms.frustum[1].normal, -xc, tr.viewParms.or.axis[1], tr.viewParms.frustum[1].normal );
+	FIXED_VEC3SCALE( tr.viewParms._or.axis[0], xs, tr.viewParms.frustum[1].normal );
+	FIXED_VEC3MA( tr.viewParms.frustum[1].normal, -xc, tr.viewParms._or.axis[1], tr.viewParms.frustum[1].normal );
 
 	ang = MAKE_CFIXED(tr.viewParms.fovY / AFIXED(360,0) * AFIXED_PI );
 	xs = FIXED_SIN( ang );
 	xc = FIXED_COS( ang );
 
-	FIXED_VEC3SCALE( tr.viewParms.or.axis[0], xs, tr.viewParms.frustum[2].normal );
-	FIXED_VEC3MA( tr.viewParms.frustum[2].normal, xc, tr.viewParms.or.axis[2], tr.viewParms.frustum[2].normal );
+	FIXED_VEC3SCALE( tr.viewParms._or.axis[0], xs, tr.viewParms.frustum[2].normal );
+	FIXED_VEC3MA( tr.viewParms.frustum[2].normal, xc, tr.viewParms._or.axis[2], tr.viewParms.frustum[2].normal );
 
-	FIXED_VEC3SCALE( tr.viewParms.or.axis[0], xs, tr.viewParms.frustum[3].normal );
-	FIXED_VEC3MA( tr.viewParms.frustum[3].normal, -xc, tr.viewParms.or.axis[2], tr.viewParms.frustum[3].normal );
+	FIXED_VEC3SCALE( tr.viewParms._or.axis[0], xs, tr.viewParms.frustum[3].normal );
+	FIXED_VEC3MA( tr.viewParms.frustum[3].normal, -xc, tr.viewParms._or.axis[2], tr.viewParms.frustum[3].normal );
 
 	for (i=0 ; i<4 ; i++) {
 		tr.viewParms.frustum[i].type = PLANE_NON_AXIAL;
-		tr.viewParms.frustum[i].dist = FIXED_VEC3DOT (tr.viewParms.or.origin, tr.viewParms.frustum[i].normal);
+		tr.viewParms.frustum[i].dist = FIXED_VEC3DOT (tr.viewParms._or.origin, tr.viewParms.frustum[i].normal);
 		SetPlaneSignbits( &tr.viewParms.frustum[i] );
 	}
 }
@@ -642,15 +642,15 @@ qboolean R_GetPortalOrientations( drawSurf_t *drawSurf, int entityNum,
 		tr.currentEntity = &tr.refdef.entities[entityNum];
 
 		// get the orientation of the entity
-		R_RotateForEntity( tr.currentEntity, &tr.viewParms, &tr.or );
+		R_RotateForEntity( tr.currentEntity, &tr.viewParms, &tr._or );
 
 		// rotate the plane, but keep the non-rotated version for matching
 		// against the portalSurface entities
 		R_LocalNormalToWorld( originalPlane.normal, plane.normal );
-		plane.dist = originalPlane.dist + FIXED_VEC3DOT_R( plane.normal, tr.or.origin );
+		plane.dist = originalPlane.dist + FIXED_VEC3DOT_R( plane.normal, tr._or.origin );
 
 		// translate the original plane
-		originalPlane.dist = originalPlane.dist + FIXED_VEC3DOT_R( originalPlane.normal, tr.or.origin );
+		originalPlane.dist = originalPlane.dist + FIXED_VEC3DOT_R( originalPlane.normal, tr._or.origin );
 	} else {
 		plane = originalPlane;
 	}
@@ -760,15 +760,15 @@ static qboolean IsMirror( const drawSurf_t *drawSurf, int entityNum )
 		tr.currentEntity = &tr.refdef.entities[entityNum];
 
 		// get the orientation of the entity
-		R_RotateForEntity( tr.currentEntity, &tr.viewParms, &tr.or );
+		R_RotateForEntity( tr.currentEntity, &tr.viewParms, &tr._or );
 
 		// rotate the plane, but keep the non-rotated version for matching
 		// against the portalSurface entities
 		R_LocalNormalToWorld( originalPlane.normal, plane.normal );
-		plane.dist = originalPlane.dist + FIXED_VEC3DOT_R( plane.normal, tr.or.origin );
+		plane.dist = originalPlane.dist + FIXED_VEC3DOT_R( plane.normal, tr._or.origin );
 
 		// translate the original plane
-		originalPlane.dist = originalPlane.dist + FIXED_VEC3DOT_R( originalPlane.normal, tr.or.origin );
+		originalPlane.dist = originalPlane.dist + FIXED_VEC3DOT_R( originalPlane.normal, tr._or.origin );
 	} 
 	else 
 	{
@@ -842,7 +842,7 @@ static qboolean SurfIsOffscreen( const drawSurf_t *drawSurf, vec4_t clipDest[128
 		int j;
 		unsigned int pointFlags = 0;
 
-		R_TransformModelToClip( tess.xyz[i], tr.or.modelMatrix, tr.viewParms.projectionMatrix, eye, clip );
+		R_TransformModelToClip( tess.xyz[i], tr._or.modelMatrix, tr.viewParms.projectionMatrix, eye, clip );
 
 		for ( j = 0; j < 3; j++ )
 		{
@@ -878,7 +878,7 @@ static qboolean SurfIsOffscreen( const drawSurf_t *drawSurf, vec4_t clipDest[128
 		bfixed dot;
 		bfixed len;
 
-		VectorSubtract( tess.xyz[tess.indexes[i]], tr.viewParms.or.origin, normal );
+		VectorSubtract( tess.xyz[tess.indexes[i]], tr.viewParms._or.origin, normal );
 
 		len = FIXED_VEC3LEN_SQ( normal );			// lose the sqrt
 		if ( len < shortest )
@@ -949,14 +949,14 @@ qboolean R_MirrorViewBySurface (drawSurf_t *drawSurf, int entityNum) {
 		return qfalse;		// bad portal, no portalentity
 	}
 
-	R_MirrorPoint (oldParms.or.origin, &surface, &camera, newParms.or.origin );
+	R_MirrorPoint (oldParms._or.origin, &surface, &camera, newParms._or.origin );
 
 	VectorSubtract( avec3_origin, camera.axis[0], newParms.portalPlane.normal );
 	newParms.portalPlane.dist = FIXED_VEC3DOT( camera.origin, newParms.portalPlane.normal );
 	
-	R_MirrorVector (oldParms.or.axis[0], &surface, &camera, newParms.or.axis[0]);
-	R_MirrorVector (oldParms.or.axis[1], &surface, &camera, newParms.or.axis[1]);
-	R_MirrorVector (oldParms.or.axis[2], &surface, &camera, newParms.or.axis[2]);
+	R_MirrorVector (oldParms._or.axis[0], &surface, &camera, newParms._or.axis[0]);
+	R_MirrorVector (oldParms._or.axis[1], &surface, &camera, newParms._or.axis[1]);
+	R_MirrorVector (oldParms._or.axis[2], &surface, &camera, newParms._or.axis[2]);
 
 	// OPTIMIZE: restrict the viewport on the mirrored view
 
@@ -1345,8 +1345,8 @@ void R_AddEntitySurfaces (void) {
 			break;
 
 		case RT_MODEL:
-			// we must set up parts of tr.or for model culling
-			R_RotateForEntity( ent, &tr.viewParms, &tr.or );
+			// we must set up parts of tr._or for model culling
+			R_RotateForEntity( ent, &tr.viewParms, &tr._or );
 
 			tr.currentModel = R_GetModelByHandle( ent->e.hModel );
 			if (!tr.currentModel) {

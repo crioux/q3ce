@@ -39,15 +39,15 @@ Used by both the front end (for DlightBmodel) and
 the back end (before doing the lighting calculation)
 ===============
 */
-void R_TransformDlights( int count, dlight_t *dl, orientationr_t *or) {
+void R_TransformDlights( int count, dlight_t *dl, orientationr_t *_or) {
 	int		i;
 	bvec3_t	temp;
 
 	for ( i = 0 ; i < count ; i++, dl++ ) {
-		VectorSubtract( dl->origin, or->origin, temp );
-		dl->transformed[0] = FIXED_VEC3DOT( temp, or->axis[0] );
-		dl->transformed[1] = FIXED_VEC3DOT( temp, or->axis[1] );
-		dl->transformed[2] = FIXED_VEC3DOT( temp, or->axis[2] );
+		VectorSubtract( dl->origin, _or->origin, temp );
+		dl->transformed[0] = FIXED_VEC3DOT( temp, _or->axis[0] );
+		dl->transformed[1] = FIXED_VEC3DOT( temp, _or->axis[1] );
+		dl->transformed[2] = FIXED_VEC3DOT( temp, _or->axis[2] );
 	}
 }
 
@@ -65,7 +65,7 @@ void R_DlightBmodel( bmodel_t *bmodel ) {
 	msurface_t	*surf;
 
 	// transform all the lights
-	R_TransformDlights( tr.refdef.num_dlights, tr.refdef.dlights, &tr.or );
+	R_TransformDlights( tr.refdef.num_dlights, tr.refdef.dlights, &tr._or );
 
 	mask = 0;
 	for ( i=0 ; i<tr.refdef.num_dlights ; i++ ) {

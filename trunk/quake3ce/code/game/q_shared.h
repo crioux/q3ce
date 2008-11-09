@@ -23,7 +23,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #ifndef __Q_SHARED_H
 #define __Q_SHARED_H
 
+#ifdef _WIN32
 #include<windows.h>
+#else
+#include"../qcommon/unixdefs.h"
+#endif
 
 #include"../qcommon/fixed.h"
 
@@ -170,6 +174,58 @@ ID_INLINE bfixed LittleFixed_IS_FLOAT_B(bfixed f) { return bfixed::Construct(Lit
 
 #endif
 
+//======================= LINUX DEFINES =================================
+
+#ifdef _LINUX
+
+#define	MAC_STATIC
+
+#undef QDECL
+#define	QDECL
+
+// buildstring will be incorporated into the version string
+#ifdef _DEBUG
+#ifdef _M_IX86
+#define	CPUSTRING	"linux-x86-debug"
+#elif defined ARM
+#define	CPUSTRING	"linux-ARM-debug"
+#endif
+#else
+#ifdef _M_IX86
+#define	CPUSTRING	"linux-x86"
+#elif defined ARM
+#define	CPUSTRING	"linux-ARM"
+#endif
+#endif
+
+#define ID_INLINE __inline 
+
+ID_INLINE short BigShort(short l) { return ShortSwap(l); }
+ID_INLINE short LittleShort(short l) { return l; }
+ID_INLINE int BigLong(int l) { return LongSwap(l); }
+ID_INLINE int LittleLong(int l) { return l; }
+ID_INLINE float BigFloat(float f) { return FloatSwap(&f); }
+ID_INLINE float LittleFloat(float f) { return f; }
+//ID_INLINE gfixed BigFixed(gfixed f) { return INT_AS_FIXED(LongSwap(GFIXED_AS_INT(f))); }
+ID_INLINE gfixed LittleFixed(gfixed f) { return f; }
+//ID_INLINE afixed BigAFixed(afixed f) { return INT_AS_FIXED(LongSwap(AFIXED_AS_INT(f))); }
+//ID_INLINE bfixed BigBFixed(bfixed f) { return INT_AS_FIXED(LongSwap(BFIXED_AS_INT(f))); }
+ID_INLINE afixed LittleAFixed(afixed f) { return f; }
+ID_INLINE bfixed LittleBFixed(bfixed f) { return f; }
+
+#ifdef FIXED_IS_FLOAT
+ID_INLINE gfixed LittleFixed_IS_FLOAT(gfixed f) { return LittleFixed(f); }
+ID_INLINE afixed LittleFixed_IS_FLOAT_A(afixed f) { return LittleAFixed(f); }
+ID_INLINE bfixed LittleFixed_IS_FLOAT_B(bfixed f) { return LittleBFixed(f); }
+#else
+ID_INLINE gfixed LittleFixed_IS_FLOAT(gfixed f) { return gfixed::Construct(LittleFloat(*(float *)&f)); }
+ID_INLINE afixed LittleFixed_IS_FLOAT_A(afixed f) { return afixed::Construct(LittleFloat(*(float *)&f)); }
+ID_INLINE bfixed LittleFixed_IS_FLOAT_B(bfixed f) { return bfixed::Construct(LittleFloat(*(float *)&f)); }
+#endif
+
+#define	PATH_SEP '/'
+
+#endif
 
 
 //=============================================================
@@ -298,7 +354,7 @@ typedef enum {
 
 #ifdef HUNK_DEBUG
 #define Hunk_Alloc( size, preference )				Hunk_AllocDebug(size, preference, #size, __FILE__, __LINE__)
-void *Hunk_AllocDebug( int size, ha_pref preference, char *label, char *file, int line );
+void *Hunk_AllocDebug( int size, ha_pref preference, const char *label, const char *file, int line );
 #else
 void *Hunk_Alloc( int size, ha_pref preference );
 #endif
@@ -311,8 +367,16 @@ void Snd_Memset (void* dest, const int val, const size_t count);
 #define Snd_Memset Com_Memset
 #endif
 
-EXTERN_C void Com_Memset (void* dest, const int val, const size_t count);
-EXTERN_C void Com_Memcpy (void* dest, const void* src, const size_t count);
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void Com_Memset (void* dest, const int val, const size_t count);
+void Com_Memcpy (void* dest, const void* src, const size_t count);
+
+#ifdef __cplusplus
+}
+#endif
 
 #define CIN_system	1
 #define CIN_loop	2
@@ -607,6 +671,12 @@ inline void VectorCopyB2A(const bfixed *a, afixed *b)
 	b[0]=MAKE_AFIXED(a[0]);
 	b[1]=MAKE_AFIXED(a[1]);
 	b[2]=MAKE_AFIXED(a[2]);
+}
+inline void VectorCopyA2B(const afixed *a, bfixed *b)
+{
+	b[0]=MAKE_BFIXED(a[0]);
+	b[1]=MAKE_BFIXED(a[1]);
+	b[2]=MAKE_BFIXED(a[2]);
 }
 
 
@@ -930,6 +1000,7 @@ typedef bfixed bmat_33[3][3];
 typedef afixed amat_33[3][3];
 void MatrixMultiply(bmat_33 &in1, bmat_33 &in2, bmat_33 &out);
 void AngleVectors( const avec3_t angles, avec3_t forward, avec3_t right, avec3_t up);
+void AngleVectors( const avec3_t angles, bvec3_t forward, bvec3_t right, bvec3_t up);
 void PerpendicularVector( bvec3_t dst, const bvec3_t src );
 #ifndef FIXED_IS_FLOAT
 void MatrixMultiply(amat_33 &in1, amat_33 &in2, amat_33 &out);
@@ -954,12 +1025,12 @@ void	COM_DefaultExtension( char *path, int maxSize, const char *extension );
 
 void	COM_BeginParseSession( const char *name );
 int		COM_GetCurrentParseLine( void );
-char	*COM_Parse( char **data_p );
-char	*COM_ParseExt( char **data_p, qboolean allowLineBreak );
+const char	*COM_Parse( const char **data_p );
+const char	*COM_ParseExt( const char * *data_p, qboolean allowLineBreak );
 int		COM_Compress( char *data_p );
-void	COM_ParseError( char *format, ... );
-void	COM_ParseWarning( char *format, ... );
-//int		COM_ParseInfos( char *buf, int max, char infos[][MAX_INFO_STRING] );
+void	COM_ParseError( const char *format, ... );
+void	COM_ParseWarning( const char *format, ... );
+//int		COM_ParseInfos( const char *buf, int max, char infos[][MAX_INFO_STRING] );
 
 #define MAX_TOKENLENGTH		1024
 
@@ -983,14 +1054,14 @@ typedef struct pc_token_s
 
 // data is an in/out parm, returns a parsed out token
 
-void	COM_MatchToken( char**buf_p, char *match );
+void	COM_MatchToken( const char**buf_p, const char *match );
 
-void SkipBracedSection (char **program);
-void SkipRestOfLine ( char **data );
+void SkipBracedSection (const char * *program);
+void SkipRestOfLine (const char * *data );
 
-void Parse1DMatrix (char **buf_p, int x, gfixed *m);
-void Parse2DMatrix (char **buf_p, int y, int x, gfixed *m);
-void Parse3DMatrix (char **buf_p, int z, int y, int x, gfixed *m);
+void Parse1DMatrix (const char **buf_p, int x, gfixed *m);
+void Parse2DMatrix (const char **buf_p, int y, int x, gfixed *m);
+void Parse3DMatrix (const char **buf_p, int z, int y, int x, gfixed *m);
 
 void	QDECL Com_sprintf (char *dest, int size, const char *fmt, ...);
 
@@ -1062,14 +1133,14 @@ gfixed	LittleFloat (const gfixed *l);
 
 void	Swap_Init (void);
 */
-char	* QDECL va(char *format, ...);
+const char	* QDECL va(const char *format, ...);
 
 //=============================================
 
 //
 // key / value info strings
 //
-char *Info_ValueForKey( const char *s, const char *key );
+const char *Info_ValueForKey( const char *s, const char *key );
 void Info_RemoveKey( char *s, const char *key );
 void Info_RemoveKey_big( char *s, const char *key );
 void Info_SetValueForKey( char *s, const char *key, const char *value );
@@ -1599,7 +1670,7 @@ typedef enum _flag_status {
 #define CDKEY_LEN 16
 #define CDCHKSUM_LEN 2
 
-long ID_INLINE ReadLittleLong(const byte *buf)
+ID_INLINE long ReadLittleLong(const byte *buf)
 {
 	return (long) (
 	(((unsigned long)(unsigned char)(buf[0]))<<0) | 
@@ -1609,7 +1680,8 @@ long ID_INLINE ReadLittleLong(const byte *buf)
 	); 
 
 }
-short ID_INLINE ReadLittleShort(const byte *buf) 
+
+ID_INLINE short ReadLittleShort(const byte *buf)
 { 
 	return (short) (
 	(((unsigned short)(unsigned char)(buf[0]))<<0) | 
@@ -1702,5 +1774,17 @@ public:
 	const SysCallArg & operator[] (int pos) const  { if(pos<0 || pos>m_nArgs) { DebugBreak(); } return m_args[pos]; }
 };
 
+
+#ifdef _WIN32
+
+#define DLLEXPORT __declspec(dllexport)
+#define DLLIMPORT __declspec(dllimport)
+
+#else
+
+#define DLLEXPORT __attribute__((visibility("default")))
+#define DLLIMPORT 
+
+#endif
 
 #endif	// __Q_SHARED_H

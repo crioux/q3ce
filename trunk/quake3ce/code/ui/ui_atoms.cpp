@@ -167,7 +167,7 @@ void UI_LoadBestScores(const char *map, int game) {
 	}
 	UI_SetBestScores(&newInfo, qfalse);
 
-	Com_sprintf(fileName, MAX_QPATH, "demos/%s_%d.dm_%d", map, game, (int)_UI_trap_Cvar_VariableValue("protocol"));
+	Com_sprintf(fileName, MAX_QPATH, "demos/%s_%d.dm_%d", map, game, FIXED_TO_INT(_UI_trap_Cvar_VariableValue("protocol")));
 	uiInfo.demoAvailable = qfalse;
 	if (_UI_trap_FS_FOpenFile(fileName, &f, FS_READ) >= 0) {
 		uiInfo.demoAvailable = qtrue;
@@ -261,7 +261,7 @@ static void UI_CalcPostGameStats() {
 	time = atoi(UI_Argv(13));
 	newInfo.captures = atoi(UI_Argv(14));
 
-	newInfo.time = (time - _UI_trap_Cvar_VariableValue("ui_matchStartTime")) / 1000;
+	newInfo.time = (time - FIXED_TO_INT(_UI_trap_Cvar_VariableValue("ui_matchStartTime"))) / 1000;
 	adjustedTime = uiInfo.mapList[ui_currentMap.integer].timeToBeat[game];
 	if (newInfo.time < adjustedTime) { 
 		newInfo.timeBonus = (adjustedTime - newInfo.time) * 10;
@@ -275,7 +275,7 @@ static void UI_CalcPostGameStats() {
 		newInfo.shutoutBonus = 0;
 	}
 
-	newInfo.skillBonus = _UI_trap_Cvar_VariableValue("g_spSkill");
+	newInfo.skillBonus = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("g_spSkill"));
 	if (newInfo.skillBonus <= 0) {
 		newInfo.skillBonus = 1;
 	}
@@ -417,7 +417,7 @@ void UI_DrawNamedPic( gfixed x, gfixed y, gfixed width, gfixed height, const cha
 
 	hShader = _UI_trap_R_RegisterShaderNoMip( picname );
 	UI_AdjustFrom640( &x, &y, &width, &height );
-	_UI_trap_R_DrawStretchPic( x, y, width, height, 0, 0, 1, 1, hShader );
+	_UI_trap_R_DrawStretchPic( x, y, width, height, GFIXED_0, GFIXED_0, GFIXED_1, GFIXED_1, hShader );
 }
 
 void UI_DrawHandlePic( gfixed x, gfixed y, gfixed w, gfixed h, qhandle_t hShader ) {
@@ -426,24 +426,24 @@ void UI_DrawHandlePic( gfixed x, gfixed y, gfixed w, gfixed h, qhandle_t hShader
 	gfixed	t0;
 	gfixed	t1;
 
-	if( w < 0 ) {	// flip about vertical
+	if( w < GFIXED_0 ) {	// flip about vertical
 		w  = -w;
-		s0 = 1;
-		s1 = 0;
+		s0 = GFIXED_1;
+		s1 = GFIXED_0;
 	}
 	else {
-		s0 = 0;
-		s1 = 1;
+		s0 = GFIXED_0;
+		s1 = GFIXED_1;
 	}
 
-	if( h < 0 ) {	// flip about horizontal
+	if( h < GFIXED_0 ) {	// flip about horizontal
 		h  = -h;
-		t0 = 1;
-		t1 = 0;
+		t0 = GFIXED_1;
+		t1 = GFIXED_0;
 	}
 	else {
-		t0 = 0;
-		t1 = 1;
+		t0 = GFIXED_0;
+		t1 = GFIXED_1;
 	}
 	
 	UI_AdjustFrom640( &x, &y, &w, &h );
@@ -461,21 +461,21 @@ void UI_FillRect( gfixed x, gfixed y, gfixed width, gfixed height, const gfixed 
 	_UI_trap_R_SetColor( color );
 
 	UI_AdjustFrom640( &x, &y, &width, &height );
-	_UI_trap_R_DrawStretchPic( x, y, width, height, 0, 0, 0, 0, uiInfo.uiDC.whiteShader );
+	_UI_trap_R_DrawStretchPic( x, y, width, height, GFIXED_0, GFIXED_0, GFIXED_0, GFIXED_0, uiInfo.uiDC.whiteShader );
 
 	_UI_trap_R_SetColor( NULL );
 }
 
 void UI_DrawSides(gfixed x, gfixed y, gfixed w, gfixed h) {
 	UI_AdjustFrom640( &x, &y, &w, &h );
-	_UI_trap_R_DrawStretchPic( x, y, 1, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader );
-	_UI_trap_R_DrawStretchPic( x + w - 1, y, 1, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader );
+	_UI_trap_R_DrawStretchPic( x, y, GFIXED_1, h, GFIXED_0, GFIXED_0, GFIXED_0, GFIXED_0, uiInfo.uiDC.whiteShader );
+	_UI_trap_R_DrawStretchPic( x + w - GFIXED_1, y, GFIXED_1, h, GFIXED_0, GFIXED_0, GFIXED_0, GFIXED_0, uiInfo.uiDC.whiteShader );
 }
 
 void UI_DrawTopBottom(gfixed x, gfixed y, gfixed w, gfixed h) {
 	UI_AdjustFrom640( &x, &y, &w, &h );
-	_UI_trap_R_DrawStretchPic( x, y, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader );
-	_UI_trap_R_DrawStretchPic( x, y + h - 1, w, 1, 0, 0, 0, 0, uiInfo.uiDC.whiteShader );
+	_UI_trap_R_DrawStretchPic( x, y, w, GFIXED_1, GFIXED_0, GFIXED_0, GFIXED_0, GFIXED_0, uiInfo.uiDC.whiteShader );
+	_UI_trap_R_DrawStretchPic( x, y + h - GFIXED_1, w, GFIXED_1, GFIXED_0, GFIXED_0, GFIXED_0, GFIXED_0, uiInfo.uiDC.whiteShader );
 }
 /*
 ================
@@ -504,8 +504,16 @@ void UI_UpdateScreen( void ) {
 
 void UI_DrawTextBox (int x, int y, int width, int lines)
 {
-	UI_FillRect( x + BIGCHAR_WIDTH/2, y + BIGCHAR_HEIGHT/2, ( width + 1 ) * BIGCHAR_WIDTH, ( lines + 1 ) * BIGCHAR_HEIGHT, colorBlack );
-	UI_DrawRect( x + BIGCHAR_WIDTH/2, y + BIGCHAR_HEIGHT/2, ( width + 1 ) * BIGCHAR_WIDTH, ( lines + 1 ) * BIGCHAR_HEIGHT, colorWhite );
+	UI_FillRect( MAKE_GFIXED(x + BIGCHAR_WIDTH/2), 
+		     MAKE_GFIXED(y + BIGCHAR_HEIGHT/2),
+		     MAKE_GFIXED(( width + 1 ) * BIGCHAR_WIDTH),
+		     MAKE_GFIXED(( lines + 1 ) * BIGCHAR_HEIGHT),
+	             colorBlack );
+	UI_DrawRect( MAKE_GFIXED(x + BIGCHAR_WIDTH/2), 
+		     MAKE_GFIXED(y + BIGCHAR_HEIGHT/2),
+                     MAKE_GFIXED(( width + 1 ) * BIGCHAR_WIDTH),
+                     MAKE_GFIXED(( lines + 1 ) * BIGCHAR_HEIGHT),
+                     colorWhite );
 }
 
 qboolean UI_CursorInRect (int x, int y, int width, int height)

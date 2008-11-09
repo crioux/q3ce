@@ -268,7 +268,7 @@ Inserts the current value of a variable as command text
 ===============
 */
 void Cmd_Vstr_f( void ) {
-	char	*v;
+	const char	*v;
 
 	if (Cmd_Argc () != 2) {
 		Com_Printf ("vstr <variablename> : execute a variable command\n");
@@ -334,7 +334,7 @@ int		Cmd_Argc( void ) {
 Cmd_Argv
 ============
 */
-char	*Cmd_Argv( int arg ) {
+const char	*Cmd_Argv( int arg ) {
 	if ( (unsigned)arg >= cmd_argc ) {
 		return "";
 	}
@@ -361,7 +361,7 @@ Cmd_Args
 Returns a single string containing argv(1) to argv(argc()-1)
 ============
 */
-char	*Cmd_Args( void ) {
+const char	*Cmd_Args( void ) {
 	static	char		cmd_args[MAX_STRING_CHARS];
 	int		i;
 
@@ -383,7 +383,7 @@ Cmd_Args
 Returns a single string containing argv(arg) to argv(argc()-1)
 ============
 */
-char *Cmd_ArgsFrom( int arg ) {
+const char *Cmd_ArgsFrom( int arg ) {
 	static	char		cmd_args[BIG_INFO_STRING];
 	int		i;
 
@@ -421,7 +421,7 @@ For rcon use when you want to transmit without altering quoting
 https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=543
 ============
 */
-char *Cmd_Cmd()
+const char *Cmd_Cmd()
 {
 	return cmd_cmd;
 }
@@ -681,7 +681,7 @@ void Cmd_List_f (void)
 {
 	cmd_function_t	*cmd;
 	int				i;
-	char			*match;
+	const char			*match;
 
 	if ( Cmd_Argc() > 1 ) {
 		match = Cmd_Argv( 1 );

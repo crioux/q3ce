@@ -334,16 +334,16 @@ GlobalVectorToLocal
 ==================
 */
 static void GlobalVectorToLocal( const bvec3_t in, bvec3_t out ) {
-	out[0] = FIXED_VEC3DOT( in, backEnd.or.axis[0] );
-	out[1] = FIXED_VEC3DOT( in, backEnd.or.axis[1] );
-	out[2] = FIXED_VEC3DOT( in, backEnd.or.axis[2] );
+	out[0] = FIXED_VEC3DOT( in, backEnd._or.axis[0] );
+	out[1] = FIXED_VEC3DOT( in, backEnd._or.axis[1] );
+	out[2] = FIXED_VEC3DOT( in, backEnd._or.axis[2] );
 }
 
 #ifndef FIXED_IS_FLOAT
 static void GlobalVectorToLocal( const avec3_t in, avec3_t out ) {
-	out[0] = FIXED_VEC3DOT( in, backEnd.or.axis[0] );
-	out[1] = FIXED_VEC3DOT( in, backEnd.or.axis[1] );
-	out[2] = FIXED_VEC3DOT( in, backEnd.or.axis[2] );
+	out[0] = FIXED_VEC3DOT( in, backEnd._or.axis[0] );
+	out[1] = FIXED_VEC3DOT( in, backEnd._or.axis[1] );
+	out[2] = FIXED_VEC3DOT( in, backEnd._or.axis[2] );
 }
 #endif
 
@@ -377,11 +377,11 @@ static void AutospriteDeform( void ) {
 	tess.numIndexes = 0;
 
 	if ( backEnd.currentEntity != &tr.worldEntity ) {
-		GlobalVectorToLocal( backEnd.viewParms.or.axis[1], leftDir );
-		GlobalVectorToLocal( backEnd.viewParms.or.axis[2], upDir );
+		GlobalVectorToLocal( backEnd.viewParms._or.axis[1], leftDir );
+		GlobalVectorToLocal( backEnd.viewParms._or.axis[2], upDir );
 	} else {
-		VectorCopy( backEnd.viewParms.or.axis[1], leftDir );
-		VectorCopy( backEnd.viewParms.or.axis[2], upDir );
+		VectorCopy( backEnd.viewParms._or.axis[1], leftDir );
+		VectorCopy( backEnd.viewParms._or.axis[2], upDir );
 	}
 
 	for ( i = 0 ; i < oldVerts ; i+=4 ) {
@@ -458,9 +458,9 @@ static void Autosprite2Deform( void ) {
 	}
 
 	if ( backEnd.currentEntity != &tr.worldEntity ) {
-		GlobalVectorToLocal( backEnd.viewParms.or.axis[0], forward );
+		GlobalVectorToLocal( backEnd.viewParms._or.axis[0], forward );
 	} else {
-		VectorCopy( backEnd.viewParms.or.axis[0], forward );
+		VectorCopy( backEnd.viewParms._or.axis[0], forward );
 	}
 
 	// this is a lot of work for two triangles...
@@ -838,11 +838,11 @@ void RB_CalcFogTexCoords( gfixed *st ) {
 	fog = tr.world->fogs + tess.fogNum;
 
 	// all fogging distance is based on world Z units
-	VectorSubtract( backEnd.or.origin, backEnd.viewParms.or.origin, local );
-	fogDistanceVector[0] = -MAKE_AFIXED(backEnd.or.modelMatrix[2]);
-	fogDistanceVector[1] = -MAKE_AFIXED(backEnd.or.modelMatrix[6]);
-	fogDistanceVector[2] = -MAKE_AFIXED(backEnd.or.modelMatrix[10]);
-	fogDistanceVectorDist= FIXED_VEC3DOT( local, backEnd.viewParms.or.axis[0] );
+	VectorSubtract( backEnd._or.origin, backEnd.viewParms._or.origin, local );
+	fogDistanceVector[0] = -MAKE_AFIXED(backEnd._or.modelMatrix[2]);
+	fogDistanceVector[1] = -MAKE_AFIXED(backEnd._or.modelMatrix[6]);
+	fogDistanceVector[2] = -MAKE_AFIXED(backEnd._or.modelMatrix[10]);
+	fogDistanceVectorDist= FIXED_VEC3DOT( local, backEnd.viewParms._or.axis[0] );
 
 	// scale the fog vectors based on the fog's thickness
 	fogDistanceVector[0] *= MAKE_AFIXED(fog->tcScale);
@@ -852,15 +852,15 @@ void RB_CalcFogTexCoords( gfixed *st ) {
 
 	// rotate the gradient vector for this orientation
 	if ( fog->hasSurface ) {
-		fogDepthVector[0] = fog->surfacenormal[0] * backEnd.or.axis[0][0] + 
-			fog->surfacenormal[1] * backEnd.or.axis[0][1] + fog->surfacenormal[2] * backEnd.or.axis[0][2];
-		fogDepthVector[1] = fog->surfacenormal[0] * backEnd.or.axis[1][0] + 
-			fog->surfacenormal[1] * backEnd.or.axis[1][1] + fog->surfacenormal[2] * backEnd.or.axis[1][2];
-		fogDepthVector[2] = fog->surfacenormal[0] * backEnd.or.axis[2][0] + 
-			fog->surfacenormal[1] * backEnd.or.axis[2][1] + fog->surfacenormal[2] * backEnd.or.axis[2][2];
-		fogDepthVectorDist = -fog->surfacedist + FIXED_VEC3DOT( backEnd.or.origin, fog->surfacenormal );
+		fogDepthVector[0] = fog->surfacenormal[0] * backEnd._or.axis[0][0] + 
+			fog->surfacenormal[1] * backEnd._or.axis[0][1] + fog->surfacenormal[2] * backEnd._or.axis[0][2];
+		fogDepthVector[1] = fog->surfacenormal[0] * backEnd._or.axis[1][0] + 
+			fog->surfacenormal[1] * backEnd._or.axis[1][1] + fog->surfacenormal[2] * backEnd._or.axis[1][2];
+		fogDepthVector[2] = fog->surfacenormal[0] * backEnd._or.axis[2][0] + 
+			fog->surfacenormal[1] * backEnd._or.axis[2][1] + fog->surfacenormal[2] * backEnd._or.axis[2][2];
+		fogDepthVectorDist = -fog->surfacedist + FIXED_VEC3DOT( backEnd._or.origin, fog->surfacenormal );
 
-		eyeT = MAKE_GFIXED(FIXED_VEC3DOT( backEnd.or.viewOrigin, fogDepthVector ) + fogDepthVectorDist);
+		eyeT = MAKE_GFIXED(FIXED_VEC3DOT( backEnd._or.viewOrigin, fogDepthVector ) + fogDepthVectorDist);
 	} else {
 		eyeT = GFIXED_1;	// non-surface fog always has eye inside
 	}
@@ -921,7 +921,7 @@ void RB_CalcEnvironmentTexCoords( gfixed *st )
 
 	for (i = 0 ; i < tess.numVertexes ; i++, v += 4, normal += 4, st += 2 ) 
 	{
-		VectorSubtract (backEnd.or.viewOrigin, v, viewer);
+		VectorSubtract (backEnd._or.viewOrigin, v, viewer);
 		FIXED_FASTVEC3NORM (viewer);
 
 		d = FIXED_VEC3DOT_R (normal, viewer);
@@ -1083,7 +1083,7 @@ void RB_CalcSpecularAlpha( unsigned char *alphas ) {
 		reflected[1] = normal[1]*FIXED_MULPOW2(d,2) - lightDir[1];
 		reflected[2] = normal[2]*FIXED_MULPOW2(d,2) - lightDir[2];
 
-		VectorSubtract (backEnd.or.viewOrigin, v, viewer);
+		VectorSubtract (backEnd._or.viewOrigin, v, viewer);
 		
 		bfixed length = FIXED_VEC3LEN( viewer );
 		l = FIXED_VEC3DOT (reflected, viewer);

@@ -365,7 +365,7 @@ if a user is interested in a server to do a full status
 */
 void SVC_Info( netadr_t from ) {
 	int		i, count;
-	char	*gamedir;
+	const char	*gamedir;
 	char	infostring[MAX_INFO_STRING];
 
 	// ignore if we are in single player
@@ -438,7 +438,7 @@ void SVC_RemoteCommand( netadr_t from, msg_t *msg ) {
 #define SV_OUTPUTBUF_LENGTH (1024 - 16)
 	char		sv_outputbuf[SV_OUTPUTBUF_LENGTH];
 	static unsigned int lasttime = 0;
-	char *cmd_aux;
+	const char *cmd_aux;
 
 	// TTimo - https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=534
 	time = Com_Milliseconds();
@@ -501,7 +501,7 @@ connectionless packets.
 */
 void SV_ConnectionlessPacket( netadr_t from, msg_t *msg ) {
 	char	*s;
-	char	*c;
+	const char	*c;
 
 	MSG_BeginReadingOOB( msg );
 	MSG_ReadLong( msg );		// skip the -1 marker

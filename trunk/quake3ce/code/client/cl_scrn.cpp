@@ -490,7 +490,7 @@ void SCR_DrawScreenField( stereoFrame_t stereoFrame ) {
 			{
 				S_StopAllSounds();
 				SysCallArgs args(1);
-				args[1]=UIMENU_MAIN;
+				args[0]=UIMENU_MAIN;
 				VM_Call( uivm, UI_SET_ACTIVE_MENU, args );
 			}
 			break;

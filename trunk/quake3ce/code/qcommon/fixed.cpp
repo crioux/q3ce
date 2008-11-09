@@ -1,5 +1,11 @@
 #ifndef FIXED_IS_FLOAT
 
+#ifndef _WIN32
+#define one 1
+#define zero 0
+#include<math.h>
+
+#endif
 
 #ifdef ARM
 
@@ -12,7 +18,7 @@ extern "C" void VEC3DOT32_11(INT32 *rep_a, INT32 *rep_b, INT32 * rep_out);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<class T, class U, int P, class EXT,int S0, int S1>
-fixed_base<T,U,P,EXT,S0,S1> fixed_base<T,U,P,EXT,S0,S1>::fast_invsqrt(void) const
+fixed_base<T,U,P,EXT,S0,S1>::TYPE fixed_base<T,U,P,EXT,S0,S1>::fast_invsqrt(void) const
 {
 	float number=this->ToFloat();
 	
@@ -108,11 +114,11 @@ fixed_base<T,U,P,EXT,S0,S1> fixed_base<T,U,P,EXT,S0,S1>::pow(const fixed_base y)
 template<class T>
 void fixed_fast_vec3norm(T *v)
 {
-	T::exttype v0s=((((T::exttype)v[0].rep)+T::round0)>>T::shift0);
+	typename T::exttype v0s=((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0);
 	v0s*=v0s;
-	T::exttype v1s=((((T::exttype)v[1].rep)+T::round0)>>T::shift0);
+	typename T::exttype v1s=((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0);
 	v1s*=v1s;
-	T::exttype v2s=((((T::exttype)v[2].rep)+T::round0)>>T::shift0);
+	typename T::exttype v2s=((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0);
 	v2s*=v2s;
 
 	T lensq;
@@ -131,13 +137,13 @@ void fixed_fast_vec3norm(T *v)
 template<class T>
 T fixed_vec2dot(const T *x, const T *y)
 {
-	T::exttype dot=(( ((((T::exttype)x[0].rep)+T::round0)>>T::shift0)*((((T::exttype)y[0].rep)+T::round0)>>T::shift0)+
-		       ((((T::exttype)x[1].rep)+T::round0)>>T::shift0)*((((T::exttype)y[1].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
+	typename T::exttype dot=(( ((((typename T::exttype)x[0].rep)+T::round0)>>T::shift0)*((((typename T::exttype)y[0].rep)+T::round0)>>T::shift0)+
+		       ((((typename T::exttype)x[1].rep)+T::round0)>>T::shift0)*((((typename T::exttype)y[1].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
 
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(dot,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(dot,typename T::exttype,T)) { ASSERT(0); }
 #endif
-	return FromRep((T::basetype)dot);
+	return FromRep((typename T::basetype)dot);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -145,13 +151,13 @@ T fixed_vec2dot(const T *x, const T *y)
 template<class T>
 T fixed_vec3dot(const T *x, const T *y)
 {
-	T::exttype dot=(( ((((T::exttype)x[0].rep)+T::round0)>>T::shift0)*((((T::exttype)y[0].rep)+T::round0)>>T::shift0)+
-		       ((((T::exttype)x[1].rep)+T::round0)>>T::shift0)*((((T::exttype)y[1].rep)+T::round0)>>T::shift0)+
-			   ((((T::exttype)x[2].rep)+T::round0)>>T::shift0)*((((T::exttype)y[2].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
+	typename T::exttype dot=(( ((((typename T::exttype)x[0].rep)+T::round0)>>T::shift0)*((((typename T::exttype)y[0].rep)+T::round0)>>T::shift0)+
+		       ((((typename T::exttype)x[1].rep)+T::round0)>>T::shift0)*((((typename T::exttype)y[1].rep)+T::round0)>>T::shift0)+
+			   ((((typename T::exttype)x[2].rep)+T::round0)>>T::shift0)*((((typename T::exttype)y[2].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(dot,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(dot,typename T::exttype,T)) { ASSERT(0); }
 #endif
-	return FromRep((T::basetype)dot);
+	return FromRep((typename T::basetype)dot);
 }
 
 #ifdef ARM
@@ -168,201 +174,201 @@ bfixed fixed_vec3dot<bfixed>(const bfixed *x, const bfixed *y)
 template<class T>
 T fixed_vec4dot(const T *x, const T *y)
 {
-	T::exttype dot=(( ((((T::exttype)x[0].rep)+T::round0)>>T::shift0)*((((T::exttype)y[0].rep)+T::round0)>>T::shift0)+
-		       ((((T::exttype)x[1].rep)+T::round0)>>T::shift0)*((((T::exttype)y[1].rep)+T::round0)>>T::shift0)+
-		       ((((T::exttype)x[2].rep)+T::round0)>>T::shift0)*((((T::exttype)y[2].rep)+T::round0)>>T::shift0)+
-			   ((((T::exttype)x[3].rep)+T::round0)>>T::shift0)*((((T::exttype)y[3].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
+	typename T::exttype dot=(( ((((typename T::exttype)x[0].rep)+T::round0)>>T::shift0)*((((typename T::exttype)y[0].rep)+T::round0)>>T::shift0)+
+		       ((((typename T::exttype)x[1].rep)+T::round0)>>T::shift0)*((((typename T::exttype)y[1].rep)+T::round0)>>T::shift0)+
+		       ((((typename T::exttype)x[2].rep)+T::round0)>>T::shift0)*((((typename T::exttype)y[2].rep)+T::round0)>>T::shift0)+
+			   ((((typename T::exttype)x[3].rep)+T::round0)>>T::shift0)*((((typename T::exttype)y[3].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(dot,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(dot,typename T::exttype,T)) { ASSERT(0); }
 #endif
-	return FromRep((T::basetype)dot);
+	return FromRep((typename T::basetype)dot);
 }
 
 
 template<class T>
 void fixed_vec2scale(const T *v, const T scale, T *o)
 {
-	T::exttype s=(((T::exttype)scale.rep)+T::round0)>>T::shift0;
-	T::exttype o0=(((((((T::exttype)v[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o1=(((((((T::exttype)v[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype s=(((typename T::exttype)scale.rep)+T::round0)>>T::shift0;
+	typename T::exttype o0=(((((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o1=(((((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
 
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(o0,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o1,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o0,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o1,typename T::exttype,T)) { ASSERT(0); }
 #endif
 
-	o[0]=FromRep((T::basetype)o0);
-	o[1]=FromRep((T::basetype)o1);
+	o[0]=FromRep((typename T::basetype)o0);
+	o[1]=FromRep((typename T::basetype)o1);
 }
 
 template<class T>
 void fixed_vec3scale(const T *v, const T scale, T *o)
 {
-	T::exttype s=(((T::exttype)scale.rep)+T::round0)>>T::shift0;
+	typename T::exttype s=(((typename T::exttype)scale.rep)+T::round0)>>T::shift0;
 
-	T::exttype o0=(((((((T::exttype)v[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o1=(((((((T::exttype)v[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o2=(((((((T::exttype)v[2].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o0=(((((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o1=(((((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o2=(((((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
 
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(o0,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o1,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o2,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o0,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o1,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o2,typename T::exttype,T)) { ASSERT(0); }
 #endif
 
-	o[0]=FromRep((T::basetype)o0);
-	o[1]=FromRep((T::basetype)o1);
-	o[2]=FromRep((T::basetype)o2);
+	o[0]=FromRep((typename T::basetype)o0);
+	o[1]=FromRep((typename T::basetype)o1);
+	o[2]=FromRep((typename T::basetype)o2);
 }
 
 template<class T>
 void fixed_vec4scale(const T *v, const T scale, T *o) 
 {
-	T::exttype s=(((T::exttype)scale.rep)+T::round0)>>T::shift0;
+	typename T::exttype s=(((typename T::exttype)scale.rep)+T::round0)>>T::shift0;
 
-	T::exttype o0=(((((((T::exttype)v[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o1=(((((((T::exttype)v[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o2=(((((((T::exttype)v[2].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o3=(((((((T::exttype)v[3].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o0=(((((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o1=(((((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o2=(((((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o3=(((((((typename T::exttype)v[3].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
 
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(o0,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o1,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o2,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o3,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o0,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o1,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o2,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o3,typename T::exttype,T)) { ASSERT(0); }
 #endif
 
-	o[0]=FromRep((T::basetype)o0);
-	o[1]=FromRep((T::basetype)o1);
-	o[2]=FromRep((T::basetype)o2);
-	o[3]=FromRep((T::basetype)o3);
+	o[0]=FromRep((typename T::basetype)o0);
+	o[1]=FromRep((typename T::basetype)o1);
+	o[2]=FromRep((typename T::basetype)o2);
+	o[3]=FromRep((typename T::basetype)o3);
 }
 
 
 template<class T>
 void fixed_vec2ma(const T *v, const T scale, const T *b, T *o)
 {
-	T::exttype s=(((T::exttype)scale.rep)+T::round0)>>T::shift0;
+	typename T::exttype s=(((typename T::exttype)scale.rep)+T::round0)>>T::shift0;
 
-	T::exttype o0=(((((((T::exttype)b[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o1=(((((((T::exttype)b[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o0=(((((((typename T::exttype)b[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o1=(((((((typename T::exttype)b[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
 
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(o0,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o1,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o0,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o1,typename T::exttype,T)) { ASSERT(0); }
 #endif
 
-	o[0]=v[0]+FromRep((T::basetype)o0);
-	o[1]=v[1]+FromRep((T::basetype)o1);
+	o[0]=v[0]+FromRep((typename T::basetype)o0);
+	o[1]=v[1]+FromRep((typename T::basetype)o1);
 }
 
 template<class T>
 void fixed_vec3ma(const T *v, const T scale, const T *b, T *o)
 {
-	T::exttype s=(((T::exttype)scale.rep)+T::round0)>>T::shift0;
+	typename T::exttype s=(((typename T::exttype)scale.rep)+T::round0)>>T::shift0;
 
-	T::exttype o0=(((((((T::exttype)b[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o1=(((((((T::exttype)b[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o2=(((((((T::exttype)b[2].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o0=(((((((typename T::exttype)b[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o1=(((((((typename T::exttype)b[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o2=(((((((typename T::exttype)b[2].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
 
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(o0,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o1,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o2,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o0,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o1,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o2,typename T::exttype,T)) { ASSERT(0); }
 #endif
 
-	o[0]=v[0]+FromRep((T::basetype)o0);
-	o[1]=v[1]+FromRep((T::basetype)o1);
-	o[2]=v[2]+FromRep((T::basetype)o2);
+	o[0]=v[0]+FromRep((typename T::basetype)o0);
+	o[1]=v[1]+FromRep((typename T::basetype)o1);
+	o[2]=v[2]+FromRep((typename T::basetype)o2);
 }
 
 template<class T>
 void fixed_vec4ma(const T *v, const T scale, const T *b, T *o)
 {
-	T::exttype s=(((T::exttype)scale.rep)+T::round0)>>T::shift0;
+	typename T::exttype s=(((typename T::exttype)scale.rep)+T::round0)>>T::shift0;
 
-	T::exttype o0=(((((((T::exttype)b[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o1=(((((((T::exttype)b[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o2=(((((((T::exttype)b[2].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
-	T::exttype o3=(((((((T::exttype)b[3].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o0=(((((((typename T::exttype)b[0].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o1=(((((((typename T::exttype)b[1].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o2=(((((((typename T::exttype)b[2].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
+	typename T::exttype o3=(((((((typename T::exttype)b[3].rep)+T::round0)>>T::shift0)*s)+T::round1)>>T::shift1);
 
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(o0,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o1,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o2,T::exttype,T)) { ASSERT(0); }
-	if(IS_BAD_CAST(o3,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o0,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o1,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o2,typename T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(o3,typename T::exttype,T)) { ASSERT(0); }
 #endif
 
-	o[0]=v[0]+FromRep((T::basetype)o0);
-	o[1]=v[1]+FromRep((T::basetype)o1);
-	o[2]=v[2]+FromRep((T::basetype)o2);
-	o[3]=v[3]+FromRep((T::basetype)o3);
+	o[0]=v[0]+FromRep((typename T::basetype)o0);
+	o[1]=v[1]+FromRep((typename T::basetype)o1);
+	o[2]=v[2]+FromRep((typename T::basetype)o2);
+	o[3]=v[3]+FromRep((typename T::basetype)o3);
 }
 
 template<class T>
 T fixed_vec2len(const T *v)
 {
-	T::exttype sumsq=(( ((((T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((T::exttype)v[0].rep)+T::round0)>>T::shift0)+
-		         ((((T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((T::exttype)v[1].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
-	return Construct(::sqrt(((double)sumsq)/((double)one)));
+	typename T::exttype sumsq=(( ((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)+
+		         ((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
+	return T::Construct(sqrt(((double)sumsq)/((double)one)));
 }
 
 template<class T>
 T fixed_vec3len(const T *v)
 {
-	T::exttype sumsq=(( ((((T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((T::exttype)v[0].rep)+T::round0)>>T::shift0)+
-		         ((((T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((T::exttype)v[1].rep)+T::round0)>>T::shift0)+
-		         ((((T::exttype)v[2].rep)+T::round0)>>T::shift0)*((((T::exttype)v[2].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
-	return Construct(::sqrt(((double)sumsq)/((double)one)));
+	typename T::exttype sumsq=(( ((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)+
+		         ((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)+
+		         ((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
+	return T::Construct(sqrt(((double)sumsq)/((double)one)));
 }
 
 template<class T>
 T fixed_vec4len(const T *v)
 {
-	T::exttype sumsq=(( ((((T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((T::exttype)v[0].rep)+T::round0)>>T::shift0)+
-		         ((((T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((T::exttype)v[1].rep)+T::round0)>>T::shift0)+
-		         ((((T::exttype)v[2].rep)+T::round0)>>T::shift0)*((((T::exttype)v[2].rep)+T::round0)>>T::shift0)+
-				 ((((T::exttype)v[3].rep)+T::round0)>>T::shift0)*((((T::exttype)v[3].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
-	return Construct(::sqrt(((double)sumsq)/((double)one)));
+	typename T::exttype sumsq=(( ((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)+
+		         ((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)+
+		         ((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0)+
+				 ((((typename T::exttype)v[3].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[3].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
+	return T::Construct(sqrt(((double)sumsq)/((double)one)));
 }
 
 template<class T>
 T fixed_vec2len_sq(const T *v)
 {
-	T::exttype sumsq=(( ((((T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((T::exttype)v[0].rep)+T::round0)>>T::shift0)+
-				 ((((T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((T::exttype)v[1].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
+	typename T::exttype sumsq=(( ((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)+
+				 ((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(sumsq,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(sumsq,typename T::exttype,T)) { ASSERT(0); }
 #endif
-	return FromRep((T::basetype)sumsq);
+	return T::FromRep((typename T::basetype)sumsq);
 }
 
 template<class T>
 T fixed_vec3len_sq(const T *v)
 {
-	T::exttype sumsq=(( ((((T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((T::exttype)v[0].rep)+T::round0)>>T::shift0)+
-		         ((((T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((T::exttype)v[1].rep)+T::round0)>>T::shift0)+
-				 ((((T::exttype)v[2].rep)+T::round0)>>T::shift0)*((((T::exttype)v[2].rep)+T::round0)>>T::shift0) ));
+	typename T::exttype sumsq=(( ((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)+
+		         ((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)+
+				 ((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0) ));
 	sumsq +=T::round1;
 	
 	sumsq = sumsq >> T::shift1;
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(sumsq,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(sumsq,typename T::exttype,T)) { ASSERT(0); }
 #endif
-	return FromRep((T::basetype)sumsq);
+	return T::FromRep((typename T::basetype)sumsq);
 }
 
 template<class T>
 T fixed_vec4len_sq(const T *v)
 {
-	T::exttype sumsq=(( ((((T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((T::exttype)v[0].rep)+T::round0)>>T::shift0)+
-		         ((((T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((T::exttype)v[1].rep)+T::round0)>>T::shift0)+
-		         ((((T::exttype)v[2].rep)+T::round0)>>T::shift0)*((((T::exttype)v[2].rep)+T::round0)>>T::shift0)+
-				 ((((T::exttype)v[3].rep)+T::round0)>>T::shift0)*((((T::exttype)v[3].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
+	typename T::exttype sumsq=(( ((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[0].rep)+T::round0)>>T::shift0)+
+		         ((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[1].rep)+T::round0)>>T::shift0)+
+		         ((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[2].rep)+T::round0)>>T::shift0)+
+				 ((((typename T::exttype)v[3].rep)+T::round0)>>T::shift0)*((((typename T::exttype)v[3].rep)+T::round0)>>T::shift0) + T::round1 )>>T::shift1);
 #ifdef VERIFY_FIXEDREP 
-	if(IS_BAD_CAST(sumsq,T::exttype,T)) { ASSERT(0); }
+	if(IS_BAD_CAST(sumsq,typename T::exttype,T)) { ASSERT(0); }
 #endif
-	return FromRep((T::basetype)sumsq);
+	return T::FromRep((typename T::basetype)sumsq);
 }
 
 ////////////////////////////////////////////////////////////////
@@ -382,4 +388,6 @@ T fixed_vec4len_sq(const T *v)
 //template lfixed;
 
 ////////////////////////////////////////////////////////////////
+
+#endif
 

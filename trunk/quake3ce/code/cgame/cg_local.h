@@ -623,10 +623,10 @@ typedef struct {
 	afixed		headYaw;
 	afixed		headEndPitch;
 	afixed		headEndYaw;
-	int			headEndTime;
+	int		headEndTime;
 	afixed		headStartPitch;
 	afixed		headStartYaw;
-	int			headStartTime;
+	int		headStartTime;
 
 	// view movement
 	int			v_dmg_time;
@@ -1341,9 +1341,9 @@ void CG_Beam( centity_t *cent );
 void CG_AdjustPositionForMover( const bvec3_t in, int moverNum, int fromTime, int toTime, bvec3_t out );
 
 void CG_PositionEntityOnTag( refEntity_t *entity, const refEntity_t *parent, 
-							qhandle_t parentModel, char *tagName );
+							qhandle_t parentModel, const char *tagName );
 void CG_PositionRotatedEntityOnTag( refEntity_t *entity, const refEntity_t *parent, 
-							qhandle_t parentModel, char *tagName );
+							qhandle_t parentModel, const char *tagName );
 
 
 
@@ -1667,9 +1667,10 @@ void	CG_ParticleBulletDebris (bvec3_t	org, bvec3_t vel, int duration);
 void	CG_ParticleSparks (bvec3_t org, bvec3_t vel, int duration, bfixed x, bfixed y, bfixed speed);
 void	CG_ParticleDust (centity_t *cent, bvec3_t origin, bvec3_t dir);
 void	CG_ParticleMisc (qhandle_t pshader, bvec3_t origin, int size, int duration, gfixed alpha);
-void	CG_ParticleExplosion (char *animStr, bvec3_t origin, bvec3_t vel, int duration, int sizeStart, int sizeEnd);
+void	CG_ParticleExplosion (const char *animStr, bvec3_t origin, bvec3_t vel, int duration, int sizeStart, int sizeEnd);
 extern qboolean		initparticles;
 int CG_NewParticleArea ( int num );
 
 
 #endif
+

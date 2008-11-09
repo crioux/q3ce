@@ -258,7 +258,7 @@ int COM_GetCurrentParseLine( void )
 	return com_lines;
 }
 
-char *COM_Parse( char **data_p )
+const char *COM_Parse( const char **data_p )
 {
 	return COM_ParseExt( data_p, qtrue );
 }
@@ -315,6 +315,25 @@ static char *SkipWhitespace( char *data, qboolean *hasNewLines ) {
 
 	return data;
 }
+
+static const char *SkipWhitespace( const char *data, qboolean *hasNewLines ) {
+	int c;
+
+	while( (c = *data) <= ' ') {
+		if( !c ) {
+			return NULL;
+		}
+		if( c == '\n' ) {
+			com_lines++;
+			*hasNewLines = qtrue;
+		}
+		data++;
+	}
+
+	return data;
+}
+
+
 
 int COM_Compress( char *data_p ) {
 	char *in, *out;
@@ -384,11 +403,11 @@ int COM_Compress( char *data_p ) {
 	return out - data_p;
 }
 
-char *COM_ParseExt( char **data_p, qboolean allowLineBreaks )
+const char *COM_ParseExt( const char **data_p, qboolean allowLineBreaks )
 {
 	int c = 0, len;
 	qboolean hasNewLines = qfalse;
-	char *data;
+	const char *data;
 
 	data = *data_p;
 	len = 0;
@@ -552,10 +571,10 @@ int COM_ParseInfos( char *buf, int max, char infos[][MAX_INFO_STRING] ) {
 COM_MatchToken
 ==================
 */
-void COM_MatchToken( char **buf_p, char *match ) {
-	char	*token;
+void COM_MatchToken( const char **buf_p, const char *match ) {
+	const char	*token;
 
-	token = COM_Parse( buf_p );
+	token = COM_Parse( (const char **) buf_p );
 	if ( strcmp( token, match ) ) {
 		Com_Error( ERR_DROP, "MatchToken: %s != %s", token, match );
 	}
@@ -571,8 +590,8 @@ Skips until a matching close brace is found.
 Internal brace depths are properly skipped.
 =================
 */
-void SkipBracedSection (char **program) {
-	char			*token;
+void SkipBracedSection (const char * *program) {
+	const char			*token;
 	int				depth;
 
 	depth = 0;
@@ -594,8 +613,8 @@ void SkipBracedSection (char **program) {
 SkipRestOfLine
 =================
 */
-void SkipRestOfLine ( char **data ) {
-	char	*p;
+void SkipRestOfLine ( const char * *data ) {
+	const char	*p;
 	int		c;
 
 	p = *data;
@@ -610,8 +629,8 @@ void SkipRestOfLine ( char **data ) {
 }
 
 
-void Parse1DMatrix (char **buf_p, int x, gfixed *m) {
-	char	*token;
+void Parse1DMatrix (const char **buf_p, int x, gfixed *m) {
+	const char	*token;
 	int		i;
 
 	COM_MatchToken( buf_p, "(" );
@@ -624,7 +643,7 @@ void Parse1DMatrix (char **buf_p, int x, gfixed *m) {
 	COM_MatchToken( buf_p, ")" );
 }
 
-void Parse2DMatrix (char **buf_p, int y, int x, gfixed *m) {
+void Parse2DMatrix (const char **buf_p, int y, int x, gfixed *m) {
 	int		i;
 
 	COM_MatchToken( buf_p, "(" );
@@ -636,7 +655,7 @@ void Parse2DMatrix (char **buf_p, int y, int x, gfixed *m) {
 	COM_MatchToken( buf_p, ")" );
 }
 
-void Parse3DMatrix (char **buf_p, int z, int y, int x, gfixed *m) {
+void Parse3DMatrix (const char **buf_p, int z, int y, int x, gfixed *m) {
 	int		i;
 
 	COM_MatchToken( buf_p, "(" );
@@ -876,7 +895,11 @@ void QDECL Com_sprintf( char *dest, int size, const char *fmt, ...)
 	va_list		argptr;
 	
 	va_start (argptr,fmt);
+#ifdef _WIN32
 	_vsnprintf(dest,size,fmt,argptr);
+#else
+	vsnprintf(dest,size,fmt,argptr);
+#endif
 	va_end (argptr);
 }
 
@@ -890,7 +913,7 @@ varargs versions of all text functions.
 FIXME: make this buffer size safe someday
 ============
 */
-char	* QDECL va( char *format, ... ) {
+const char	* QDECL va( const char *format, ... ) {
 	va_list		argptr;
 	static char		string[2][32000];	// in case va is called by nested functions
 	static int		index = 0;
@@ -924,7 +947,7 @@ key and returns the associated value, or an empty string.
 FIXME: overflow check?
 ===============
 */
-char *Info_ValueForKey( const char *s, const char *key ) {
+const char *Info_ValueForKey( const char *s, const char *key ) {
 	char	pkey[BIG_INFO_KEY];
 	static	char value[2][BIG_INFO_VALUE];	// use two buffers so compares
 											// work without stomping on each other

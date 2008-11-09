@@ -1353,6 +1353,43 @@ void AngleVectors( const avec3_t angles, avec3_t forward, avec3_t right, avec3_t
 	}
 }
 
+void AngleVectors( const avec3_t angles, bvec3_t forward, bvec3_t right, bvec3_t up) 
+{
+	afixed		angle;
+	static afixed		sr, sp, sy, cr, cp, cy;
+	// static to help MS compiler fp bugs
+
+	angle = angles[YAW] * (AFIXED_PI * AFIXED(2,0) / AFIXED(360,0));
+	sy = FIXED_SIN(angle);
+	cy = FIXED_COS(angle);
+	angle = angles[PITCH] * (AFIXED_PI * AFIXED(2,0) / AFIXED(360,0));
+	sp = FIXED_SIN(angle);
+	cp = FIXED_COS(angle);
+	angle = angles[ROLL] * (AFIXED_PI * AFIXED(2,0) / AFIXED(360,0));
+	sr = FIXED_SIN(angle);
+	cr = FIXED_COS(angle);
+
+	if (forward)
+	{
+		forward[0] = MAKE_BFIXED(cp*cy);
+		forward[1] = MAKE_BFIXED(cp*sy);
+		forward[2] = -MAKE_BFIXED(sp);
+	}
+	if (right)
+	{
+		right[0] = MAKE_BFIXED(((-AFIXED_1)*sr*sp*cy+(-AFIXED_1)*cr*-sy));
+		right[1] = MAKE_BFIXED(((-AFIXED_1)*sr*sp*sy+(-AFIXED_1)*cr*cy));
+		right[2] = MAKE_BFIXED(-AFIXED_1*sr*cp);
+	}
+	if (up)
+	{
+		up[0] = MAKE_BFIXED((cr*sp*cy+-sr*-sy));
+		up[1] = MAKE_BFIXED((cr*sp*sy+-sr*cy));
+		up[2] = MAKE_BFIXED(cr*cp);
+	}
+}
+
+
 
 void PerpendicularVector( bvec3_t dst, const bvec3_t src )
 {

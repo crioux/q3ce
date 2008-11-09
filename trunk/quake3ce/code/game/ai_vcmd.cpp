@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 typedef struct voiceCommand_s
 {
-	char *cmd;
+	const char *cmd;
 	void (*func)(bot_state_t *bs, int client, int mode);
 } voiceCommand_t;
 
@@ -486,7 +486,7 @@ voiceCommand_t voiceCommands[] = {
 	{NULL, BotVoiceChat_Dummy}
 };
 
-int BotVoiceChatCommand(bot_state_t *bs, int mode, char *voiceChat) {
+int BotVoiceChatCommand(bot_state_t *bs, int mode, const char *voiceChat) {
 	int i, voiceOnly, clientNum, color;
 	char *ptr, buf[MAX_MESSAGE_SIZE], *cmd;
 

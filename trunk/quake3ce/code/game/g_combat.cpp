@@ -283,7 +283,7 @@ void body_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int d
 
 
 // these are just for logging, the client prints its own messages
-char	*modNames[] = {
+const char	*modNames[] = {
 	"MOD_UNKNOWN",
 	"MOD_SHOTGUN",
 	"MOD_GAUNTLET",
@@ -356,7 +356,7 @@ CheckAlmostCapture
 void CheckAlmostCapture( gentity_t *self, gentity_t *attacker ) {
 	gentity_t	*ent;
 	bvec3_t		dir;
-	char		*classname;
+	const char		*classname;
 
 	// if this player was carrying a flag
 	if ( self->client->ps.powerups[PW_REDFLAG] ||
@@ -406,7 +406,7 @@ CheckAlmostScored
 void CheckAlmostScored( gentity_t *self, gentity_t *attacker ) {
 	gentity_t	*ent;
 	bvec3_t		dir;
-	char		*classname;
+	const char		*classname;
 
 	// if the player was carrying cubes
 	if ( self->client->ps.generic1 ) {
@@ -442,7 +442,7 @@ void player_die( gentity_t *self, gentity_t *inflictor, gentity_t *attacker, int
 	int			contents;
 	int			killer;
 	int			i;
-	char		*killerName, *obit;
+	const char		*killerName, *obit;
 
 	if ( self->client->ps.pm_type == PM_DEAD ) {
 		return;

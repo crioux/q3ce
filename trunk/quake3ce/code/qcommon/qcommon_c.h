@@ -25,8 +25,8 @@ extern int FS_FOpenFileRead( const char *filename, fileHandle_t *file, qboolean 
 #ifdef ZONE_DEBUG
 #define Z_TagMalloc(size, tag)			Z_TagMallocDebug(size, tag, #size, __FILE__, __LINE__)
 #define Z_Malloc(size)					Z_MallocDebug(size, #size, __FILE__, __LINE__)
-void *Z_TagMallocDebug( int size, int tag, char *label, char *file, int line );	// NOT 0 filled memory
-void *Z_MallocDebug( int size, char *label, char *file, int line );			// returns 0 filled memory
+void *Z_TagMallocDebug( int size, int tag, const char *label, const char *file, int line );	// NOT 0 filled memory
+void *Z_MallocDebug( int size, const char *label, const char *file, int line );			// returns 0 filled memory
 #else
 void *Z_TagMalloc( int size, int tag );	// NOT 0 filled memory
 void *Z_Malloc( int size );			// returns 0 filled memory
@@ -55,8 +55,6 @@ void Hunk_Log( void);
 
 #define	MAX_FILE_HANDLES	64
 
-#define BASEGAME "baseq3"
-
  qboolean FS_Initialized();
 
  void	FS_InitFilesystem (void);
@@ -66,7 +64,7 @@ void Hunk_Log( void);
  void	FS_Restart( int checksumFeed );
 // shutdown and restart the filesystem so changes to fs_gamedir can take effect
 
- char	**FS_ListFiles( const char *directory, const char *extension, int *numfiles );
+ const char	**FS_ListFiles( const char *directory, const char *extension, int *numfiles );
 // directory should not have either a leading or trailing /
 // if extension is "/", only subdirectories will be returned
 // the returned files will not include any directories or /
@@ -171,7 +169,7 @@ void Hunk_Log( void);
 // separated checksums will be checked for files, with the
 // sole exception of .cfg files.
 
- qboolean FS_idPak( char *pak, char *base );
+ qboolean FS_idPak( const char *pak, const char *base );
  qboolean FS_ComparePaks( char *neededpaks, int len, qboolean dlstring );
 
  void FS_Rename( const char *from, const char *to );

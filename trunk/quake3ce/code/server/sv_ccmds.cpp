@@ -42,7 +42,7 @@ Returns the player with name from Cmd_Argv(1)
 static client_t *SV_GetPlayerByName( void ) {
 	client_t	*cl;
 	int			i;
-	char		*s;
+	const char		*s;
 	char		cleanName[64];
 
 	// make sure server is running
@@ -89,7 +89,7 @@ static client_t *SV_GetPlayerByNum( void ) {
 	client_t	*cl;
 	int			i;
 	int			idnum;
-	char		*s;
+	const char		*s;
 
 	// make sure server is running
 	if ( !com_sv_running->integer ) {
@@ -136,8 +136,8 @@ Restart the server on a different map
 ==================
 */
 static void SV_Map_f( void ) {
-	char		*cmd;
-	char		*map;
+	const char		*cmd;
+	const char		*map;
 	qboolean	killBots, cheat;
 	char		expanded[MAX_QPATH];
 	char		mapname[MAX_QPATH];
@@ -210,7 +210,7 @@ This allows fair starts with variable load times.
 static void SV_MapRestart_f( void ) {
 	int			i;
 	client_t	*client;
-	char		*denied;
+	const char	*denied;
 	qboolean	isBot;
 	int			delay;
 
@@ -305,7 +305,7 @@ static void SV_MapRestart_f( void ) {
 		args[0]=i;
 		args[1]=qfalse;
 		args[2]=isBot;
-		denied = (char *)VM_ExplicitArgPtr( gvm, VM_Call( gvm, GAME_CLIENT_CONNECT, args) );
+		denied = (const char *)VM_ExplicitArgConstPtr( gvm, VM_Call( gvm, GAME_CLIENT_CONNECT, args) );
 		if ( denied ) {
 			// this generally shouldn't happen, because the client
 			// was connected before the level change
@@ -602,7 +602,7 @@ SV_ConSay_f
 ==================
 */
 static void SV_ConSay_f(void) {
-	char	*p;
+	const char	*p;
 	char	text[1024];
 
 	// make sure server is running
@@ -620,10 +620,13 @@ static void SV_ConSay_f(void) {
 
 	if ( *p == '"' ) {
 		p++;
-		p[strlen(p)-1] = 0;
+		strcat(text, p);
+		text[strlen(text)-1] = 0;
 	}
-
-	strcat(text, p);
+	else
+	{
+		strcat(text, p);
+	}
 
 	SV_SendServerCommand(NULL, "chat \"%s\n\"", text);
 }

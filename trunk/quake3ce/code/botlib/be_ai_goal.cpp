@@ -221,7 +221,7 @@ void BotInterbreedGoalFuzzyLogic(int parent1, int parent2, int child)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-void BotSaveGoalFuzzyLogic(int goalstate, char *filename)
+void BotSaveGoalFuzzyLogic(int goalstate, const char *filename)
 {
 	bot_goalstate_t *gs;
 
@@ -249,7 +249,7 @@ void BotMutateGoalFuzzyLogic(int goalstate, gfixed range)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-itemconfig_t *LoadItemConfig(char *filename)
+itemconfig_t *LoadItemConfig(const char *filename)
 {
 	int max_iteminfo;
 	token_t token;
@@ -841,7 +841,7 @@ void BotSetAvoidGoalTime(int goalstate, int number, gfixed avoidtime)
 // Returns:				-
 // Changes Globals:		-
 //===========================================================================
-int BotGetLevelItemGoal(int index, char *name, bot_goal_t *goal)
+int BotGetLevelItemGoal(int index, const char *name, bot_goal_t *goal)
 {
 	levelitem_t *li;
 
@@ -894,7 +894,7 @@ int BotGetLevelItemGoal(int index, char *name, bot_goal_t *goal)
 // Returns:				-
 // Changes Globals:		-
 //===========================================================================
-int BotGetMapLocationGoal(char *name, bot_goal_t *goal)
+int BotGetMapLocationGoal(const char *name, bot_goal_t *goal)
 {
 	maplocation_t *ml;
 	bvec3_t mins = {-BFIXED(8,0), -BFIXED(8,0), -BFIXED(8,0)}, maxs = {BFIXED(8,0), BFIXED(8,0), BFIXED(8,0)};
@@ -1674,7 +1674,7 @@ void BotResetGoalState(int goalstate)
 // Returns:					-
 // Changes Globals:		-
 //===========================================================================
-int BotLoadItemWeights(int goalstate, char *filename)
+int BotLoadItemWeights(int goalstate, const char *filename)
 {
 	bot_goalstate_t *gs;
 
@@ -1760,7 +1760,7 @@ void BotFreeGoalState(int handle)
 //===========================================================================
 int BotSetupGoalAI(void)
 {
-	char *filename;
+	const char *filename;
 
 	//check if teamplay is on
 	gametype = FIXED_TO_INT(LibVarValue("gametype", "0"));

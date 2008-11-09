@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 //
 #include"ui_pch.h"
+#include"qcommon.h"
 
 // this file is only included when building a dll
 // _UI_syscalls.asm is included instead when building a qvm
@@ -28,9 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #error "Do not use in VM build"
 #endif
 
-static SysCallArg (QDECL *_UI_syscall)(int id, SysCallArgs &args)= (SysCallArg (QDECL *)(int, SysCallArgs &))-1;
+static SysCallArg (QDECL *_UI_syscall)(int id, const SysCallArgs &args)= (SysCallArg (QDECL *)(int, const SysCallArgs &))-1;
 
-void dllEntry( SysCallArg (QDECL *syscallptr)(int id, SysCallArgs &args) )
+EXTERN_C DLLEXPORT void dllEntry( SysCallArg (QDECL *syscallptr)(int id, const SysCallArgs &args) )
 {
 //	DebugBreak();
 
@@ -535,7 +536,7 @@ void _UI_trap_SetCDKey( char *buf ) {
 	_UI_syscall( UI_SET_CDKEY, args );
 }
 
-int _UI_trap_PC_AddGlobalDefine( char *define ) {
+int _UI_trap_PC_AddGlobalDefine(const char *define ) {
 	SysCallArgs args(1);
 	args[0]=define;
 	return (int)_UI_syscall( UI_PC_ADD_GLOBAL_DEFINE, args);

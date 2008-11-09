@@ -29,9 +29,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #endif
 
 
-static SysCallArg (QDECL *_CG_syscall)(int id, SysCallArgs &args) = (SysCallArg (QDECL *)(int, SysCallArgs &))-1;
+static SysCallArg (QDECL *_CG_syscall)(int id, const SysCallArgs &args) = (SysCallArg (QDECL *)(int, const SysCallArgs &))-1;
 
-void dllEntry( SysCallArg (QDECL *syscallptr)(int id, SysCallArgs &args) )
+EXTERN_C DLLEXPORT void dllEntry( SysCallArg (QDECL *syscallptr)(int id, const SysCallArgs &args) )
 {
 	_CG_syscall = syscallptr;
 }
@@ -608,7 +608,7 @@ int _CG_trap_Key_GetKey( const char *binding ) {
 	return (int)_CG_syscall( CG_KEY_GETKEY, args );
 }
 
-int _CG_trap_PC_AddGlobalDefine( char *define ) {
+int _CG_trap_PC_AddGlobalDefine(const char *define ) {
 	SysCallArgs args(1);
 	args[0]=define;
 	return (int)_CG_syscall( CG_PC_ADD_GLOBAL_DEFINE, args);

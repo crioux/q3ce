@@ -224,7 +224,7 @@ static void Main_MenuDraw( void ) {
 
 	UI_DrawString( 320, 372, "Quake III Arena (c) 1999-2000", UI_CENTER|UI_SMALLFONT, color );
 	UI_DrawString( 320, 400, "Id Software, Inc.  All Rights Reserved", UI_CENTER|UI_SMALLFONT, color );
-	UI_DrawString( 320, 428, "Q3CE (c) 2005, NoctemWare", UI_CENTER|UI_SMALLFONT, color );
+	UI_DrawString( 320, 428, "Q3CE (c) 2005-2009, Christien Rioux", UI_CENTER|UI_SMALLFONT, color );
 	
 }
 
@@ -316,7 +316,7 @@ void UI_MainMenu( void ) {
 	s_main.singleplayer.generic.y			= y;
 	s_main.singleplayer.generic.id			= ID_SINGLEPLAYER;
 	s_main.singleplayer.generic.callback	= Main_MenuEvent; 
-	s_main.singleplayer.string				= "SINGLE PLAYER";
+	s_main.singleplayer.string				= strdup("SINGLE PLAYER");
 	s_main.singleplayer.color				= color_red;
 	s_main.singleplayer.style				= style;
 
@@ -327,7 +327,7 @@ void UI_MainMenu( void ) {
 	s_main.multiplayer.generic.y			= y;
 	s_main.multiplayer.generic.id			= ID_MULTIPLAYER;
 	s_main.multiplayer.generic.callback		= Main_MenuEvent; 
-	s_main.multiplayer.string				= "MULTIPLAYER";
+	s_main.multiplayer.string				= strdup("MULTIPLAYER");
 	s_main.multiplayer.color				= color_red;
 	s_main.multiplayer.style				= style;
 
@@ -338,7 +338,7 @@ void UI_MainMenu( void ) {
 	s_main.setup.generic.y					= y;
 	s_main.setup.generic.id					= ID_SETUP;
 	s_main.setup.generic.callback			= Main_MenuEvent; 
-	s_main.setup.string						= "SETUP";
+	s_main.setup.string						= strdup("SETUP");
 	s_main.setup.color						= color_red;
 	s_main.setup.style						= style;
 
@@ -349,7 +349,7 @@ void UI_MainMenu( void ) {
 	s_main.demos.generic.y					= y;
 	s_main.demos.generic.id					= ID_DEMOS;
 	s_main.demos.generic.callback			= Main_MenuEvent; 
-	s_main.demos.string						= "DEMOS";
+	s_main.demos.string						= strdup("DEMOS");
 	s_main.demos.color						= color_red;
 	s_main.demos.style						= style;
 
@@ -360,7 +360,7 @@ void UI_MainMenu( void ) {
 	s_main.cinematics.generic.y				= y;
 	s_main.cinematics.generic.id			= ID_CINEMATICS;
 	s_main.cinematics.generic.callback		= Main_MenuEvent; 
-	s_main.cinematics.string				= "CINEMATICS";
+	s_main.cinematics.string				= strdup("CINEMATICS");
 	s_main.cinematics.color					= color_red;
 	s_main.cinematics.style					= style;
 
@@ -373,7 +373,7 @@ void UI_MainMenu( void ) {
 		s_main.teamArena.generic.y				= y;
 		s_main.teamArena.generic.id				= ID_TEAMARENA;
 		s_main.teamArena.generic.callback		= Main_MenuEvent; 
-		s_main.teamArena.string					= "TEAM ARENA";
+		s_main.teamArena.string					= strdup("TEAM ARENA");
 		s_main.teamArena.color					= color_red;
 		s_main.teamArena.style					= style;
 	}
@@ -396,7 +396,7 @@ void UI_MainMenu( void ) {
 	s_main.exit.generic.y					= y;
 	s_main.exit.generic.id					= ID_EXIT;
 	s_main.exit.generic.callback			= Main_MenuEvent; 
-	s_main.exit.string						= "EXIT";
+	s_main.exit.string						= strdup("EXIT");
 	s_main.exit.color						= color_red;
 	s_main.exit.style						= style;
 

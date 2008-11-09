@@ -44,11 +44,11 @@ extern CXMalloc g_mem_snd;
 
 
 
-#define FCCBE(a,b,c,d) \
+#define FCCLE(a,b,c,d) \
 	(((unsigned char)a << 24) | ((unsigned char)b << 16) | \
 	((unsigned char)c << 8) | ((unsigned char)d << 0))
 
-#define FCCLE(a,b,c,d) \
+#define FCCBE(a,b,c,d) \
 	(((unsigned char)a << 0) | ((unsigned char)b << 8) | \
 	((unsigned char)c << 16) | ((unsigned char)d << 24))
 
@@ -68,7 +68,7 @@ memory management
 ===============================================================================
 */
 
-static HANDLE s_buffer_maphandle=NULL;
+//static HANDLE s_buffer_maphandle=NULL;
 static	sndBuffer	*buffer = NULL;
 static	sndBuffer	*freelist = NULL;
 static	int inUse = 0;
@@ -176,7 +176,7 @@ static int GetLittleLong(void)
 	return val;
 }
 
-static void FindNextChunk(char *name)
+static void FindNextChunk(const char *name)
 {
 	while (1)
 	{
@@ -202,7 +202,7 @@ static void FindNextChunk(char *name)
 	}
 }
 
-static void FindChunk(char *name)
+static void FindChunk(const char *name)
 {
 	last_chunk = iff_data;
 	FindNextChunk (name);
@@ -213,7 +213,7 @@ static void FindChunk(char *name)
 GetWavinfo
 ============
 */
-static wavinfo_t GetWavinfo (char *name, byte *wav, int wavlength)
+static wavinfo_t GetWavinfo (const char *name, byte *wav, int wavlength)
 {
 	wavinfo_t	info;
 

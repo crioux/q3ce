@@ -146,7 +146,7 @@ typedef enum {
 
 typedef struct
 {
-	char	*name;
+	const char	*name;
 	int		ofs;
 	fieldtype_t	type;
 	int		flags;
@@ -179,7 +179,7 @@ field_t fields[] = {
 
 
 typedef struct {
-	char	*name;
+	const char	*name;
 	void	(*spawn)(gentity_t *ent);
 } spawn_t;
 
@@ -483,8 +483,10 @@ level.spawnVars[], then call the class specfic spawn function
 void G_SpawnGEntityFromSpawnVars( void ) {
 	int			i;
 	gentity_t	*ent;
-	char		*s, *value, *gametypeName;
-	static char *gametypeNames[] = {"ffa", "tournament", "single", "team", "ctf", "oneflag", "obelisk", "harvester", "teamtournament"};
+	const char		*s;
+	char *value;
+	const char *gametypeName;
+	static const char *gametypeNames[] = {"ffa", "tournament", "single", "team", "ctf", "oneflag", "obelisk", "harvester", "teamtournament"};
 
 	// get the next free entity
 	ent = G_Spawn();

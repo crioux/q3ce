@@ -15,6 +15,9 @@
 
 #ifdef WIN32
 #include<windows.h>
+#else
+#include"unixdefs.h"
+#include"string.h"
 #endif
 
 namespace DLMALLOC
@@ -5116,12 +5119,7 @@ inline void DPRINT(const char *str,...)
 {
 	va_list args;
 	va_start(args,str);
-	char outstr[4096];
-
-	_vsnprintf(outstr,4096,str,args);
-	outstr[4095]='\0';
-
-	fprintf(stderr,"%s",outstr);
+	vfprintf(stderr,str,args);
 }
 #endif
 

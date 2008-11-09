@@ -11,6 +11,10 @@
 
 #include "zutil.h"
 
+#ifndef _WIN32
+#include "errno.h"
+#endif
+
 #ifdef NO_DEFLATE       /* for compatiblity with old definition */
 #  define NO_GZCOMPRESS
 #endif

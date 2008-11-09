@@ -28,9 +28,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #error "Do not use in VM build"
 #endif
 
-static SysCallArg (QDECL *_G_syscall)(int id, SysCallArgs &args) = (SysCallArg (QDECL *)(int, SysCallArgs &args))-1;
+static SysCallArg (QDECL *_G_syscall)(int id, const SysCallArgs &args) = (SysCallArg (QDECL *)(int, const SysCallArgs &args))-1;
 
-void dllEntry( SysCallArg (QDECL *syscallptr)(int id, SysCallArgs &args) )
+EXTERN_C DLLEXPORT void dllEntry( SysCallArg (QDECL *syscallptr)(int id, const SysCallArgs &args) )
 {
 	_G_syscall = syscallptr;
 }
@@ -375,14 +375,14 @@ int _G_trap_BotLibShutdown( void ) {
 	return (int)_G_syscall( BOTLIB_SHUTDOWN,SysCallArgs(0) );
 }
 
-int _G_trap_BotLibVarSet(char *var_name, char *value) {
+int _G_trap_BotLibVarSet(const char *var_name, const char *value) {
 	SysCallArgs args(2);
 	args[0]=var_name;
 	args[1]=value;
 	return (int)_G_syscall( BOTLIB_LIBVAR_SET, args);
 }
 
-int _G_trap_BotLibVarGet(char *var_name, char *value, int size) {
+int _G_trap_BotLibVarGet(const char *var_name, char *value, int size) {
 	SysCallArgs args(3);
 	args[0]=var_name;
 	args[1]=value;
@@ -390,7 +390,7 @@ int _G_trap_BotLibVarGet(char *var_name, char *value, int size) {
 	return (int)_G_syscall( BOTLIB_LIBVAR_GET, args);
 }
 
-int _G_trap_BotLibDefine(char *string) {
+int _G_trap_BotLibDefine(const char *string) {
 	SysCallArgs args(1);
 	args[0]=string;
 	return (int)_G_syscall( BOTLIB_PC_ADD_GLOBAL_DEFINE, args );
@@ -520,7 +520,7 @@ int _G_trap_AAS_NextBSPEntity(int ent) {
 	return (int)_G_syscall( BOTLIB_AAS_NEXT_BSP_ENTITY, args );
 }
 
-int _G_trap_AAS_ValueForBSPEpairKey(int ent, char *key, char *value, int size) {
+int _G_trap_AAS_ValueForBSPEpairKey(int ent, const char *key, char *value, int size) {
 	SysCallArgs args(4);
 	args[0]=ent;
 	args[1]=key;
@@ -529,7 +529,7 @@ int _G_trap_AAS_ValueForBSPEpairKey(int ent, char *key, char *value, int size) {
 	return (int)_G_syscall( BOTLIB_AAS_VALUE_FOR_BSP_EPAIR_KEY, args);
 }
 
-int _G_trap_AAS_VectorForBSPEpairKey(int ent, char *key, bvec3_t v) {
+int _G_trap_AAS_VectorForBSPEpairKey(int ent, const char *key, bvec3_t v) {
 	SysCallArgs args(3);
 	args[0]=ent;
 	args[1]=key;
@@ -537,7 +537,7 @@ int _G_trap_AAS_VectorForBSPEpairKey(int ent, char *key, bvec3_t v) {
 	return (int)_G_syscall( BOTLIB_AAS_VECTOR_FOR_BSP_EPAIR_KEY, args );
 }
 
-int _G_trap_AAS_FloatForBSPEpairKey(int ent, char *key, gfixed *value) {
+int _G_trap_AAS_FloatForBSPEpairKey(int ent, const char *key, gfixed *value) {
 	SysCallArgs args(3);
 	args[0]=ent;
 	args[1]=key;
@@ -545,7 +545,7 @@ int _G_trap_AAS_FloatForBSPEpairKey(int ent, char *key, gfixed *value) {
 	return (int)_G_syscall( BOTLIB_AAS_FLOAT_FOR_BSP_EPAIR_KEY, args);
 }
 
-int _G_trap_AAS_IntForBSPEpairKey(int ent, char *key, int *value) {
+int _G_trap_AAS_IntForBSPEpairKey(int ent, const char *key, int *value) {
 	SysCallArgs args(3);
 	args[0]=ent;
 	args[1]=key;
@@ -634,21 +634,21 @@ int _G_trap_AAS_PredictClientMovement(void /* struct aas_clientmove_s */ *move, 
 	return (int)_G_syscall( BOTLIB_AAS_PREDICT_CLIENT_MOVEMENT, args);
 }
 
-void _G_trap_EA_Say(int client, char *str) {
+void _G_trap_EA_Say(int client, const char *str) {
 	SysCallArgs args(2);
 	args[0]=client;
 	args[1]=str;
 	_G_syscall( BOTLIB_EA_SAY, args);
 }
 
-void _G_trap_EA_SayTeam(int client, char *str) {
+void _G_trap_EA_SayTeam(int client, const char *str) {
 	SysCallArgs args(2);
 	args[0]=client;
 	args[1]=str;
 	_G_syscall( BOTLIB_EA_SAY_TEAM, args);
 }
 
-void _G_trap_EA_Command(int client, char *command) {
+void _G_trap_EA_Command(int client, const char *command) {
 	SysCallArgs args(2);
 	args[0]=client;
 	args[1]=command;
@@ -789,7 +789,7 @@ void _G_trap_EA_ResetInput(int client) {
 	_G_syscall( BOTLIB_EA_RESET_INPUT, args );
 }
 
-int _G_trap_BotLoadCharacter(char *charfile, gfixed skill) {
+int _G_trap_BotLoadCharacter(const char *charfile, gfixed skill) {
 	SysCallArgs args(2);
 	args[0]=charfile;
 	args[1]=skill;
@@ -853,7 +853,7 @@ void _G_trap_BotFreeChatState(int handle) {
 	_G_syscall( BOTLIB_AI_FREE_CHAT_STATE, args);
 }
 
-void _G_trap_BotQueueConsoleMessage(int chatstate, int type, char *message) {
+void _G_trap_BotQueueConsoleMessage(int chatstate, int type, const char *message) {
 	SysCallArgs args(3);
 	args[0]=chatstate;
 	args[1]=type;
@@ -881,8 +881,8 @@ int _G_trap_BotNumConsoleMessages(int chatstate) {
 	return (int)_G_syscall( BOTLIB_AI_NUM_CONSOLE_MESSAGE, args);
 }
 
-void _G_trap_BotInitialChat(int chatstate, char *type, int mcontext, char *var0, char *var1, char *var2,
-							char *var3, char *var4, char *var5, char *var6, char *var7 ) {
+void _G_trap_BotInitialChat(int chatstate, const char *type, int mcontext, const char *var0, const char *var1, const char *var2,
+							const char *var3, const char *var4, const char *var5, const char *var6, const char *var7 ) {
 	SysCallArgs args(11);
 	args[0]=chatstate;
 	args[1]=type;
@@ -898,15 +898,15 @@ void _G_trap_BotInitialChat(int chatstate, char *type, int mcontext, char *var0,
 	_G_syscall( BOTLIB_AI_INITIAL_CHAT, args );
 }
 
-int	_G_trap_BotNumInitialChats(int chatstate, char *type) {
+int	_G_trap_BotNumInitialChats(int chatstate, const char *type) {
 	SysCallArgs args(2);
 	args[0]=chatstate;
 	args[1]=type;
 	return (int)_G_syscall( BOTLIB_AI_NUM_INITIAL_CHATS, args);
 }
 
-int _G_trap_BotReplyChat(int chatstate, char *message, int mcontext, int vcontext, char *var0, char *var1, 
-						 char *var2, char *var3, char *var4, char *var5, char *var6, char *var7 ) {
+int _G_trap_BotReplyChat(int chatstate, const char *message, int mcontext, int vcontext, const char *var0, const char *var1, 
+						 const char *var2, const char *var3, const char *var4, const char *var5, const char *var6, const char *var7 ) {
 	SysCallArgs args(12);
 	args[0]=chatstate;
 	args[1]=message;
@@ -945,7 +945,7 @@ void _G_trap_BotGetChatMessage(int chatstate, char *buf, int size) {
 	_G_syscall( BOTLIB_AI_GET_CHAT_MESSAGE, args);
 }
 
-int _G_trap_StringContains(char *str1, char *str2, int casesensitive) {
+int _G_trap_StringContains(const char *str1, const char *str2, int casesensitive) {
 	SysCallArgs args(3);
 	args[0]=str1;
 	args[1]=str2;
@@ -953,7 +953,7 @@ int _G_trap_StringContains(char *str1, char *str2, int casesensitive) {
 	return (int)_G_syscall( BOTLIB_AI_STRING_CONTAINS, args);
 }
 
-int _G_trap_BotFindMatch(char *str, void /* struct bot_match_s */ *match, unsigned long int context) {
+int _G_trap_BotFindMatch(const char *str, void /* struct bot_match_s */ *match, unsigned long int context) {
 	SysCallArgs args(3);
 	args[0]=str;
 	args[1]=match;
@@ -983,7 +983,7 @@ void _G_trap_BotReplaceSynonyms(char *string, unsigned long int context) {
 	_G_syscall( BOTLIB_AI_REPLACE_SYNONYMS, args);
 }
 
-int _G_trap_BotLoadChatFile(int chatstate, char *chatfile, char *chatname) {
+int _G_trap_BotLoadChatFile(int chatstate, const char *chatfile, const char *chatname) {
 	SysCallArgs args(3);
 	args[0]=chatstate;
 	args[1]=chatfile;
@@ -998,7 +998,7 @@ void _G_trap_BotSetChatGender(int chatstate, int gender) {
 	_G_syscall( BOTLIB_AI_SET_CHAT_GENDER, args);
 }
 
-void _G_trap_BotSetChatName(int chatstate, char *name, int client) {
+void _G_trap_BotSetChatName(int chatstate, const char *name, int client) {
 	SysCallArgs args(3);
 	args[0]=chatstate;
 	args[1]=name;
@@ -1115,7 +1115,7 @@ int _G_trap_BotItemGoalInVisButNotVisible(int viewer, bvec3_t eye, avec3_t viewa
 	return (int)_G_syscall( BOTLIB_AI_ITEM_GOAL_IN_VIS_BUT_NOT_VISIBLE, args );
 }
 
-int _G_trap_BotGetLevelItemGoal(int index, char *classname, void /* struct bot_goal_s */ *goal) {
+int _G_trap_BotGetLevelItemGoal(int index, const char *classname, void /* struct bot_goal_s */ *goal) {
 	SysCallArgs args(3);
 	args[0]=index;
 	args[1]=classname;
@@ -1161,7 +1161,7 @@ void _G_trap_BotUpdateEntityItems(void) {
 	_G_syscall( BOTLIB_AI_UPDATE_ENTITY_ITEMS,SysCallArgs(0) );
 }
 
-int _G_trap_BotLoadItemWeights(int goalstate, char *filename) {
+int _G_trap_BotLoadItemWeights(int goalstate, const char *filename) {
 	SysCallArgs args(2);
 	args[0]=goalstate;
 	args[1]=filename;
@@ -1182,7 +1182,7 @@ void _G_trap_BotInterbreedGoalFuzzyLogic(int parent1, int parent2, int child) {
 	_G_syscall( BOTLIB_AI_INTERBREED_GOAL_FUZZY_LOGIC, args);
 }
 
-void _G_trap_BotSaveGoalFuzzyLogic(int goalstate, char *filename) {
+void _G_trap_BotSaveGoalFuzzyLogic(int goalstate, const char *filename) {
 	SysCallArgs args(2);
 	args[0]=goalstate;
 	args[1]=filename;
@@ -1316,7 +1316,7 @@ void _G_trap_BotGetWeaponInfo(int weaponstate, int weapon, void /* struct weapon
 	_G_syscall( BOTLIB_AI_GET_WEAPON_INFO, args);
 }
 
-int _G_trap_BotLoadWeaponWeights(int weaponstate, char *filename) {
+int _G_trap_BotLoadWeaponWeights(int weaponstate, const char *filename) {
 	SysCallArgs args(2);
 	args[0]=weaponstate;
 	args[1]=filename;

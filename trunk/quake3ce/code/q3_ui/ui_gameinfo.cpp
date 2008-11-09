@@ -82,7 +82,7 @@ UI_ParseInfos
 ===============
 */
 int UI_ParseInfos( char *buf, int max, char *infos[] ) {
-	char	*token;
+	const char	*token;
 	int		count;
 	char	key[MAX_TOKEN_CHARS];
 	char	info[MAX_INFO_STRING];
@@ -90,7 +90,7 @@ int UI_ParseInfos( char *buf, int max, char *infos[] ) {
 	count = 0;
 
 	while ( 1 ) {
-		token = COM_Parse( &buf );
+		token = COM_Parse( (const char **) &buf );
 		if ( !token[0] ) {
 			break;
 		}
@@ -106,7 +106,7 @@ int UI_ParseInfos( char *buf, int max, char *infos[] ) {
 
 		info[0] = '\0';
 		while ( 1 ) {
-			token = COM_ParseExt( &buf, qtrue );
+			token = COM_ParseExt( (const char **) &buf, qtrue );
 			if ( !token[0] ) {
 				Com_Printf( "Unexpected end of info file\n" );
 				break;
@@ -116,9 +116,9 @@ int UI_ParseInfos( char *buf, int max, char *infos[] ) {
 			}
 			Q_strncpyz( key, token, sizeof( key ) );
 
-			token = COM_ParseExt( &buf, qfalse );
+			token = COM_ParseExt( (const char **) &buf, qfalse );
 			if ( !token[0] ) {
-				strcpy( token, "<NULL>" );
+				token="<NULL>";
 			}
 			Info_SetValueForKey( info, key, token );
 		}
@@ -137,7 +137,7 @@ int UI_ParseInfos( char *buf, int max, char *infos[] ) {
 UI_LoadArenasFromFile
 ===============
 */
-static void UI_LoadArenasFromFile( char *filename ) {
+static void UI_LoadArenasFromFile( const char *filename ) {
 	int				len;
 	fileHandle_t	f;
 	char			buf[MAX_ARENAS_TEXT];
@@ -173,8 +173,8 @@ static void UI_LoadArenas( void ) {
 	char*		dirptr;
 	int			i, n;
 	int			dirlen;
-	char		*type;
-	char		*tag;
+	const char		*type;
+	const char		*tag;
 	int			singlePlayerNum, specialNum, otherNum;
 
 	ui_numArenas = 0;
@@ -268,7 +268,7 @@ UI_GetArenaInfoByNumber
 */
 const char *UI_GetArenaInfoByNumber( int num ) {
 	int		n;
-	char	*value;
+	const char	*value;
 
 	if( num < 0 || num >= ui_numArenas ) {
 		_UI_trap_Print( va( S_COLOR_RED "Invalid arena number: %i\n", num ) );
@@ -326,7 +326,7 @@ const char *UI_GetSpecialArenaInfo( const char *tag ) {
 UI_LoadBotsFromFile
 ===============
 */
-static void UI_LoadBotsFromFile( char *filename ) {
+static void UI_LoadBotsFromFile( const char *filename ) {
 	int				len;
 	fileHandle_t	f;
 	char			buf[MAX_BOTS_TEXT];
@@ -392,7 +392,7 @@ static void UI_LoadBots( void ) {
 UI_GetBotInfoByNumber
 ===============
 */
-char *UI_GetBotInfoByNumber( int num ) {
+const char *UI_GetBotInfoByNumber( int num ) {
 	if( num < 0 || num >= ui_numBots ) {
 		_UI_trap_Print( va( S_COLOR_RED "Invalid bot number: %i\n", num ) );
 		return NULL;
@@ -406,9 +406,9 @@ char *UI_GetBotInfoByNumber( int num ) {
 UI_GetBotInfoByName
 ===============
 */
-char *UI_GetBotInfoByName( const char *name ) {
+const char *UI_GetBotInfoByName( const char *name ) {
 	int		n;
-	char	*value;
+	const char	*value;
 
 	for ( n = 0; n < ui_numBots ; n++ ) {
 		value = Info_ValueForKey( ui_botInfos[n], "name" );

@@ -56,8 +56,8 @@ typedef struct {
 	char			*descriptionPtr;
 	char			*fs_gamePtr;
 
-	char			*descriptionList[MAX_MODS];
-	char			*fs_gameList[MAX_MODS];
+	const char		*descriptionList[MAX_MODS];
+	const char		*fs_gameList[MAX_MODS];
 } mods_t;
 
 static mods_t	s_mods;
@@ -151,7 +151,7 @@ static void UI_Mods_LoadMods( void ) {
 	int		numdirs;
 	char	dirlist[2048];
 	char	*dirptr;
-  char  *descptr;
+  	char  *descptr;
 	int		i;
 	int		dirlen;
 
@@ -195,7 +195,7 @@ static void UI_Mods_MenuInit( void ) {
 	s_mods.banner.generic.type		= MTYPE_BTEXT;
 	s_mods.banner.generic.x			= 320;
 	s_mods.banner.generic.y			= 16;
-	s_mods.banner.string			= "MODS";
+	s_mods.banner.string			= strdup("MODS");
 	s_mods.banner.color				= color_white;
 	s_mods.banner.style				= UI_CENTER;
 

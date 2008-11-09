@@ -61,7 +61,7 @@ int LoadJPG( const char *filename, unsigned char **pic, int *width, int *height 
 
   /* Step 2: specify data source (eg, a file) */
 
-  jpeg_stdio_src(&cinfo, infile);
+  jpeg_stdio_src(&cinfo, (unsigned char *)infile);
 
   /* Step 3: read file parameters with jpeg_read_header() */
 

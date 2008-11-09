@@ -114,7 +114,7 @@ static const char *sortKeys[] = {
 };
 static const int numSortKeys = sizeof(sortKeys) / sizeof(const char*);
 
-static char* netnames[] = {
+static const char* netnames[] = {
 	"???",
 	"UDP",
 	"IPX",
@@ -196,7 +196,7 @@ int _UI_vmMain( int command, int arg0, int arg1, int arg2, int arg3, int arg4, i
 		  return _UI_IsFullscreen();
 
 	  case UI_SET_ACTIVE_MENU:
-		  _UI_SetActiveMenu( arg0 );
+		  _UI_SetActiveMenu( (uiMenuCommand_t) arg0 );
 		  return 0;
 
 	  case UI_CONSOLE_COMMAND:
@@ -249,15 +249,15 @@ void AssetCache() {
 void _UI_DrawSides(gfixed x, gfixed y, gfixed w, gfixed h, gfixed size) {
 	UI_AdjustFrom640( &x, &y, &w, &h );
 	size *= uiInfo.uiDC.xscale;
-	_UI_trap_R_DrawStretchPic( x, y, size, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader );
-	_UI_trap_R_DrawStretchPic( x + w - size, y, size, h, 0, 0, 0, 0, uiInfo.uiDC.whiteShader );
+	_UI_trap_R_DrawStretchPic( x, y, size, h, GFIXED_0, GFIXED_0, GFIXED_0, GFIXED_0, uiInfo.uiDC.whiteShader );
+	_UI_trap_R_DrawStretchPic( x + w - size, y, size, h, GFIXED_0, GFIXED_0, GFIXED_0, GFIXED_0, uiInfo.uiDC.whiteShader );
 }
 
 void _UI_DrawTopBottom(gfixed x, gfixed y, gfixed w, gfixed h, gfixed size) {
 	UI_AdjustFrom640( &x, &y, &w, &h );
 	size *= uiInfo.uiDC.yscale;
-	_UI_trap_R_DrawStretchPic( x, y, w, size, 0, 0, 0, 0, uiInfo.uiDC.whiteShader );
-	_UI_trap_R_DrawStretchPic( x, y + h - size, w, size, 0, 0, 0, 0, uiInfo.uiDC.whiteShader );
+	_UI_trap_R_DrawStretchPic( x, y, w, size, GFIXED_0, GFIXED_0, GFIXED_0, GFIXED_0, uiInfo.uiDC.whiteShader );
+	_UI_trap_R_DrawStretchPic( x, y + h - size, w, size, GFIXED_0, GFIXED_0, GFIXED_0, GFIXED_0, uiInfo.uiDC.whiteShader );
 }
 /*
 ================
@@ -282,13 +282,13 @@ int Text_Width(const char *text, gfixed scale, int limit) {
 	gfixed useScale;
 	const char *s = text;
 	fontInfo_t *font = &uiInfo.uiDC.Assets.textFont;
-	if (scale <= ui_smallFont.value) {
+	if (scale <= MAKE_GFIXED(ui_smallFont.value)) {
 		font = &uiInfo.uiDC.Assets.smallFont;
-	} else if (scale >= ui_bigFont.value) {
+	} else if (scale >= MAKE_GFIXED(ui_bigFont.value)) {
 		font = &uiInfo.uiDC.Assets.bigFont;
 	}
 	useScale = scale * font->glyphScale;
-  out = 0;
+  out = GFIXED_0;
   if (text) {
     len = strlen(text);
 		if (limit > 0 && len > limit) {
@@ -301,13 +301,13 @@ int Text_Width(const char *text, gfixed scale, int limit) {
 				continue;
 			} else {
 				glyph = &font->glyphs[(int)*s];
-				out += glyph->xSkip;
+				out += MAKE_GFIXED(glyph->xSkip);
 				s++;
 				count++;
 			}
     }
   }
-  return out * useScale;
+  return FIXED_TO_INT(out * useScale);
 }
 
 int Text_Height(const char *text, gfixed scale, int limit) {
@@ -317,13 +317,13 @@ int Text_Height(const char *text, gfixed scale, int limit) {
 	gfixed useScale;
 	const char *s = text; // bk001206 - unsigned
 	fontInfo_t *font = &uiInfo.uiDC.Assets.textFont;
-	if (scale <= ui_smallFont.value) {
+	if (scale <= MAKE_GFIXED(ui_smallFont.value)) {
 		font = &uiInfo.uiDC.Assets.smallFont;
-	} else if (scale >= ui_bigFont.value) {
+	} else if (scale >= MAKE_GFIXED(ui_bigFont.value)) {
 		font = &uiInfo.uiDC.Assets.bigFont;
 	}
 	useScale = scale * font->glyphScale;
-  max = 0;
+  max = GFIXED_0;
   if (text) {
     len = strlen(text);
 		if (limit > 0 && len > limit) {
@@ -336,15 +336,15 @@ int Text_Height(const char *text, gfixed scale, int limit) {
 				continue;
 			} else {
 				glyph = &font->glyphs[(int)*s]; // TTimo: FIXME: getting nasty warnings without the cast, hopefully this doesn't break the VM build
-	      if (max < glyph->height) {
-		      max = glyph->height;
+	      if (max < MAKE_GFIXED(glyph->height)) {
+		      max = MAKE_GFIXED(glyph->height);
 			  }
 				s++;
 				count++;
 			}
     }
   }
-  return max * useScale;
+  return FIXED_TO_INT(max * useScale);
 }
 
 void Text_PaintChar(gfixed x, gfixed y, gfixed width, gfixed height, gfixed scale, gfixed s, gfixed t, gfixed s2, gfixed t2, qhandle_t hShader) {
@@ -361,9 +361,9 @@ void Text_Paint(gfixed x, gfixed y, gfixed scale, vec4_t color, const char *text
 	glyphInfo_t *glyph;
 	gfixed useScale;
 	fontInfo_t *font = &uiInfo.uiDC.Assets.textFont;
-	if (scale <= ui_smallFont.value) {
+	if (scale <= MAKE_GFIXED(ui_smallFont.value)) {
 		font = &uiInfo.uiDC.Assets.smallFont;
-	} else if (scale >= ui_bigFont.value) {
+	} else if (scale >= MAKE_GFIXED(ui_bigFont.value)) {
 		font = &uiInfo.uiDC.Assets.bigFont;
 	}
 	useScale = scale * font->glyphScale;
@@ -387,34 +387,34 @@ void Text_Paint(gfixed x, gfixed y, gfixed scale, vec4_t color, const char *text
 				s += 2;
 				continue;
 			} else {
-				gfixed yadj = useScale * glyph->top;
+				gfixed yadj = useScale * MAKE_GFIXED(glyph->top);
 				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE) {
-					int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+					gfixed ofs = style == ITEM_TEXTSTYLE_SHADOWED ? GFIXED(1,0) : GFIXED(2,0);
 					colorBlack[3] = newColor[3];
 					_UI_trap_R_SetColor( colorBlack );
 					Text_PaintChar(x + ofs, y - yadj + ofs, 
-														glyph->imageWidth,
-														glyph->imageHeight,
-														useScale, 
-														glyph->s,
-														glyph->t,
-														glyph->s2,
-														glyph->t2,
+														MAKE_GFIXED(glyph->imageWidth),
+														MAKE_GFIXED(glyph->imageHeight),
+														MAKE_GFIXED(useScale), 
+														MAKE_GFIXED(glyph->s),
+														MAKE_GFIXED(glyph->t),
+														MAKE_GFIXED(glyph->s2),
+														MAKE_GFIXED(glyph->t2),
 														glyph->glyph);
 					_UI_trap_R_SetColor( newColor );
 					colorBlack[3] = GFIXED_1;
 				}
 				Text_PaintChar(x, y - yadj, 
-													glyph->imageWidth,
-													glyph->imageHeight,
-													useScale, 
-													glyph->s,
-													glyph->t,
-													glyph->s2,
-													glyph->t2,
+													MAKE_GFIXED(glyph->imageWidth),
+													MAKE_GFIXED(glyph->imageHeight),
+													MAKE_GFIXED(useScale), 
+													MAKE_GFIXED(glyph->s),
+													MAKE_GFIXED(glyph->t),
+													MAKE_GFIXED(glyph->s2),
+													MAKE_GFIXED(glyph->t2),
 													glyph->glyph);
 
-				x += (glyph->xSkip * useScale) + adjust;
+				x += (MAKE_GFIXED(glyph->xSkip) * useScale) + adjust;
 				s++;
 				count++;
 			}
@@ -430,9 +430,9 @@ void Text_PaintWithCursor(gfixed x, gfixed y, gfixed scale, vec4_t color, const 
 	gfixed yadj;
 	gfixed useScale;
 	fontInfo_t *font = &uiInfo.uiDC.Assets.textFont;
-	if (scale <= ui_smallFont.value) {
+	if (scale <= MAKE_GFIXED(ui_smallFont.value)) {
 		font = &uiInfo.uiDC.Assets.smallFont;
-	} else if (scale >= ui_bigFont.value) {
+	} else if (scale >= MAKE_GFIXED(ui_bigFont.value)) {
 		font = &uiInfo.uiDC.Assets.bigFont;
 	}
 	useScale = scale * font->glyphScale;
@@ -457,62 +457,62 @@ void Text_PaintWithCursor(gfixed x, gfixed y, gfixed scale, vec4_t color, const 
 				s += 2;
 				continue;
 			} else {
-				yadj = useScale * glyph->top;
+				yadj = useScale * MAKE_GFIXED(glyph->top);
 				if (style == ITEM_TEXTSTYLE_SHADOWED || style == ITEM_TEXTSTYLE_SHADOWEDMORE) {
-					int ofs = style == ITEM_TEXTSTYLE_SHADOWED ? 1 : 2;
+					gfixed ofs = style == ITEM_TEXTSTYLE_SHADOWED ? GFIXED(1,0) : GFIXED(2,0);
 					colorBlack[3] = newColor[3];
 					_UI_trap_R_SetColor( colorBlack );
 					Text_PaintChar(x + ofs, y - yadj + ofs, 
-														glyph->imageWidth,
-														glyph->imageHeight,
+														MAKE_GFIXED(glyph->imageWidth),
+														MAKE_GFIXED(glyph->imageHeight),
 														useScale, 
-														glyph->s,
-														glyph->t,
-														glyph->s2,
-														glyph->t2,
+														MAKE_GFIXED(glyph->s),
+														MAKE_GFIXED(glyph->t),
+														MAKE_GFIXED(glyph->s2),
+														MAKE_GFIXED(glyph->t2),
 														glyph->glyph);
 					colorBlack[3] = GFIXED_1;
 					_UI_trap_R_SetColor( newColor );
 				}
 				Text_PaintChar(x, y - yadj, 
-													glyph->imageWidth,
-													glyph->imageHeight,
+													MAKE_GFIXED(glyph->imageWidth),
+													MAKE_GFIXED(glyph->imageHeight),
 													useScale, 
-													glyph->s,
-													glyph->t,
-													glyph->s2,
-													glyph->t2,
+													MAKE_GFIXED(glyph->s),
+													MAKE_GFIXED(glyph->t),
+													MAKE_GFIXED(glyph->s2),
+													MAKE_GFIXED(glyph->t2),
 													glyph->glyph);
 
-	      yadj = useScale * glyph2->top;
+	      yadj = useScale * MAKE_GFIXED(glyph2->top);
 		    if (count == cursorPos && !((uiInfo.uiDC.realTime/BLINK_DIVISOR) & 1)) {
 					Text_PaintChar(x, y - yadj, 
-														glyph2->imageWidth,
-														glyph2->imageHeight,
+														MAKE_GFIXED(glyph2->imageWidth),
+														MAKE_GFIXED(glyph2->imageHeight),
 														useScale, 
-														glyph2->s,
-														glyph2->t,
-														glyph2->s2,
-														glyph2->t2,
+														MAKE_GFIXED(glyph2->s),
+														MAKE_GFIXED(glyph2->t),
+														MAKE_GFIXED(glyph2->s2),
+														MAKE_GFIXED(glyph2->t2),
 														glyph2->glyph);
 				}
 
-				x += (glyph->xSkip * useScale);
+				x += (MAKE_GFIXED(glyph->xSkip) * useScale);
 				s++;
 				count++;
 			}
     }
     // need to paint cursor at end of text
     if (cursorPos == len && !((uiInfo.uiDC.realTime/BLINK_DIVISOR) & 1)) {
-        yadj = useScale * glyph2->top;
+        yadj = useScale * MAKE_GFIXED(glyph2->top);
         Text_PaintChar(x, y - yadj, 
-                          glyph2->imageWidth,
-                          glyph2->imageHeight,
+                          MAKE_GFIXED(glyph2->imageWidth),
+                          MAKE_GFIXED(glyph2->imageHeight),
                           useScale, 
-                          glyph2->s,
-                          glyph2->t,
-                          glyph2->s2,
-                          glyph2->t2,
+                          MAKE_GFIXED(glyph2->s),
+                          MAKE_GFIXED(glyph2->t),
+                          MAKE_GFIXED(glyph2->s2),
+                          MAKE_GFIXED(glyph2->t2),
                           glyph2->glyph);
 
     }
@@ -531,12 +531,12 @@ static void Text_Paint_Limit(gfixed *maxX, gfixed x, gfixed y, gfixed scale, vec
 		gfixed max = *maxX;
 		gfixed useScale;
 		fontInfo_t *font = &uiInfo.uiDC.Assets.textFont;
-		if (scale <= ui_smallFont.value) {
+		if (scale <= MAKE_GFIXED(ui_smallFont.value)) {
 			font = &uiInfo.uiDC.Assets.smallFont;
-		} else if (scale > ui_bigFont.value) {
+		} else if (scale > MAKE_GFIXED(ui_bigFont.value)) {
 			font = &uiInfo.uiDC.Assets.bigFont;
 		}
-		useScale = scale * font->glyphScale;
+		useScale = scale * MAKE_GFIXED(font->glyphScale);
 		_UI_trap_R_SetColor( color );
     len = strlen(text);					 
 		if (limit > 0 && len > limit) {
@@ -552,21 +552,21 @@ static void Text_Paint_Limit(gfixed *maxX, gfixed x, gfixed y, gfixed scale, vec
 				s += 2;
 				continue;
 			} else {
-	      gfixed yadj = useScale * glyph->top;
-				if (Text_Width(s, useScale, 1) + x > max) {
-					*maxX = 0;
+	      gfixed yadj = useScale * MAKE_GFIXED(glyph->top);
+				if (MAKE_GFIXED(Text_Width(s, useScale, 1)) + x > max) {
+					*maxX = GFIXED_0;
 					break;
 				}
 		    Text_PaintChar(x, y - yadj, 
-			                 glyph->imageWidth,
-				               glyph->imageHeight,
+			                 MAKE_GFIXED(glyph->imageWidth),
+				              MAKE_GFIXED(glyph->imageHeight),
 				               useScale, 
-						           glyph->s,
-								       glyph->t,
-								       glyph->s2,
-									     glyph->t2,
+						           MAKE_GFIXED(glyph->s),
+								       MAKE_GFIXED(glyph->t),
+								       MAKE_GFIXED(glyph->s2),
+									     MAKE_GFIXED(glyph->t2),
 										   glyph->glyph);
-	      x += (glyph->xSkip * useScale) + adjust;
+	      x += (MAKE_GFIXED(glyph->xSkip) * useScale) + adjust;
 				*maxX = x;
 				count++;
 				s++;
@@ -595,7 +595,7 @@ void UI_DrawCenteredPic(qhandle_t image, int w, int h) {
   int x, y;
   x = (SCREEN_WIDTH - w) / 2;
   y = (SCREEN_HEIGHT - h) / 2;
-  UI_DrawHandlePic(x, y, w, h, image);
+  UI_DrawHandlePic(MAKE_GFIXED(x), MAKE_GFIXED(y), MAKE_GFIXED(w), MAKE_GFIXED(h), image);
 }
 
 int frameCount = 0;
@@ -626,7 +626,7 @@ void _UI_Refresh( int realtime )
 		if ( !total ) {
 			total = 1;
 		}
-		uiInfo.uiDC.FPS = 1000 * UI_FPS_FRAMES / total;
+		uiInfo.uiDC.FPS = FIXED_INT32RATIO_G(1000 * UI_FPS_FRAMES,total);
 	}
 
 
@@ -647,7 +647,7 @@ void _UI_Refresh( int realtime )
 	// draw cursor
 	UI_SetColor( NULL );
 	if (Menu_Count() > 0) {
-		UI_DrawHandlePic( uiInfo.uiDC.cursorx-16, uiInfo.uiDC.cursory-16, 32, 32, uiInfo.uiDC.Assets.cursor);
+		UI_DrawHandlePic( MAKE_GFIXED(uiInfo.uiDC.cursorx-16), MAKE_GFIXED(uiInfo.uiDC.cursory-16), GFIXED(32,0), GFIXED(32,0), uiInfo.uiDC.Assets.cursor);
 	}
 
 #ifndef NDEBUG
@@ -986,7 +986,7 @@ void UI_LoadMenus(const char *menuFile, qboolean reset) {
 void UI_Load() {
 	char lastName[1024];
   menuDef_t *menu = Menu_GetFocused();
-	char *menuSet = UI_Cvar_VariableString("ui_menuFiles");
+	const char *menuSet = UI_Cvar_VariableString("ui_menuFiles");
 	if (menu && menu->window.name) {
 		strcpy(lastName, menu->window.name);
 	}
@@ -1015,16 +1015,17 @@ static int numHandicaps = sizeof(handicapValues) / sizeof(const char*);
 #endif
 
 static void UI_DrawHandicap(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
-  int i, h;
+  int i;
+  gfixed h;
 
-  h = Com_Clamp( 5, 100, _UI_trap_Cvar_VariableValue("handicap") );
-  i = 20 - h / 5;
+  h = Com_Clamp( GFIXED(5,0), GFIXED(100,0), MAKE_GFIXED(_UI_trap_Cvar_VariableValue("handicap")) );
+  i = FIXED_TO_INT(GFIXED(20,0) - h / GFIXED(5,0));
 
-  Text_Paint(rect->x, rect->y, scale, color, handicapValues[i], 0, 0, textStyle);
+  Text_Paint(MAKE_GFIXED(rect->x), MAKE_GFIXED(rect->y), MAKE_GFIXED(scale), color, handicapValues[i], GFIXED_0, 0, textStyle);
 }
 
 static void UI_DrawClanName(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
-  Text_Paint(rect->x, rect->y, scale, color, UI_Cvar_VariableString("ui_teamName"), 0, 0, textStyle);
+  Text_Paint(MAKE_GFIXED(rect->x), MAKE_GFIXED(rect->y), MAKE_GFIXED(scale), color, UI_Cvar_VariableString("ui_teamName"), GFIXED_0, 0, textStyle);
 }
 
 
@@ -1046,7 +1047,7 @@ static void UI_SetCapFragLimits(qboolean uiVars) {
 }
 // ui_gameType assumes gametype 0 is -1 ALL and will not show
 static void UI_DrawGameType(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
-  Text_Paint(rect->x, rect->y, scale, color, uiInfo.gameTypes[ui_gameType.integer].gameType, 0, 0, textStyle);
+  Text_Paint(MAKE_GFIXED(rect->x), MAKE_GFIXED(rect->y), MAKE_GFIXED(scale), color, uiInfo.gameTypes[ui_gameType.integer].gameType, GFIXED_0, 0, textStyle);
 }
 
 static void UI_DrawNetGameType(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
@@ -1054,14 +1055,14 @@ static void UI_DrawNetGameType(rectDef_t *rect, gfixed scale, vec4_t color, int 
 		_UI_trap_Cvar_Set("ui_netGameType", "0");
 		_UI_trap_Cvar_Set("ui_actualNetGameType", "0");
 	}
-  Text_Paint(rect->x, rect->y, scale, color, uiInfo.gameTypes[ui_netGameType.integer].gameType , 0, 0, textStyle);
+  Text_Paint(MAKE_GFIXED(rect->x), MAKE_GFIXED(rect->y), MAKE_GFIXED(scale), color, uiInfo.gameTypes[ui_netGameType.integer].gameType , GFIXED_0, 0, textStyle);
 }
 
 static void UI_DrawJoinGameType(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
 	if (ui_joinGameType.integer < 0 || ui_joinGameType.integer > uiInfo.numJoinGameTypes) {
 		_UI_trap_Cvar_Set("ui_joinGameType", "0");
 	}
-  Text_Paint(rect->x, rect->y, scale, color, uiInfo.joinGameTypes[ui_joinGameType.integer].gameType , 0, 0, textStyle);
+  Text_Paint(MAKE_GFIXED(rect->x), MAKE_GFIXED(rect->y), MAKE_GFIXED(scale), color, uiInfo.joinGameTypes[ui_joinGameType.integer].gameType , GFIXED_0, 0, textStyle);
 }
 
 
@@ -1109,17 +1110,17 @@ static void UI_DrawClanCinematic(rectDef_t *rect, gfixed scale, vec4_t color) {
 			}
 			if (uiInfo.teamList[i].cinematic >= 0) {
 			  _UI_trap_CIN_RunCinematic(uiInfo.teamList[i].cinematic);
-				_UI_trap_CIN_SetExtents(uiInfo.teamList[i].cinematic, rect->x, rect->y, rect->w, rect->h);
+				_UI_trap_CIN_SetExtents(uiInfo.teamList[i].cinematic, FIXED_TO_INT(rect->x), FIXED_TO_INT(rect->y), FIXED_TO_INT(rect->w), FIXED_TO_INT(rect->h));
 	 			_UI_trap_CIN_DrawCinematic(uiInfo.teamList[i].cinematic);
 			} else {
 			  	_UI_trap_R_SetColor( color );
-				UI_DrawHandlePic( rect->x, rect->y, rect->w, rect->h, uiInfo.teamList[i].teamIcon_Metal);
+				UI_DrawHandlePic( MAKE_GFIXED(rect->x), MAKE_GFIXED(rect->y), MAKE_GFIXED(rect->w), MAKE_GFIXED(rect->h), uiInfo.teamList[i].teamIcon_Metal);
 				_UI_trap_R_SetColor(NULL);
 				uiInfo.teamList[i].cinematic = -2;
 			}
 		} else {
 	  	_UI_trap_R_SetColor( color );
-			UI_DrawHandlePic( rect->x, rect->y, rect->w, rect->h, uiInfo.teamList[i].teamIcon);
+			UI_DrawHandlePic( MAKE_GFIXED(rect->x), MAKE_GFIXED(rect->y), MAKE_GFIXED(rect->w), MAKE_GFIXED(rect->h), uiInfo.teamList[i].teamIcon);
 			_UI_trap_R_SetColor(NULL);
 		}
 	}
@@ -1131,7 +1132,7 @@ static void UI_DrawPreviewCinematic(rectDef_t *rect, gfixed scale, vec4_t color)
 		uiInfo.previewMovie = _UI_trap_CIN_PlayCinematic(va("%s.roq", uiInfo.movieList[uiInfo.movieIndex]), 0, 0, 0, 0, (CIN_loop | CIN_silent) );
 		if (uiInfo.previewMovie >= 0) {
 		  _UI_trap_CIN_RunCinematic(uiInfo.previewMovie);
-			_UI_trap_CIN_SetExtents(uiInfo.previewMovie, rect->x, rect->y, rect->w, rect->h);
+			_UI_trap_CIN_SetExtents(uiInfo.previewMovie, FIXED_TO_INT(rect->x), FIXED_TO_INT(rect->y), FIXED_TO_INT(rect->w), FIXED_TO_INT(rect->h));
  			_UI_trap_CIN_DrawCinematic(uiInfo.previewMovie);
 		} else {
 			uiInfo.previewMovie = -2;
@@ -1144,11 +1145,11 @@ static void UI_DrawPreviewCinematic(rectDef_t *rect, gfixed scale, vec4_t color)
 
 static void UI_DrawSkill(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
   int i;
-	i = _UI_trap_Cvar_VariableValue( "g_spSkill" );
+	i = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "g_spSkill" ));
   if (i < 1 || i > numSkillLevels) {
     i = 1;
   }
-  Text_Paint(rect->x, rect->y, scale, color, skillLevels[i-1],0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, skillLevels[i-1],GFIXED_0, 0, textStyle);
 }
 
 
@@ -1156,7 +1157,7 @@ static void UI_DrawTeamName(rectDef_t *rect, gfixed scale, vec4_t color, qboolea
   int i;
   i = UI_TeamIndexFromName(UI_Cvar_VariableString((blue) ? "ui_blueTeam" : "ui_redTeam"));
   if (i >= 0 && i < uiInfo.teamCount) {
-    Text_Paint(rect->x, rect->y, scale, color, va("%s: %s", (blue) ? "Blue" : "Red", uiInfo.teamList[i].teamName),0, 0, textStyle);
+    Text_Paint(rect->x, rect->y, scale, color, va("%s: %s", (blue) ? "Blue" : "Red", uiInfo.teamList[i].teamName),GFIXED_0, 0, textStyle);
   }
 }
 
@@ -1164,7 +1165,7 @@ static void UI_DrawTeamMember(rectDef_t *rect, gfixed scale, vec4_t color, qbool
 	// 0 - None
 	// 1 - Human
 	// 2..NumCharacters - Bot
-	int value = _UI_trap_Cvar_VariableValue(va(blue ? "ui_blueteam%i" : "ui_redteam%i", num));
+	int value = FIXED_TO_INT(_UI_trap_Cvar_VariableValue(va(blue ? "ui_blueteam%i" : "ui_redteam%i", num)));
 	const char *text;
 	if (value <= 0) {
 		text = "Closed";
@@ -1185,12 +1186,12 @@ static void UI_DrawTeamMember(rectDef_t *rect, gfixed scale, vec4_t color, qbool
 			text = UI_GetBotNameByNumber(value);
 		}
 	}
-  Text_Paint(rect->x, rect->y, scale, color, text, 0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, text, GFIXED_0, 0, textStyle);
 }
 
 static void UI_DrawEffects(rectDef_t *rect, gfixed scale, vec4_t color) {
-	UI_DrawHandlePic( rect->x, rect->y - 14, 128, 8, uiInfo.uiDC.Assets.fxBasePic );
-	UI_DrawHandlePic( rect->x + uiInfo.effectsColor * 16 + 8, rect->y - 16, 16, 12, uiInfo.uiDC.Assets.fxPic[uiInfo.effectsColor] );
+	UI_DrawHandlePic( rect->x, rect->y - GFIXED(14,0), GFIXED(128,0), GFIXED(8,0), uiInfo.uiDC.Assets.fxBasePic );
+	UI_DrawHandlePic( rect->x + MAKE_GFIXED(uiInfo.effectsColor) * GFIXED(16,0) + GFIXED(8,0), rect->y - GFIXED(16,0), GFIXED(16,0), GFIXED(12,0), uiInfo.uiDC.Assets.fxPic[uiInfo.effectsColor] );
 }
 
 static void UI_DrawMapPreview(rectDef_t *rect, gfixed scale, vec4_t color, qboolean net) {
@@ -1230,7 +1231,7 @@ static void UI_DrawMapTimeToBeat(rectDef_t *rect, gfixed scale, vec4_t color, in
 	minutes = time / 60;
 	seconds = time % 60;
 
-  Text_Paint(rect->x, rect->y, scale, color, va("%02i:%02i", minutes, seconds), 0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, va("%02i:%02i", minutes, seconds), GFIXED_0, 0, textStyle);
 }
 
 
@@ -1255,7 +1256,7 @@ static void UI_DrawMapCinematic(rectDef_t *rect, gfixed scale, vec4_t color, qbo
 		}
 		if (uiInfo.mapList[map].cinematic >= 0) {
 		  _UI_trap_CIN_RunCinematic(uiInfo.mapList[map].cinematic);
-		  _UI_trap_CIN_SetExtents(uiInfo.mapList[map].cinematic, rect->x, rect->y, rect->w, rect->h);
+		  _UI_trap_CIN_SetExtents(uiInfo.mapList[map].cinematic, FIXED_TO_INT(rect->x), FIXED_TO_INT(rect->y), FIXED_TO_INT(rect->w), FIXED_TO_INT(rect->h));
  			_UI_trap_CIN_DrawCinematic(uiInfo.mapList[map].cinematic);
 		} else {
 			uiInfo.mapList[map].cinematic = -2;
@@ -1275,10 +1276,10 @@ static void UI_DrawPlayerModel(rectDef_t *rect) {
   char model[MAX_QPATH];
   char team[256];
 	char head[256];
-	bvec3_t	viewangles;
-	bvec3_t	moveangles;
+	avec3_t	viewangles;
+	avec3_t	moveangles;
 
-	  if (_UI_trap_Cvar_VariableValue("ui_Q3Model")) {
+	  if (FIXED_TO_INT(_UI_trap_Cvar_VariableValue("ui_Q3Model"))!=0) {
 	  strcpy(model, UI_Cvar_VariableString("model"));
 		strcpy(head, UI_Cvar_VariableString("headmodel"));
 		if (!q3Model) {
@@ -1298,12 +1299,12 @@ static void UI_DrawPlayerModel(rectDef_t *rect) {
 	}
   if (updateModel) {
   	memset( &info, 0, sizeof(playerInfo_t) );
-  	viewangles[YAW]   = 180 - 10;
-  	viewangles[PITCH] = 0;
-  	viewangles[ROLL]  = 0;
+  	viewangles[YAW]   = AFIXED(180 - 10,0);
+  	viewangles[PITCH] = AFIXED_0;
+  	viewangles[ROLL]  = AFIXED_0;
   	VectorClear( moveangles );
     UI_PlayerInfo_SetModel( &info, model, head, team);
-    UI_PlayerInfo_SetInfo( &info, LEGS_IDLE, TORSO_STAND, viewangles, vec3_origin, WP_MACHINEGUN, qfalse );
+    UI_PlayerInfo_SetInfo( &info, LEGS_IDLE, TORSO_STAND, viewangles, avec3_origin, WP_MACHINEGUN, qfalse );
 //		UI_RegisterClientModelname( &info, model, head, team);
     updateModel = qfalse;
   }
@@ -1316,7 +1317,7 @@ static void UI_DrawNetSource(rectDef_t *rect, gfixed scale, vec4_t color, int te
 	if (ui_netSource.integer < 0 || ui_netSource.integer > numNetSources) {
 		ui_netSource.integer = 0;
 	}
-  Text_Paint(rect->x, rect->y, scale, color, va("Source: %s", netSources[ui_netSource.integer]), 0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, va("Source: %s", netSources[ui_netSource.integer]), GFIXED_0, 0, textStyle);
 }
 
 static void UI_DrawNetMapPreview(rectDef_t *rect, gfixed scale, vec4_t color) {
@@ -1336,7 +1337,7 @@ static void UI_DrawNetMapCinematic(rectDef_t *rect, gfixed scale, vec4_t color) 
 
 	if (uiInfo.serverStatus.currentServerCinematic >= 0) {
 	  _UI_trap_CIN_RunCinematic(uiInfo.serverStatus.currentServerCinematic);
-	  _UI_trap_CIN_SetExtents(uiInfo.serverStatus.currentServerCinematic, rect->x, rect->y, rect->w, rect->h);
+	  _UI_trap_CIN_SetExtents(uiInfo.serverStatus.currentServerCinematic, FIXED_TO_INT(rect->x), FIXED_TO_INT(rect->y), FIXED_TO_INT(rect->w), FIXED_TO_INT(rect->h));
  	  _UI_trap_CIN_DrawCinematic(uiInfo.serverStatus.currentServerCinematic);
 	} else {
 		UI_DrawNetMapPreview(rect, scale, color);
@@ -1349,22 +1350,22 @@ static void UI_DrawNetFilter(rectDef_t *rect, gfixed scale, vec4_t color, int te
 	if (ui_serverFilterType.integer < 0 || ui_serverFilterType.integer > numServerFilters) {
 		ui_serverFilterType.integer = 0;
 	}
-  Text_Paint(rect->x, rect->y, scale, color, va("Filter: %s", serverFilters[ui_serverFilterType.integer].description), 0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, va("Filter: %s", serverFilters[ui_serverFilterType.integer].description), GFIXED_0, 0, textStyle);
 }
 
 
 static void UI_DrawTier(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
   int i;
-	i = _UI_trap_Cvar_VariableValue( "ui_currentTier" );
+	i = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "ui_currentTier" ));
   if (i < 0 || i >= uiInfo.tierCount) {
     i = 0;
   }
-  Text_Paint(rect->x, rect->y, scale, color, va("Tier: %s", uiInfo.tierList[i].tierName),0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, va("Tier: %s", uiInfo.tierList[i].tierName),GFIXED_0, 0, textStyle);
 }
 
 static void UI_DrawTierMap(rectDef_t *rect, int index) {
   int i;
-	i = _UI_trap_Cvar_VariableValue( "ui_currentTier" );
+	i = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "ui_currentTier" ));
   if (i < 0 || i >= uiInfo.tierCount) {
     i = 0;
   }
@@ -1388,30 +1389,30 @@ static const char *UI_EnglishMapName(const char *map) {
 
 static void UI_DrawTierMapName(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
   int i, j;
-	i = _UI_trap_Cvar_VariableValue( "ui_currentTier" );
+	i = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "ui_currentTier" ));
   if (i < 0 || i >= uiInfo.tierCount) {
     i = 0;
   }
-	j = _UI_trap_Cvar_VariableValue("ui_currentMap");
+	j = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("ui_currentMap"));
 	if (j < 0 || j > MAPS_PER_TIER) {
 		j = 0;
 	}
 
-  Text_Paint(rect->x, rect->y, scale, color, UI_EnglishMapName(uiInfo.tierList[i].maps[j]), 0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, UI_EnglishMapName(uiInfo.tierList[i].maps[j]), GFIXED_0, 0, textStyle);
 }
 
 static void UI_DrawTierGameType(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
   int i, j;
-	i = _UI_trap_Cvar_VariableValue( "ui_currentTier" );
+	i = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "ui_currentTier" ));
   if (i < 0 || i >= uiInfo.tierCount) {
     i = 0;
   }
-	j = _UI_trap_Cvar_VariableValue("ui_currentMap");
+	j = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("ui_currentMap"));
 	if (j < 0 || j > MAPS_PER_TIER) {
 		j = 0;
 	}
 
-  Text_Paint(rect->x, rect->y, scale, color, uiInfo.gameTypes[uiInfo.tierList[i].gameTypes[j]].gameType , 0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, uiInfo.gameTypes[uiInfo.tierList[i].gameTypes[j]].gameType , GFIXED_0, 0, textStyle);
 }
 
 
@@ -1484,8 +1485,8 @@ static void UI_DrawOpponent(rectDef_t *rect) {
   char model[MAX_QPATH];
   char headmodel[MAX_QPATH];
   char team[256];
-	bvec3_t	viewangles;
-	bvec3_t	moveangles;
+	avec3_t	viewangles;
+	avec3_t	moveangles;
   
 	if (updateOpponentModel) {
 		
@@ -1494,12 +1495,12 @@ static void UI_DrawOpponent(rectDef_t *rect) {
 		team[0] = '\0';
 
   	memset( &info2, 0, sizeof(playerInfo_t) );
-  	viewangles[YAW]   = 180 - 10;
-  	viewangles[PITCH] = 0;
-  	viewangles[ROLL]  = 0;
+  	viewangles[YAW]   = AFIXED(180 - 10,0);
+  	viewangles[PITCH] = AFIXED_0;
+  	viewangles[ROLL]  = AFIXED_0;
   	VectorClear( moveangles );
     UI_PlayerInfo_SetModel( &info2, model, headmodel, "");
-    UI_PlayerInfo_SetInfo( &info2, LEGS_IDLE, TORSO_STAND, viewangles, vec3_origin, WP_MACHINEGUN, qfalse );
+    UI_PlayerInfo_SetInfo( &info2, LEGS_IDLE, TORSO_STAND, viewangles, avec3_origin, WP_MACHINEGUN, qfalse );
 		UI_RegisterClientModelname( &info2, model, headmodel, team);
     updateOpponentModel = qfalse;
   }
@@ -1540,7 +1541,7 @@ static void UI_PriorOpponent() {
  	_UI_trap_Cvar_Set( "ui_opponentName", uiInfo.teamList[i].teamName );
 }
 
-static void	UI_DrawPlayerLogo(rectDef_t *rect, bvec3_t color) {
+static void	UI_DrawPlayerLogo(rectDef_t *rect, vec3_t color) {
   int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
 
 	if (uiInfo.teamList[i].teamIcon == -1) {
@@ -1554,7 +1555,7 @@ static void	UI_DrawPlayerLogo(rectDef_t *rect, bvec3_t color) {
  	_UI_trap_R_SetColor( NULL );
 }
 
-static void	UI_DrawPlayerLogoMetal(rectDef_t *rect, bvec3_t color) {
+static void	UI_DrawPlayerLogoMetal(rectDef_t *rect, vec3_t color) {
   int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
 	if (uiInfo.teamList[i].teamIcon == -1) {
     uiInfo.teamList[i].teamIcon = _UI_trap_R_RegisterShaderNoMip(uiInfo.teamList[i].imageName);
@@ -1567,7 +1568,7 @@ static void	UI_DrawPlayerLogoMetal(rectDef_t *rect, bvec3_t color) {
  	_UI_trap_R_SetColor( NULL );
 }
 
-static void	UI_DrawPlayerLogoName(rectDef_t *rect, bvec3_t color) {
+static void	UI_DrawPlayerLogoName(rectDef_t *rect, vec3_t color) {
   int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_teamName"));
 	if (uiInfo.teamList[i].teamIcon == -1) {
     uiInfo.teamList[i].teamIcon = _UI_trap_R_RegisterShaderNoMip(uiInfo.teamList[i].imageName);
@@ -1580,7 +1581,7 @@ static void	UI_DrawPlayerLogoName(rectDef_t *rect, bvec3_t color) {
  	_UI_trap_R_SetColor( NULL );
 }
 
-static void	UI_DrawOpponentLogo(rectDef_t *rect, bvec3_t color) {
+static void	UI_DrawOpponentLogo(rectDef_t *rect, vec3_t color) {
   int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
 	if (uiInfo.teamList[i].teamIcon == -1) {
     uiInfo.teamList[i].teamIcon = _UI_trap_R_RegisterShaderNoMip(uiInfo.teamList[i].imageName);
@@ -1593,7 +1594,7 @@ static void	UI_DrawOpponentLogo(rectDef_t *rect, bvec3_t color) {
  	_UI_trap_R_SetColor( NULL );
 }
 
-static void	UI_DrawOpponentLogoMetal(rectDef_t *rect, bvec3_t color) {
+static void	UI_DrawOpponentLogoMetal(rectDef_t *rect, vec3_t color) {
   int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
 	if (uiInfo.teamList[i].teamIcon == -1) {
     uiInfo.teamList[i].teamIcon = _UI_trap_R_RegisterShaderNoMip(uiInfo.teamList[i].imageName);
@@ -1606,7 +1607,7 @@ static void	UI_DrawOpponentLogoMetal(rectDef_t *rect, bvec3_t color) {
  	_UI_trap_R_SetColor( NULL );
 }
 
-static void	UI_DrawOpponentLogoName(rectDef_t *rect, bvec3_t color) {
+static void	UI_DrawOpponentLogoName(rectDef_t *rect, vec3_t color) {
   int i = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
 	if (uiInfo.teamList[i].teamIcon == -1) {
     uiInfo.teamList[i].teamIcon = _UI_trap_R_RegisterShaderNoMip(uiInfo.teamList[i].imageName);
@@ -1622,12 +1623,12 @@ static void	UI_DrawOpponentLogoName(rectDef_t *rect, bvec3_t color) {
 static void UI_DrawAllMapsSelection(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle, qboolean net) {
 	int map = (net) ? ui_currentNetMap.integer : ui_currentMap.integer;
 	if (map >= 0 && map < uiInfo.mapCount) {
-	  Text_Paint(rect->x, rect->y, scale, color, uiInfo.mapList[map].mapName, 0, 0, textStyle);
+	  Text_Paint(rect->x, rect->y, scale, color, uiInfo.mapList[map].mapName, GFIXED_0, 0, textStyle);
 	}
 }
 
 static void UI_DrawOpponentName(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
-  Text_Paint(rect->x, rect->y, scale, color, UI_Cvar_VariableString("ui_opponentName"), 0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, UI_Cvar_VariableString("ui_opponentName"), GFIXED_0, 0, textStyle);
 }
 
 
@@ -1638,7 +1639,7 @@ static int UI_OwnerDrawWidth(int ownerDraw, gfixed scale) {
 
   switch (ownerDraw) {
     case UI_HANDICAP:
-			  h = Com_Clamp( 5, 100, _UI_trap_Cvar_VariableValue("handicap") );
+			  h = FIXED_TO_INT(Com_Clamp( GFIXED(5,0), GFIXED(100,0), MAKE_GFIXED(_UI_trap_Cvar_VariableValue("handicap"))));
 				i = 20 - h / 5;
 				s = handicapValues[i];
       break;
@@ -1649,7 +1650,7 @@ static int UI_OwnerDrawWidth(int ownerDraw, gfixed scale) {
 				s = uiInfo.gameTypes[ui_gameType.integer].gameType;
       break;
     case UI_SKILL:
-				i = _UI_trap_Cvar_VariableValue( "g_spSkill" );
+				i = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "g_spSkill" ));
 				if (i < 1 || i > numSkillLevels) {
 					i = 1;
 				}
@@ -1672,7 +1673,7 @@ static int UI_OwnerDrawWidth(int ownerDraw, gfixed scale) {
 		case UI_BLUETEAM3:
 		case UI_BLUETEAM4:
 		case UI_BLUETEAM5:
-			value = _UI_trap_Cvar_VariableValue(va("ui_blueteam%i", ownerDraw-UI_BLUETEAM1 + 1));
+			value = FIXED_TO_INT(_UI_trap_Cvar_VariableValue(va("ui_blueteam%i", ownerDraw-UI_BLUETEAM1 + 1)));
 			if (value <= 0) {
 				text = "Closed";
 			} else if (value == 1) {
@@ -1691,7 +1692,7 @@ static int UI_OwnerDrawWidth(int ownerDraw, gfixed scale) {
 		case UI_REDTEAM3:
 		case UI_REDTEAM4:
 		case UI_REDTEAM5:
-			value = _UI_trap_Cvar_VariableValue(va("ui_redteam%i", ownerDraw-UI_REDTEAM1 + 1));
+			value = FIXED_TO_INT(_UI_trap_Cvar_VariableValue(va("ui_redteam%i", ownerDraw-UI_REDTEAM1 + 1)));
 			if (value <= 0) {
 				text = "Closed";
 			} else if (value == 1) {
@@ -1749,7 +1750,7 @@ static int UI_OwnerDrawWidth(int ownerDraw, gfixed scale) {
 
 static void UI_DrawBotName(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
 	int value = uiInfo.botIndex;
-	int game = _UI_trap_Cvar_VariableValue("g_gametype");
+	int game = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("g_gametype"));
 	const char *text = "";
 	if (game >= GT_TEAM) {
 		if (value >= uiInfo.characterCount) {
@@ -1762,17 +1763,17 @@ static void UI_DrawBotName(rectDef_t *rect, gfixed scale, vec4_t color, int text
 		}
 		text = UI_GetBotNameByNumber(value);
 	}
-  Text_Paint(rect->x, rect->y, scale, color, text, 0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, text, GFIXED_0, 0, textStyle);
 }
 
 static void UI_DrawBotSkill(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
 	if (uiInfo.skillIndex >= 0 && uiInfo.skillIndex < numSkillLevels) {
-	  Text_Paint(rect->x, rect->y, scale, color, skillLevels[uiInfo.skillIndex], 0, 0, textStyle);
+	  Text_Paint(rect->x, rect->y, scale, color, skillLevels[uiInfo.skillIndex], GFIXED_0, 0, textStyle);
 	}
 }
 
 static void UI_DrawRedBlue(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
-  Text_Paint(rect->x, rect->y, scale, color, (uiInfo.redBlue == 0) ? "Red" : "Blue", 0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, (uiInfo.redBlue == 0) ? "Red" : "Blue", GFIXED_0, 0, textStyle);
 }
 
 static void UI_DrawCrosshair(rectDef_t *rect, gfixed scale, vec4_t color) {
@@ -1828,7 +1829,7 @@ static void UI_BuildPlayerList() {
 		_UI_trap_Cvar_Set("cg_selectedPlayer", va("%d", playerTeamNumber));
 	}
 
-	n = _UI_trap_Cvar_VariableValue("cg_selectedPlayer");
+	n = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("cg_selectedPlayer"));
 	if (n < 0 || n > uiInfo.myTeamCount) {
 		n = 0;
 	}
@@ -1843,7 +1844,7 @@ static void UI_DrawSelectedPlayer(rectDef_t *rect, gfixed scale, vec4_t color, i
 		uiInfo.playerRefresh = uiInfo.uiDC.realTime + 3000;
 		UI_BuildPlayerList();
 	}
-  Text_Paint(rect->x, rect->y, scale, color, (uiInfo.teamLeader) ? UI_Cvar_VariableString("cg_selectedPlayerName") : UI_Cvar_VariableString("name") , 0, 0, textStyle);
+  Text_Paint(rect->x, rect->y, scale, color, (uiInfo.teamLeader) ? UI_Cvar_VariableString("cg_selectedPlayerName") : UI_Cvar_VariableString("name") , GFIXED_0, 0, textStyle);
 }
 
 static void UI_DrawServerRefreshDate(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
@@ -1853,12 +1854,12 @@ static void UI_DrawServerRefreshDate(rectDef_t *rect, gfixed scale, vec4_t color
 		lowLight[1] = GFIXED(0,8) * color[1]; 
 		lowLight[2] = GFIXED(0,8) * color[2]; 
 		lowLight[3] = GFIXED(0,8) * color[3]; 
-		LerpColor(color,lowLight,newColor,GFIXED(0,5)+GFIXED(0,5)*sin(uiInfo.uiDC.realTime / PULSE_DIVISOR));
-	  Text_Paint(rect->x, rect->y, scale, newColor, va("Getting info for %d servers (ESC to cancel)", _UI_trap_LAN_GetServerCount(ui_netSource.integer)), 0, 0, textStyle);
+		LerpColor(color,lowLight,newColor,GFIXED(0,5)+GFIXED(0,5)*FIXED_SIN(FIXED_INT32RATIO_G(uiInfo.uiDC.realTime,PULSE_DIVISOR)));
+	  Text_Paint(rect->x, rect->y, scale, newColor, va("Getting info for %d servers (ESC to cancel)", _UI_trap_LAN_GetServerCount(ui_netSource.integer)), GFIXED_0, 0, textStyle);
 	} else {
 		char buff[64];
 		Q_strncpyz(buff, UI_Cvar_VariableString(va("ui_lastServerRefresh_%i", ui_netSource.integer)), 64);
-	  Text_Paint(rect->x, rect->y, scale, color, va("Refresh Time: %s", buff), 0, 0, textStyle);
+	  Text_Paint(rect->x, rect->y, scale, color, va("Refresh Time: %s", buff), GFIXED_0, 0, textStyle);
 	}
 }
 
@@ -1868,19 +1869,19 @@ static void UI_DrawServerMOTD(rectDef_t *rect, gfixed scale, vec4_t color) {
 	 
 		if (uiInfo.serverStatus.motdWidth == -1) {
 			uiInfo.serverStatus.motdWidth = 0;
-			uiInfo.serverStatus.motdPaintX = rect->x + 1;
+			uiInfo.serverStatus.motdPaintX = FIXED_TO_INT(rect->x + GFIXED_1);
 			uiInfo.serverStatus.motdPaintX2 = -1;
 		}
 
 		if (uiInfo.serverStatus.motdOffset > uiInfo.serverStatus.motdLen) {
 			uiInfo.serverStatus.motdOffset = 0;
-			uiInfo.serverStatus.motdPaintX = rect->x + 1;
+			uiInfo.serverStatus.motdPaintX = FIXED_TO_INT(rect->x + GFIXED_1);
 			uiInfo.serverStatus.motdPaintX2 = -1;
 		}
 
 		if (uiInfo.uiDC.realTime > uiInfo.serverStatus.motdTime) {
 			uiInfo.serverStatus.motdTime = uiInfo.uiDC.realTime + 10;
-			if (uiInfo.serverStatus.motdPaintX <= rect->x + 2) {
+			if (uiInfo.serverStatus.motdPaintX <= FIXED_TO_INT(rect->x) + 2) {
 				if (uiInfo.serverStatus.motdOffset < uiInfo.serverStatus.motdLen) {
 					uiInfo.serverStatus.motdPaintX += Text_Width(&uiInfo.serverStatus.motd[uiInfo.serverStatus.motdOffset], scale, 1) - 1;
 					uiInfo.serverStatus.motdOffset++;
@@ -1889,7 +1890,7 @@ static void UI_DrawServerMOTD(rectDef_t *rect, gfixed scale, vec4_t color) {
 					if (uiInfo.serverStatus.motdPaintX2 >= 0) {
 						uiInfo.serverStatus.motdPaintX = uiInfo.serverStatus.motdPaintX2;
 					} else {
-						uiInfo.serverStatus.motdPaintX = rect->x + rect->w - 2;
+						uiInfo.serverStatus.motdPaintX = FIXED_TO_INT(rect->x) + FIXED_TO_INT(rect->w) - 2;
 					}
 					uiInfo.serverStatus.motdPaintX2 = -1;
 				}
@@ -1903,16 +1904,16 @@ static void UI_DrawServerMOTD(rectDef_t *rect, gfixed scale, vec4_t color) {
 			}
 		}
 
-		maxX = rect->x + rect->w - 2;
-		Text_Paint_Limit(&maxX, uiInfo.serverStatus.motdPaintX, rect->y + rect->h - 3, scale, color, &uiInfo.serverStatus.motd[uiInfo.serverStatus.motdOffset], 0, 0); 
+		maxX = rect->x + rect->w - GFIXED(2,0);
+		Text_Paint_Limit(&maxX, MAKE_GFIXED(uiInfo.serverStatus.motdPaintX), rect->y + rect->h - GFIXED(3,0), scale, color, &uiInfo.serverStatus.motd[uiInfo.serverStatus.motdOffset], GFIXED_0, 0); 
 		if (uiInfo.serverStatus.motdPaintX2 >= 0) {
-			gfixed maxX2 = rect->x + rect->w - 2;
-			Text_Paint_Limit(&maxX2, uiInfo.serverStatus.motdPaintX2, rect->y + rect->h - 3, scale, color, uiInfo.serverStatus.motd, 0, uiInfo.serverStatus.motdOffset); 
+			gfixed maxX2 = rect->x + rect->w - GFIXED(2,0);
+			Text_Paint_Limit(&maxX2, MAKE_GFIXED(uiInfo.serverStatus.motdPaintX2), rect->y + rect->h - GFIXED(3,0), scale, color, uiInfo.serverStatus.motd, GFIXED_0, uiInfo.serverStatus.motdOffset); 
 		}
-		if (uiInfo.serverStatus.motdOffset && maxX > 0) {
+		if (uiInfo.serverStatus.motdOffset && maxX > GFIXED_0) {
 			// if we have an offset ( we are skipping the first part of the string ) and we fit the string
 			if (uiInfo.serverStatus.motdPaintX2 == -1) {
-						uiInfo.serverStatus.motdPaintX2 = rect->x + rect->w - 2;
+						uiInfo.serverStatus.motdPaintX2 = FIXED_TO_INT(rect->x) + FIXED_TO_INT(rect->w) - 2;
 			}
 		} else {
 			uiInfo.serverStatus.motdPaintX2 = -1;
@@ -1924,9 +1925,9 @@ static void UI_DrawServerMOTD(rectDef_t *rect, gfixed scale, vec4_t color) {
 static void UI_DrawKeyBindStatus(rectDef_t *rect, gfixed scale, vec4_t color, int textStyle) {
 //	int ofs = 0; TTimo: unused
 	if (Display_KeyBindPending()) {
-		Text_Paint(rect->x, rect->y, scale, color, "Waiting for new key... Press ESCAPE to cancel", 0, 0, textStyle);
+		Text_Paint(rect->x, rect->y, scale, color, "Waiting for new key... Press ESCAPE to cancel", GFIXED_0, 0, textStyle);
 	} else {
-		Text_Paint(rect->x, rect->y, scale, color, "Press ENTER or CLICK to change, Press BACKSPACE to clear", 0, 0, textStyle);
+		Text_Paint(rect->x, rect->y, scale, color, "Press ENTER or CLICK to change, Press BACKSPACE to clear", GFIXED_0, 0, textStyle);
 	}
 }
 
@@ -1934,11 +1935,12 @@ static void UI_DrawGLInfo(rectDef_t *rect, gfixed scale, vec4_t color, int textS
 	char * eptr;
 	char buff[1024];
 	const char *lines[64];
-	int y, numLines, i;
+	gfixed y;
+	int numLines, i;
 
-	Text_Paint(rect->x + 2, rect->y, scale, color, va("VENDOR: %s", uiInfo.uiDC.glconfig.vendor_string), 0, 30, textStyle);
-	Text_Paint(rect->x + 2, rect->y + 15, scale, color, va("VERSION: %s: %s", uiInfo.uiDC.glconfig.version_string,uiInfo.uiDC.glconfig.renderer_string), 0, 30, textStyle);
-	Text_Paint(rect->x + 2, rect->y + 30, scale, color, va ("PIXELFORMAT: color(%d-bits) Z(%d-bits) stencil(%d-bits)", uiInfo.uiDC.glconfig.colorBits, uiInfo.uiDC.glconfig.depthBits, uiInfo.uiDC.glconfig.stencilBits), 0, 30, textStyle);
+	Text_Paint(rect->x + GFIXED(2,0), rect->y, scale, color, va("VENDOR: %s", uiInfo.uiDC.glconfig.vendor_string), GFIXED_0, 30, textStyle);
+	Text_Paint(rect->x + GFIXED(2,0), rect->y + GFIXED(15,0), scale, color, va("VERSION: %s: %s", uiInfo.uiDC.glconfig.version_string,uiInfo.uiDC.glconfig.renderer_string), GFIXED_0, 30, textStyle);
+	Text_Paint(rect->x + GFIXED(2,0), rect->y + GFIXED(30,0), scale, color, va ("PIXELFORMAT: color(%d-bits) Z(%d-bits) stencil(%d-bits)", uiInfo.uiDC.glconfig.colorBits, uiInfo.uiDC.glconfig.depthBits, uiInfo.uiDC.glconfig.stencilBits), GFIXED_0, 30, textStyle);
 
 	// build null terminated extension strings
   // TTimo: https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=399
@@ -1946,7 +1948,7 @@ static void UI_DrawGLInfo(rectDef_t *rect, gfixed scale, vec4_t color, int textS
   // brought down the string size to 1024, there's not much that can be shown on the screen anyway
 	Q_strncpyz(buff, uiInfo.uiDC.glconfig.extensions_string, 1024);
 	eptr = buff;
-	y = rect->y + 45;
+	y = rect->y + GFIXED(45,0);
 	numLines = 0;
 	while ( y < rect->y + rect->h && *eptr )
 	{
@@ -1964,12 +1966,12 @@ static void UI_DrawGLInfo(rectDef_t *rect, gfixed scale, vec4_t color, int textS
 
 	i = 0;
 	while (i < numLines) {
-		Text_Paint(rect->x + 2, y, scale, color, lines[i++], 0, 20, textStyle);
+		Text_Paint(rect->x + GFIXED(2,0), y, scale, color, lines[i++], GFIXED_0, 20, textStyle);
 		if (i < numLines) {
-			Text_Paint(rect->x + rect->w / 2, y, scale, color, lines[i++], 0, 20, textStyle);
+			Text_Paint(rect->x + rect->w / GFIXED(2,0), y, scale, color, lines[i++], GFIXED_0, 20, textStyle);
 		}
-		y += 10;
-		if (y > rect->y + rect->h - 11) {
+		y += GFIXED(10,0);
+		if (y > rect->y + rect->h - GFIXED(11,0)) {
 			break;
 		}
 	}
@@ -2152,14 +2154,14 @@ static qboolean UI_OwnerDrawVisible(int flags) {
 	while (flags) {
 
 		if (flags & UI_SHOW_FFA) {
-			if (_UI_trap_Cvar_VariableValue("g_gametype") != GT_FFA) {
+			if (FIXED_TO_INT(_UI_trap_Cvar_VariableValue("g_gametype")) != GT_FFA) {
 				vis = qfalse;
 			}
 			flags &= ~UI_SHOW_FFA;
 		}
 
 		if (flags & UI_SHOW_NOTFFA) {
-			if (_UI_trap_Cvar_VariableValue("g_gametype") == GT_FFA) {
+			if (FIXED_TO_INT(_UI_trap_Cvar_VariableValue("g_gametype")) == GT_FFA) {
 				vis = qfalse;
 			}
 			flags &= ~UI_SHOW_NOTFFA;
@@ -2231,7 +2233,7 @@ static qboolean UI_OwnerDrawVisible(int flags) {
 				vis = qfalse;
 			} else {
 				if (uiInfo.soundHighScore) {
-					if (_UI_trap_Cvar_VariableValue("sv_killserver") == 0) {
+					if (FIXED_TO_INT(_UI_trap_Cvar_VariableValue("sv_killserver")) == 0) {
 						// wait on server to go down before playing sound
 						_UI_trap_S_StartLocalSound(uiInfo.newHighScoreSound, CHAN_ANNOUNCER);
 						uiInfo.soundHighScore = qfalse;
@@ -2261,7 +2263,7 @@ static qboolean UI_OwnerDrawVisible(int flags) {
 static qboolean UI_Handicap_HandleKey(int flags, gfixed *special, int key) {
   if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER) {
     int h;
-    h = Com_Clamp( 5, 100, _UI_trap_Cvar_VariableValue("handicap") );
+    h = FIXED_TO_INT(Com_Clamp( GFIXED(5,0), GFIXED(100,0), MAKE_GFIXED(_UI_trap_Cvar_VariableValue("handicap") )));
 		if (key == K_MOUSE2) {
 	    h -= 5;
 		} else {
@@ -2293,7 +2295,7 @@ static qboolean UI_Effects_HandleKey(int flags, gfixed *special, int key) {
 	  	uiInfo.effectsColor = 6;
 		}
 
-	  _UI_trap_Cvar_SetValue( "color1", uitogamecode[uiInfo.effectsColor] );
+	  _UI_trap_Cvar_SetValue( "color1", MAKE_LFIXED(uitogamecode[uiInfo.effectsColor]) );
     return qtrue;
   }
   return qfalse;
@@ -2319,7 +2321,7 @@ static qboolean UI_ClanName_HandleKey(int flags, gfixed *special, int key) {
 		}
   	_UI_trap_Cvar_Set( "ui_teamName", uiInfo.teamList[i].teamName);
 	UI_HeadCountByTeam();
-	UI_FeederSelection(FEEDER_HEADS, 0);
+	UI_FeederSelection(MAKE_GFIXED(FEEDER_HEADS), 0);
 	updateModel = qtrue;
     return qtrue;
   }
@@ -2416,7 +2418,7 @@ static qboolean UI_JoinGameType_HandleKey(int flags, gfixed *special, int key) {
 
 static qboolean UI_Skill_HandleKey(int flags, gfixed *special, int key) {
   if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER) {
-  	int i = _UI_trap_Cvar_VariableValue( "g_spSkill" );
+  	int i = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "g_spSkill" ));
 
 		if (key == K_MOUSE2) {
 	    i--;
@@ -2465,8 +2467,8 @@ static qboolean UI_TeamMember_HandleKey(int flags, gfixed *special, int key, qbo
 		// 0 - None
 		// 1 - Human
 		// 2..NumCharacters - Bot
-		char *cvar = va(blue ? "ui_blueteam%i" : "ui_redteam%i", num);
-		int value = _UI_trap_Cvar_VariableValue(cvar);
+		const char *cvar = va(blue ? "ui_blueteam%i" : "ui_redteam%i", num);
+		int value = FIXED_TO_INT(_UI_trap_Cvar_VariableValue(cvar));
 
 		if (key == K_MOUSE2) {
 			value--;
@@ -2557,7 +2559,7 @@ static qboolean UI_OpponentName_HandleKey(int flags, gfixed *special, int key) {
 
 static qboolean UI_BotName_HandleKey(int flags, gfixed *special, int key) {
   if (key == K_MOUSE1 || key == K_MOUSE2 || key == K_ENTER || key == K_KP_ENTER) {
-		int game = _UI_trap_Cvar_VariableValue("g_gametype");
+		int game = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("g_gametype"));
 		int value = uiInfo.botIndex;
 
 		if (key == K_MOUSE2) {
@@ -2639,7 +2641,7 @@ static qboolean UI_SelectedPlayer_HandleKey(int flags, gfixed *special, int key)
 		if (!uiInfo.teamLeader) {
 			return qfalse;
 		}
-		selected = _UI_trap_Cvar_VariableValue("cg_selectedPlayer");
+		selected = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("cg_selectedPlayer"));
 		
 		if (key == K_MOUSE2) {
 			selected--;
@@ -2740,7 +2742,7 @@ static qboolean UI_OwnerDrawHandleKey(int ownerDraw, int flags, gfixed *special,
 
 
 static gfixed UI_GetValue(int ownerDraw) {
-  return 0;
+  return GFIXED_0;
 }
 
 /*
@@ -2908,11 +2910,11 @@ static void UI_LoadDemos() {
 	char	*demoname;
 	int		i, len;
 
-	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", (int)_UI_trap_Cvar_VariableValue("protocol"));
+	Com_sprintf(demoExt, sizeof(demoExt), "dm_%d", FIXED_TO_INT(_UI_trap_Cvar_VariableValue("protocol")));
 
 	uiInfo.demoCount = _UI_trap_FS_GetFileList( "demos", demoExt, demolist, 4096 );
 
-	Com_sprintf(demoExt, sizeof(demoExt), ".dm_%d", (int)_UI_trap_Cvar_VariableValue("protocol"));
+	Com_sprintf(demoExt, sizeof(demoExt), ".dm_%d", FIXED_TO_INT(_UI_trap_Cvar_VariableValue("protocol")));
 
 	if (uiInfo.demoCount) {
 		if (uiInfo.demoCount > MAX_DEMOS) {
@@ -2952,7 +2954,7 @@ static void UI_StartSkirmish(qboolean next) {
 
 	if (next) {
 		int actual;
-		int index = _UI_trap_Cvar_VariableValue("ui_mapIndex");
+		int index = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("ui_mapIndex"));
 	 	UI_MapCountByGameType(qtrue);
 		UI_SelectedMap(index, &actual);
 		if (UI_SetNextMap(actual, index)) {
@@ -2964,9 +2966,9 @@ static void UI_StartSkirmish(qboolean next) {
 	}
 
 	g = uiInfo.gameTypes[ui_gameType.integer].gtEnum;
-	_UI_trap_Cvar_SetValue( "g_gametype", g );
+	_UI_trap_Cvar_SetValue( "g_gametype", MAKE_LFIXED(g) );
 	_UI_trap_Cmd_ExecuteText( EXEC_APPEND, va( "wait ; wait ; map %s\n", uiInfo.mapList[ui_currentMap.integer].mapLoadName) );
-	skill = _UI_trap_Cvar_VariableValue( "g_spSkill" );
+	skill = MAKE_GFIXED(_UI_trap_Cvar_VariableValue( "g_spSkill" ));
 	_UI_trap_Cvar_Set("ui_scoreMap", uiInfo.mapList[ui_currentMap.integer].mapName);
 
 	k = UI_TeamIndexFromName(UI_Cvar_VariableString("ui_opponentName"));
@@ -2974,24 +2976,24 @@ static void UI_StartSkirmish(qboolean next) {
 	_UI_trap_Cvar_Set("ui_singlePlayerActive", "1");
 
 	// set up sp overrides, will be replaced on postgame
-	temp = _UI_trap_Cvar_VariableValue( "capturelimit" );
+	temp = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "capturelimit" ));
 	_UI_trap_Cvar_Set("ui_saveCaptureLimit", va("%i", temp));
-	temp = _UI_trap_Cvar_VariableValue( "fraglimit" );
+	temp = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "fraglimit" ));
 	_UI_trap_Cvar_Set("ui_saveFragLimit", va("%i", temp));
 
 	UI_SetCapFragLimits(qfalse);
 
-	temp = _UI_trap_Cvar_VariableValue( "cg_drawTimer" );
+	temp = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "cg_drawTimer" ));
 	_UI_trap_Cvar_Set("ui_drawTimer", va("%i", temp));
-	temp = _UI_trap_Cvar_VariableValue( "g_doWarmup" );
+	temp = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "g_doWarmup" ));
 	_UI_trap_Cvar_Set("ui_doWarmup", va("%i", temp));
-	temp = _UI_trap_Cvar_VariableValue( "g_friendlyFire" );
+	temp = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "g_friendlyFire" ));
 	_UI_trap_Cvar_Set("ui_friendlyFire", va("%i", temp));
-	temp = _UI_trap_Cvar_VariableValue( "sv_maxClients" );
+	temp = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "sv_maxClients" ));
 	_UI_trap_Cvar_Set("ui_maxClients", va("%i", temp));
-	temp = _UI_trap_Cvar_VariableValue( "g_warmup" );
+	temp = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "g_warmup" ));
 	_UI_trap_Cvar_Set("ui_Warmup", va("%i", temp));
-	temp = _UI_trap_Cvar_VariableValue( "sv_pure" );
+	temp = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "sv_pure" ));
 	_UI_trap_Cvar_Set("ui_pure", va("%i", temp));
 
 	_UI_trap_Cvar_Set("cg_cameraOrbit", "0");
@@ -3004,7 +3006,7 @@ static void UI_StartSkirmish(qboolean next) {
 	_UI_trap_Cvar_Set("g_redTeam", UI_Cvar_VariableString("ui_teamName"));
 	_UI_trap_Cvar_Set("g_blueTeam", UI_Cvar_VariableString("ui_opponentName"));
 
-	if (_UI_trap_Cvar_VariableValue("ui_recordSPDemo")) {
+	if (FIXED_TO_INT(_UI_trap_Cvar_VariableValue("ui_recordSPDemo"))!=0) {
 		Com_sprintf(buff, MAX_STRING_CHARS, "%s_%i", uiInfo.mapList[ui_currentMap.integer].mapLoadName, g);
 		_UI_trap_Cvar_Set("ui_recordSPDemoName", buff);
 	}
@@ -3036,16 +3038,16 @@ static void UI_StartSkirmish(qboolean next) {
 }
 
 static void UI_Update(const char *name) {
-	int	val = _UI_trap_Cvar_VariableValue(name);
+	int	val = FIXED_TO_INT(_UI_trap_Cvar_VariableValue(name));
 
  	if (Q_stricmp(name, "ui_SetName") == 0) {
 		_UI_trap_Cvar_Set( "name", UI_Cvar_VariableString("ui_Name"));
  	} else if (Q_stricmp(name, "ui_setRate") == 0) {
-		gfixed rate = _UI_trap_Cvar_VariableValue("rate");
-		if (rate >= 5000) {
+		gfixed rate = MAKE_GFIXED(_UI_trap_Cvar_VariableValue("rate"));
+		if (rate >= GFIXED(5000,0)) {
 			_UI_trap_Cvar_Set("cl_maxpackets", "30");
 			_UI_trap_Cvar_Set("cl_packetdup", "1");
-		} else if (rate >= 4000) {
+		} else if (rate >= GFIXED(4000,0)) {
 			_UI_trap_Cvar_Set("cl_maxpackets", "15");
 			_UI_trap_Cvar_Set("cl_packetdup", "2");		// favor less prediction errors when there's packet loss
 		} else {
@@ -3057,106 +3059,106 @@ static void UI_Update(const char *name) {
  	} else if (Q_stricmp(name, "r_colorbits") == 0) {
 		switch (val) {
 			case 0:
-				_UI_trap_Cvar_SetValue( "r_depthbits", 0 );
-				_UI_trap_Cvar_SetValue( "r_stencilbits", 0 );
+				_UI_trap_Cvar_SetValue( "r_depthbits", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_stencilbits", LFIXED_0 );
 			break;
 			case 16:
-				_UI_trap_Cvar_SetValue( "r_depthbits", 16 );
-				_UI_trap_Cvar_SetValue( "r_stencilbits", 0 );
+				_UI_trap_Cvar_SetValue( "r_depthbits", LFIXED(16,0) );
+				_UI_trap_Cvar_SetValue( "r_stencilbits", LFIXED_0 );
 			break;
 			case 32:
-				_UI_trap_Cvar_SetValue( "r_depthbits", 24 );
+				_UI_trap_Cvar_SetValue( "r_depthbits", LFIXED(24,0) );
 			break;
 		}
 	} else if (Q_stricmp(name, "r_lodbias") == 0) {
 		switch (val) {
 			case 0:
-				_UI_trap_Cvar_SetValue( "r_subdivisions", 4 );
+				_UI_trap_Cvar_SetValue( "r_subdivisions", LFIXED(4,0) );
 			break;
 			case 1:
-				_UI_trap_Cvar_SetValue( "r_subdivisions", 12 );
+				_UI_trap_Cvar_SetValue( "r_subdivisions", LFIXED(12,0) );
 			break;
 			case 2:
-				_UI_trap_Cvar_SetValue( "r_subdivisions", 20 );
+				_UI_trap_Cvar_SetValue( "r_subdivisions", LFIXED(20,0) );
 			break;
 		}
 	} else if (Q_stricmp(name, "ui_glCustom") == 0) {
 		switch (val) {
 			case 0:	// high quality
-				_UI_trap_Cvar_SetValue( "r_fullScreen", 1 );
-				_UI_trap_Cvar_SetValue( "r_subdivisions", 4 );
-				_UI_trap_Cvar_SetValue( "r_vertexlight", 0 );
-				_UI_trap_Cvar_SetValue( "r_lodbias", 0 );
-				_UI_trap_Cvar_SetValue( "r_colorbits", 32 );
-				_UI_trap_Cvar_SetValue( "r_depthbits", 24 );
-				_UI_trap_Cvar_SetValue( "r_picmip", 0 );
-				_UI_trap_Cvar_SetValue( "r_mode", 4 );
-				_UI_trap_Cvar_SetValue( "r_texturebits", 32 );
-				_UI_trap_Cvar_SetValue( "r_fastSky", 0 );
-				_UI_trap_Cvar_SetValue( "r_inGameVideo", 1 );
-				_UI_trap_Cvar_SetValue( "cg_shadows", 1 );
-				_UI_trap_Cvar_SetValue( "cg_brassTime", 2500 );
+				_UI_trap_Cvar_SetValue( "r_fullScreen", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "r_subdivisions", LFIXED(4,0) );
+				_UI_trap_Cvar_SetValue( "r_vertexlight", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_lodbias", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_colorbits", LFIXED(32,0) );
+				_UI_trap_Cvar_SetValue( "r_depthbits", LFIXED(24,0) );
+				_UI_trap_Cvar_SetValue( "r_picmip", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_mode", LFIXED(4,0) );
+				_UI_trap_Cvar_SetValue( "r_texturebits", LFIXED(32,0) );
+				_UI_trap_Cvar_SetValue( "r_fastSky", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_inGameVideo", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "cg_shadows", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "cg_brassTime", LFIXED(2500,0) );
 				_UI_trap_Cvar_Set( "r_texturemode", "GL_LINEAR_MIPMAP_LINEAR" );
 			break;
 			case 1: // normal 
-				_UI_trap_Cvar_SetValue( "r_fullScreen", 1 );
-				_UI_trap_Cvar_SetValue( "r_subdivisions", 12 );
-				_UI_trap_Cvar_SetValue( "r_vertexlight", 0 );
-				_UI_trap_Cvar_SetValue( "r_lodbias", 0 );
-				_UI_trap_Cvar_SetValue( "r_colorbits", 0 );
-				_UI_trap_Cvar_SetValue( "r_depthbits", 24 );
-				_UI_trap_Cvar_SetValue( "r_picmip", 1 );
-				_UI_trap_Cvar_SetValue( "r_mode", 3 );
-				_UI_trap_Cvar_SetValue( "r_texturebits", 0 );
-				_UI_trap_Cvar_SetValue( "r_fastSky", 0 );
-				_UI_trap_Cvar_SetValue( "r_inGameVideo", 1 );
-				_UI_trap_Cvar_SetValue( "cg_brassTime", 2500 );
+				_UI_trap_Cvar_SetValue( "r_fullScreen", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "r_subdivisions", LFIXED(12,0) );
+				_UI_trap_Cvar_SetValue( "r_vertexlight", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_lodbias", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_colorbits", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_depthbits", LFIXED(24,0) );
+				_UI_trap_Cvar_SetValue( "r_picmip", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "r_mode", LFIXED(3,0) );
+				_UI_trap_Cvar_SetValue( "r_texturebits", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_fastSky", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_inGameVideo", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "cg_brassTime", LFIXED(2500,0) );
 				_UI_trap_Cvar_Set( "r_texturemode", "GL_LINEAR_MIPMAP_LINEAR" );
-				_UI_trap_Cvar_SetValue( "cg_shadows", 0 );
+				_UI_trap_Cvar_SetValue( "cg_shadows", LFIXED_0 );
 			break;
 			case 2: // fast
-				_UI_trap_Cvar_SetValue( "r_fullScreen", 1 );
-				_UI_trap_Cvar_SetValue( "r_subdivisions", 8 );
-				_UI_trap_Cvar_SetValue( "r_vertexlight", 0 );
-				_UI_trap_Cvar_SetValue( "r_lodbias", 1 );
-				_UI_trap_Cvar_SetValue( "r_colorbits", 0 );
-				_UI_trap_Cvar_SetValue( "r_depthbits", 0 );
-				_UI_trap_Cvar_SetValue( "r_picmip", 1 );
-				_UI_trap_Cvar_SetValue( "r_mode", 3 );
-				_UI_trap_Cvar_SetValue( "r_texturebits", 0 );
-				_UI_trap_Cvar_SetValue( "cg_shadows", 0 );
-				_UI_trap_Cvar_SetValue( "r_fastSky", 1 );
-				_UI_trap_Cvar_SetValue( "r_inGameVideo", 0 );
-				_UI_trap_Cvar_SetValue( "cg_brassTime", 0 );
+				_UI_trap_Cvar_SetValue( "r_fullScreen", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "r_subdivisions", LFIXED(8,0) );
+				_UI_trap_Cvar_SetValue( "r_vertexlight", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_lodbias", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "r_colorbits", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_depthbits", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_picmip", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "r_mode", LFIXED(3,0) );
+				_UI_trap_Cvar_SetValue( "r_texturebits", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "cg_shadows", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_fastSky", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "r_inGameVideo", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "cg_brassTime", LFIXED_0 );
 				_UI_trap_Cvar_Set( "r_texturemode", "GL_LINEAR_MIPMAP_NEAREST" );
 			break;
 			case 3: // fastest
-				_UI_trap_Cvar_SetValue( "r_fullScreen", 1 );
-				_UI_trap_Cvar_SetValue( "r_subdivisions", 20 );
-				_UI_trap_Cvar_SetValue( "r_vertexlight", 1 );
-				_UI_trap_Cvar_SetValue( "r_lodbias", 2 );
-				_UI_trap_Cvar_SetValue( "r_colorbits", 16 );
-				_UI_trap_Cvar_SetValue( "r_depthbits", 16 );
-				_UI_trap_Cvar_SetValue( "r_mode", 3 );
-				_UI_trap_Cvar_SetValue( "r_picmip", 2 );
-				_UI_trap_Cvar_SetValue( "r_texturebits", 16 );
-				_UI_trap_Cvar_SetValue( "cg_shadows", 0 );
-				_UI_trap_Cvar_SetValue( "cg_brassTime", 0 );
-				_UI_trap_Cvar_SetValue( "r_fastSky", 1 );
-				_UI_trap_Cvar_SetValue( "r_inGameVideo", 0 );
+				_UI_trap_Cvar_SetValue( "r_fullScreen", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "r_subdivisions", LFIXED(20,0) );
+				_UI_trap_Cvar_SetValue( "r_vertexlight", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "r_lodbias", LFIXED(2,0) );
+				_UI_trap_Cvar_SetValue( "r_colorbits", LFIXED(16,0) );
+				_UI_trap_Cvar_SetValue( "r_depthbits", LFIXED(16,0) );
+				_UI_trap_Cvar_SetValue( "r_mode", LFIXED(3,0) );
+				_UI_trap_Cvar_SetValue( "r_picmip", LFIXED(2,0) );
+				_UI_trap_Cvar_SetValue( "r_texturebits", LFIXED(16,0) );
+				_UI_trap_Cvar_SetValue( "cg_shadows", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "cg_brassTime", LFIXED_0 );
+				_UI_trap_Cvar_SetValue( "r_fastSky", LFIXED_1 );
+				_UI_trap_Cvar_SetValue( "r_inGameVideo", LFIXED_0 );
 				_UI_trap_Cvar_Set( "r_texturemode", "GL_LINEAR_MIPMAP_NEAREST" );
 			break;
 		}
 	} else if (Q_stricmp(name, "ui_mousePitch") == 0) {
 		if (val == 0) {
-			_UI_trap_Cvar_SetValue( "m_pitch", GFIXED(0,022) );
+			_UI_trap_Cvar_SetValue( "m_pitch", LFIXED(0,022) );
 		} else {
-			_UI_trap_Cvar_SetValue( "m_pitch", -GFIXED(0,022) );
+			_UI_trap_Cvar_SetValue( "m_pitch", -LFIXED(0,022) );
 		}
 	}
 }
 
-static void UI_RunMenuScript(char **args) {
+static void UI_RunMenuScript(const char **args) {
 	const char *name, *name2;
 	char buff[1024];
 
@@ -3167,21 +3169,21 @@ static void UI_RunMenuScript(char **args) {
 			_UI_trap_Cvar_Set("cg_thirdPerson", "0");
 			_UI_trap_Cvar_Set("cg_cameraOrbit", "0");
 			_UI_trap_Cvar_Set("ui_singlePlayerActive", "0");
-			_UI_trap_Cvar_SetValue( "dedicated", Com_Clamp( 0, 2, ui_dedicated.integer ) );
-			_UI_trap_Cvar_SetValue( "g_gametype", Com_Clamp( 0, 8, uiInfo.gameTypes[ui_netGameType.integer].gtEnum ) );
+			_UI_trap_Cvar_SetValue( "dedicated", MAKE_LFIXED(Com_Clamp( GFIXED_0, GFIXED(2,0), MAKE_GFIXED(ui_dedicated.integer) ) ));
+			_UI_trap_Cvar_SetValue( "g_gametype", MAKE_LFIXED(Com_Clamp( GFIXED_0, GFIXED(8,0), MAKE_GFIXED(uiInfo.gameTypes[ui_netGameType.integer].gtEnum) ) ));
 			_UI_trap_Cvar_Set("g_redTeam", UI_Cvar_VariableString("ui_teamName"));
 			_UI_trap_Cvar_Set("g_blueTeam", UI_Cvar_VariableString("ui_opponentName"));
 			_UI_trap_Cmd_ExecuteText( EXEC_APPEND, va( "wait ; wait ; map %s\n", uiInfo.mapList[ui_currentNetMap.integer].mapLoadName ) );
-			skill = _UI_trap_Cvar_VariableValue( "g_spSkill" );
+			skill = MAKE_GFIXED(_UI_trap_Cvar_VariableValue( "g_spSkill" ));
 			// set max clients based on spots
-			oldclients = _UI_trap_Cvar_VariableValue( "sv_maxClients" );
+			oldclients = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "sv_maxClients" ));
 			clients = 0;
 			for (i = 0; i < PLAYERS_PER_TEAM; i++) {
-				int bot = _UI_trap_Cvar_VariableValue( va("ui_blueteam%i", i+1));
+				int bot = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( va("ui_blueteam%i", i+1)));
 				if (bot >= 0) {
 					clients++;
 				}
-				bot = _UI_trap_Cvar_VariableValue( va("ui_redteam%i", i+1));
+				bot = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( va("ui_redteam%i", i+1)));
 				if (bot >= 0) {
 					clients++;
 				}
@@ -3197,7 +3199,7 @@ static void UI_RunMenuScript(char **args) {
 			_UI_trap_Cvar_Set("sv_maxClients", va("%d",clients));
 
 			for (i = 0; i < PLAYERS_PER_TEAM; i++) {
-				int bot = _UI_trap_Cvar_VariableValue( va("ui_blueteam%i", i+1));
+				int bot = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( va("ui_blueteam%i", i+1)));
 				if (bot > 1) {
 					if (ui_actualNetGameType.integer >= GT_TEAM) {
 						Com_sprintf( buff, sizeof(buff), "addbot %s %f %s\n", uiInfo.characterList[bot-2].name, FIXED_TO_DOUBLE(skill), "Blue");
@@ -3206,7 +3208,7 @@ static void UI_RunMenuScript(char **args) {
 					}
 					_UI_trap_Cmd_ExecuteText( EXEC_APPEND, buff );
 				}
-				bot = _UI_trap_Cvar_VariableValue( va("ui_redteam%i", i+1));
+				bot = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( va("ui_redteam%i", i+1)));
 				if (bot > 1) {
 					if (ui_actualNetGameType.integer >= GT_TEAM) {
 						Com_sprintf( buff, sizeof(buff), "addbot %s %f %s\n", uiInfo.characterList[bot-2].name, FIXED_TO_DOUBLE(skill), "Red");
@@ -3330,7 +3332,7 @@ static void UI_RunMenuScript(char **args) {
 				UI_StartServerRefresh(qtrue);
 			}
 			UI_BuildServerDisplayList(qtrue);
-			UI_FeederSelection(FEEDER_SERVERS, 0);
+			UI_FeederSelection(MAKE_GFIXED(FEEDER_SERVERS), 0);
 		} else if (Q_stricmp(name, "ServerStatus") == 0) {
 			_UI_trap_LAN_GetServerAddressString(ui_netSource.integer, uiInfo.serverStatus.displayServers[uiInfo.serverStatus.currentServer], uiInfo.serverStatusAddress, sizeof(uiInfo.serverStatusAddress));
 			UI_BuildServerStatus(qtrue);
@@ -3405,7 +3407,7 @@ static void UI_RunMenuScript(char **args) {
 				_UI_trap_Cmd_ExecuteText( EXEC_APPEND, va("callteamvote leader %s\n",uiInfo.teamNames[uiInfo.teamIndex]) );
 			}
 		} else if (Q_stricmp(name, "addBot") == 0) {
-			if (_UI_trap_Cvar_VariableValue("g_gametype") >= GT_TEAM) {
+			if (FIXED_TO_INT(_UI_trap_Cvar_VariableValue("g_gametype")) >= GT_TEAM) {
 				_UI_trap_Cmd_ExecuteText( EXEC_APPEND, va("addbot %s %i %s\n", uiInfo.characterList[uiInfo.botIndex].name, uiInfo.skillIndex+1, (uiInfo.redBlue == 0) ? "Red" : "Blue") );
 			} else {
 				_UI_trap_Cmd_ExecuteText( EXEC_APPEND, va("addbot %s %i %s\n", UI_GetBotNameByNumber(uiInfo.botIndex), uiInfo.skillIndex+1, (uiInfo.redBlue == 0) ? "Red" : "Blue") );
@@ -3474,7 +3476,7 @@ static void UI_RunMenuScript(char **args) {
 		} else if (Q_stricmp(name, "orders") == 0) {
 			const char *orders;
 			if (String_Parse(args, &orders)) {
-				int selectedPlayer = _UI_trap_Cvar_VariableValue("cg_selectedPlayer");
+				int selectedPlayer = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("cg_selectedPlayer"));
 				if (selectedPlayer < uiInfo.myTeamCount) {
 					strcpy(buff, orders);
 					_UI_trap_Cmd_ExecuteText( EXEC_APPEND, va(buff, uiInfo.teamClientNums[selectedPlayer]) );
@@ -3498,7 +3500,7 @@ static void UI_RunMenuScript(char **args) {
 		} else if (Q_stricmp(name, "voiceOrdersTeam") == 0) {
 			const char *orders;
 			if (String_Parse(args, &orders)) {
-				int selectedPlayer = _UI_trap_Cvar_VariableValue("cg_selectedPlayer");
+				int selectedPlayer = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("cg_selectedPlayer"));
 				if (selectedPlayer == uiInfo.myTeamCount) {
 					_UI_trap_Cmd_ExecuteText( EXEC_APPEND, orders );
 					_UI_trap_Cmd_ExecuteText( EXEC_APPEND, "\n" );
@@ -3511,7 +3513,7 @@ static void UI_RunMenuScript(char **args) {
 		} else if (Q_stricmp(name, "voiceOrders") == 0) {
 			const char *orders;
 			if (String_Parse(args, &orders)) {
-				int selectedPlayer = _UI_trap_Cvar_VariableValue("cg_selectedPlayer");
+				int selectedPlayer = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("cg_selectedPlayer"));
 				if (selectedPlayer < uiInfo.myTeamCount) {
 					strcpy(buff, orders);
 					_UI_trap_Cmd_ExecuteText( EXEC_APPEND, va(buff, uiInfo.teamClientNums[selectedPlayer]) );
@@ -3847,7 +3849,7 @@ static void UI_BuildServerDisplayList(qboolean force) {
 
 typedef struct
 {
-	char *name, *altName;
+	const char *name, *altName;
 } serverStatusCvar_t;
 
 serverStatusCvar_t serverStatusCvars[] = {
@@ -3870,7 +3872,7 @@ UI_SortServerStatusInfo
 */
 static void UI_SortServerStatusInfo( serverStatusInfo_t *info ) {
 	int i, j, index;
-	char *tmp1, *tmp2;
+	const char *tmp1, *tmp2;
 
 	// FIXME: if "gamename" == "baseq3" or "missionpack" then
 	// replace the gametype number by FFA, CTF etc.
@@ -4002,7 +4004,7 @@ static int UI_GetServerStatusInfo( const char *serverAddress, serverStatusInfo_t
 stristr
 ==================
 */
-static char *stristr(char *str, char *charset) {
+static const char *stristr(const char *str, const char *charset) {
 	int i;
 
 	while(*str) {
@@ -4147,7 +4149,7 @@ static void UI_BuildFindPlayerList(qboolean force) {
 		}
 		uiInfo.nextFindPlayerRefresh = 0;
 		// show the server status info for the selected server
-		UI_FeederSelection(FEEDER_FINDPLAYER, uiInfo.currentFoundPlayerServer);
+		UI_FeederSelection(MAKE_GFIXED(FEEDER_FINDPLAYER), uiInfo.currentFoundPlayerServer);
 	}
 }
 
@@ -4189,7 +4191,8 @@ static void UI_BuildServerStatus(qboolean force) {
 UI_FeederCount
 ==================
 */
-static int UI_FeederCount(gfixed feederID) {
+static int UI_FeederCount(gfixed gfeederID) {
+	int feederID=FIXED_TO_INT(gfeederID);
 	if (feederID == FEEDER_HEADS) {
 		return UI_HeadCountByTeam();
 	} else if (feederID == FEEDER_Q3HEADS) {
@@ -4279,7 +4282,8 @@ static void UI_UpdatePendingPings() {
 
 }
 
-static const char *UI_FeederItemText(gfixed feederID, int index, int column, qhandle_t *handle) {
+static const char *UI_FeederItemText(gfixed gfeederID, int index, int column, qhandle_t *handle) {
+	int feederID=FIXED_TO_INT(gfeederID);
 	char info[MAX_STRING_CHARS];
 	static char hostname[1024];
 	static char clientBuff[32];
@@ -4391,7 +4395,8 @@ static const char *UI_FeederItemText(gfixed feederID, int index, int column, qha
 }
 
 
-static qhandle_t UI_FeederItemImage(gfixed feederID, int index) {
+static qhandle_t UI_FeederItemImage(gfixed gfeederID, int index) {
+  int feederID = FIXED_TO_INT(gfeederID);
   if (feederID == FEEDER_HEADS) {
 	int actual;
 	UI_SelectedHead(index, &actual);
@@ -4420,7 +4425,8 @@ static qhandle_t UI_FeederItemImage(gfixed feederID, int index) {
   return 0;
 }
 
-static void UI_FeederSelection(gfixed feederID, int index) {
+static void UI_FeederSelection(gfixed gfeederID, int index) {
+	int feederID=FIXED_TO_INT(gfeederID);
 	static char info[MAX_STRING_CHARS];
   if (feederID == FEEDER_HEADS) {
 	int actual;
@@ -4502,8 +4508,8 @@ static void UI_FeederSelection(gfixed feederID, int index) {
 	}
 }
 
-static qboolean Team_Parse(char **p) {
-  char *token;
+static qboolean Team_Parse(const char **p) {
+  const char *token;
   const char *tempStr;
 	int i;
 
@@ -4562,8 +4568,8 @@ static qboolean Team_Parse(char **p) {
   return qfalse;
 }
 
-static qboolean Character_Parse(char **p) {
-  char *token;
+static qboolean Character_Parse(const char **p) {
+  const char *token;
   const char *tempStr;
 
   token = COM_ParseExt(p, qtrue);
@@ -4619,8 +4625,8 @@ static qboolean Character_Parse(char **p) {
 }
 
 
-static qboolean Alias_Parse(char **p) {
-  char *token;
+static qboolean Alias_Parse(const char **p) {
+  const char *token;
 
   token = COM_ParseExt(p, qtrue);
 
@@ -4669,8 +4675,8 @@ static qboolean Alias_Parse(char **p) {
 // 1 - team parsing
 // 2 - character parsing
 static void UI_ParseTeamInfo(const char *teamFile) {
-	char	*token;
-  char *p;
+	const char	*token;
+  const char *p;
   char *buff = NULL;
   //static int mode = 0; TTimo: unused
 
@@ -4713,8 +4719,8 @@ static void UI_ParseTeamInfo(const char *teamFile) {
 }
 
 
-static qboolean GameType_Parse(char **p, qboolean join) {
-	char *token;
+static qboolean GameType_Parse(const char **p, qboolean join) {
+	const char *token;
 
 	token = COM_ParseExt(p, qtrue);
 
@@ -4774,8 +4780,8 @@ static qboolean GameType_Parse(char **p, qboolean join) {
 	return qfalse;
 }
 
-static qboolean MapList_Parse(char **p) {
-	char *token;
+static qboolean MapList_Parse(const char **p) {
+	const char *token;
 
 	token = COM_ParseExt(p, qtrue);
 
@@ -4839,8 +4845,8 @@ static qboolean MapList_Parse(char **p) {
 }
 
 static void UI_ParseGameInfo(const char *teamFile) {
-	char	*token;
-	char *p;
+	const char	*token;
+	const char *p;
 	char *buff = NULL;
 	//int mode = 0; TTimo: unused
 
@@ -4908,7 +4914,7 @@ static int UI_OwnerDraw_Width(int ownerDraw) {
 #endif
 
 static int UI_PlayCinematic(const char *name, gfixed x, gfixed y, gfixed w, gfixed h) {
-  return _UI_trap_CIN_PlayCinematic(name, x, y, w, h, (CIN_loop | CIN_silent));
+  return _UI_trap_CIN_PlayCinematic(name, FIXED_TO_INT(x), FIXED_TO_INT(y), FIXED_TO_INT(w),FIXED_TO_INT(h), (CIN_loop | CIN_silent));
 }
 
 static void UI_StopCinematic(int handle) {
@@ -4939,7 +4945,7 @@ static void UI_StopCinematic(int handle) {
 }
 
 static void UI_DrawCinematic(int handle, gfixed x, gfixed y, gfixed w, gfixed h) {
-	_UI_trap_CIN_SetExtents(handle, x, y, w, h);
+	_UI_trap_CIN_SetExtents(handle, FIXED_TO_INT(x), FIXED_TO_INT(y), FIXED_TO_INT(w), FIXED_TO_INT(h));
   _UI_trap_CIN_DrawCinematic(handle);
 }
 
@@ -5038,15 +5044,15 @@ void _UI_Init( qboolean inGameLoad ) {
 	_UI_trap_GetGlconfig( &uiInfo.uiDC.glconfig );
 
 	// for 640x480 virtualized screen
-	uiInfo.uiDC.yscale = uiInfo.uiDC.glconfig.vidHeight * (GFIXED_1/GFIXED(480,0));
-	uiInfo.uiDC.xscale = uiInfo.uiDC.glconfig.vidWidth * (GFIXED_1/GFIXED(640,0));
+	uiInfo.uiDC.yscale = MAKE_GFIXED(uiInfo.uiDC.glconfig.vidHeight) * (GFIXED_1/GFIXED(480,0));
+	uiInfo.uiDC.xscale = MAKE_GFIXED(uiInfo.uiDC.glconfig.vidWidth) * (GFIXED_1/GFIXED(640,0));
 	if ( uiInfo.uiDC.glconfig.vidWidth * 480 > uiInfo.uiDC.glconfig.vidHeight * 640 ) {
 		// wide screen
-		uiInfo.uiDC.bias = GFIXED(0,5) * ( uiInfo.uiDC.glconfig.vidWidth - ( uiInfo.uiDC.glconfig.vidHeight * (GFIXED(640,0)/GFIXED(480,0)) ) );
+		uiInfo.uiDC.bias = GFIXED(0,5) * ( MAKE_GFIXED(uiInfo.uiDC.glconfig.vidWidth) - ( MAKE_GFIXED(uiInfo.uiDC.glconfig.vidHeight) * (GFIXED(640,0)/GFIXED(480,0)) ) );
 	}
 	else {
 		// no wide screen
-		uiInfo.uiDC.bias = 0;
+		uiInfo.uiDC.bias = GFIXED_0;
 	}
 
 
@@ -5150,14 +5156,14 @@ void _UI_Init( qboolean inGameLoad ) {
 	UI_LoadBots();
 
 	// sets defaults for ui temp cvars
-	uiInfo.effectsColor = gamecodetoui[(int)_UI_trap_Cvar_VariableValue("color1")-1];
-	uiInfo.currentCrosshair = (int)_UI_trap_Cvar_VariableValue("cg_drawCrosshair");
-	_UI_trap_Cvar_Set("ui_mousePitch", (_UI_trap_Cvar_VariableValue("m_pitch") >= 0) ? "0" : "1");
+	uiInfo.effectsColor = gamecodetoui[FIXED_TO_INT(_UI_trap_Cvar_VariableValue("color1"))-1];
+	uiInfo.currentCrosshair = FIXED_TO_INT(_UI_trap_Cvar_VariableValue("cg_drawCrosshair"));
+	_UI_trap_Cvar_Set("ui_mousePitch", (FIXED_TO_INT(_UI_trap_Cvar_VariableValue("m_pitch")) >= 0) ? "0" : "1");
 
 	uiInfo.serverStatus.currentServerCinematic = -1;
 	uiInfo.previewMovie = -1;
 
-	if (_UI_trap_Cvar_VariableValue("ui_TeamArenaFirstRun") == 0) {
+	if (FIXED_TO_INT(_UI_trap_Cvar_VariableValue("ui_TeamArenaFirstRun")) == 0) {
 		_UI_trap_Cvar_Set("s_volume", "0.8");
 		_UI_trap_Cvar_Set("s_musicvolume", "0.5");
 		_UI_trap_Cvar_Set("ui_TeamArenaFirstRun", "1");
@@ -5240,7 +5246,7 @@ void _UI_SetActiveMenu( uiMenuCommand_t menu ) {
 	// enusure minumum menu data is cached
   if (Menu_Count() > 0) {
 		bvec3_t v;
-		v[0] = v[1] = v[2] = 0;
+		v[0] = v[1] = v[2] = BFIXED_0;
 	  switch ( menu ) {
 	  case UIMENU_NONE:
 			_UI_trap_Key_SetCatcher( _UI_trap_Key_GetCatcher() & ~KEYCATCH_UI );
@@ -5346,7 +5352,7 @@ static void UI_PrintTime ( char *buf, int bufsize, int time ) {
 
 void Text_PaintCenter(gfixed x, gfixed y, gfixed scale, vec4_t color, const char *text, gfixed adjust) {
 	int len = Text_Width(text, scale, 0);
-	Text_Paint(x - len / 2, y, scale, color, text, 0, 0, ITEM_TEXTSTYLE_SHADOWEDMORE);
+	Text_Paint(x - MAKE_GFIXED(len / 2), y, scale, color, text, GFIXED_0, 0, ITEM_TEXTSTYLE_SHADOWEDMORE);
 }
 
 void Text_PaintCenter_AutoWrapped(gfixed x, gfixed y, gfixed xmax, gfixed ystep, gfixed scale, vec4_t color, const char *str, gfixed adjust) {
@@ -5369,7 +5375,7 @@ void Text_PaintCenter_AutoWrapped(gfixed x, gfixed y, gfixed xmax, gfixed ystep,
 		*s3 = '\0';
 		width = Text_Width(s1, scale, 0);
 		*s3 = c_bcp;
-		if (width > xmax) {
+		if (width > FIXED_TO_INT(xmax)) {
 			if (s1==s2)
 			{
 				// fuck, don't have a clean cut, we'll overflow
@@ -5416,16 +5422,16 @@ static void UI_DisplayDownloadInfo( const char *downloadName, gfixed centerPoint
 	int leftWidth;
 	const char *s;
 
-	downloadSize = _UI_trap_Cvar_VariableValue( "cl_downloadSize" );
-	downloadCount = _UI_trap_Cvar_VariableValue( "cl_downloadCount" );
-	downloadTime = _UI_trap_Cvar_VariableValue( "cl_downloadTime" );
+	downloadSize = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "cl_downloadSize" ));
+	downloadCount = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "cl_downloadCount" ));
+	downloadTime = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "cl_downloadTime" ));
 
 	leftWidth = 320;
 
 	UI_SetColor(colorWhite);
-	Text_PaintCenter(centerPoint, yStart + 112, scale, colorWhite, dlText, 0);
-	Text_PaintCenter(centerPoint, yStart + 192, scale, colorWhite, etaText, 0);
-	Text_PaintCenter(centerPoint, yStart + 248, scale, colorWhite, xferText, 0);
+	Text_PaintCenter(centerPoint, yStart + GFIXED(112,0), scale, colorWhite, dlText, GFIXED_0);
+	Text_PaintCenter(centerPoint, yStart + GFIXED(192,0), scale, colorWhite, etaText, GFIXED_0);
+	Text_PaintCenter(centerPoint, yStart + GFIXED(248,0), scale, colorWhite, xferText, GFIXED_0);
 
 	if (downloadSize > 0) {
 		s = va( "%s (%d%%)", downloadName, downloadCount * 100 / downloadSize );
@@ -5433,14 +5439,14 @@ static void UI_DisplayDownloadInfo( const char *downloadName, gfixed centerPoint
 		s = downloadName;
 	}
 
-	Text_PaintCenter(centerPoint, yStart+136, scale, colorWhite, s, 0);
+	Text_PaintCenter(centerPoint, yStart+GFIXED(136,0), scale, colorWhite, s, GFIXED_0);
 
 	UI_ReadableSize( dlSizeBuf,		sizeof dlSizeBuf,		downloadCount );
 	UI_ReadableSize( totalSizeBuf,	sizeof totalSizeBuf,	downloadSize );
 
 	if (downloadCount < 4096 || !downloadTime) {
-		Text_PaintCenter(leftWidth, yStart+216, scale, colorWhite, "estimating", 0);
-		Text_PaintCenter(leftWidth, yStart+160, scale, colorWhite, va("(%s of %s copied)", dlSizeBuf, totalSizeBuf), 0);
+		Text_PaintCenter(MAKE_GFIXED(leftWidth), yStart+GFIXED(216,0), scale, colorWhite, "estimating", GFIXED_0);
+		Text_PaintCenter(MAKE_GFIXED(leftWidth), yStart+GFIXED(160,0), scale, colorWhite, va("(%s of %s copied)", dlSizeBuf, totalSizeBuf), GFIXED_0);
 	} else {
 		if ((uiInfo.uiDC.realTime - downloadTime) / 1000) {
 			xferRate = downloadCount / ((uiInfo.uiDC.realTime - downloadTime) / 1000);
@@ -5457,19 +5463,19 @@ static void UI_DisplayDownloadInfo( const char *downloadName, gfixed centerPoint
 			UI_PrintTime ( dlTimeBuf, sizeof dlTimeBuf, 
 				(n - (((downloadCount/1024) * n) / (downloadSize/1024))) * 1000);
 
-			Text_PaintCenter(leftWidth, yStart+216, scale, colorWhite, dlTimeBuf, 0);
-			Text_PaintCenter(leftWidth, yStart+160, scale, colorWhite, va("(%s of %s copied)", dlSizeBuf, totalSizeBuf), 0);
+			Text_PaintCenter(MAKE_GFIXED(leftWidth), yStart+GFIXED(216,0), scale, colorWhite, dlTimeBuf, GFIXED_0);
+			Text_PaintCenter(MAKE_GFIXED(leftWidth), yStart+GFIXED(160,0), scale, colorWhite, va("(%s of %s copied)", dlSizeBuf, totalSizeBuf), GFIXED_0);
 		} else {
-			Text_PaintCenter(leftWidth, yStart+216, scale, colorWhite, "estimating", 0);
+			Text_PaintCenter(MAKE_GFIXED(leftWidth), yStart+GFIXED(216,0), scale, colorWhite, "estimating", GFIXED_0);
 			if (downloadSize) {
-				Text_PaintCenter(leftWidth, yStart+160, scale, colorWhite, va("(%s of %s copied)", dlSizeBuf, totalSizeBuf), 0);
+				Text_PaintCenter(MAKE_GFIXED(leftWidth), yStart+GFIXED(160,0), scale, colorWhite, va("(%s of %s copied)", dlSizeBuf, totalSizeBuf), GFIXED_0);
 			} else {
-				Text_PaintCenter(leftWidth, yStart+160, scale, colorWhite, va("(%s copied)", dlSizeBuf), 0);
+				Text_PaintCenter(MAKE_GFIXED(leftWidth), yStart+GFIXED(160,0), scale, colorWhite, va("(%s copied)", dlSizeBuf), GFIXED_0);
 			}
 		}
 
 		if (xferRate) {
-			Text_PaintCenter(leftWidth, yStart+272, scale, colorWhite, va("%s/Sec", xferRateBuf), 0);
+			Text_PaintCenter(MAKE_GFIXED(leftWidth), yStart+GFIXED(272,0), scale, colorWhite, va("%s/Sec", xferRateBuf), GFIXED_0);
 		}
 	}
 }
@@ -5483,7 +5489,7 @@ to prevent it from blinking away too rapidly on local or lan games.
 ========================
 */
 void UI_DrawConnectScreen( qboolean overlay ) {
-	char			*s;
+	const char			*s;
 	uiClientState_t	cstate;
 	char			info[MAX_INFO_VALUE];
 	char text[256];
@@ -5497,12 +5503,12 @@ void UI_DrawConnectScreen( qboolean overlay ) {
 	}
 
 	if (!overlay) {
-		centerPoint = 320;
-		yStart = 130;
+		centerPoint = GFIXED(320,0);
+		yStart = GFIXED(130,0);
 		scale = GFIXED(0,5);
 	} else {
-		centerPoint = 320;
-		yStart = 32;
+		centerPoint = GFIXED(320,0);
+		yStart = GFIXED(32,0);
 		scale = GFIXED(0,6);
 		return;
 	}
@@ -5512,21 +5518,21 @@ void UI_DrawConnectScreen( qboolean overlay ) {
 
 	info[0] = '\0';
 	if( _UI_trap_GetConfigString( CS_SERVERINFO, info, sizeof(info) ) ) {
-		Text_PaintCenter(centerPoint, yStart, scale, colorWhite, va( "Loading %s", Info_ValueForKey( info, "mapname" )), 0);
+		Text_PaintCenter(centerPoint, yStart, scale, colorWhite, va( "Loading %s", Info_ValueForKey( info, "mapname" )), GFIXED_0);
 	}
 
 	if (!Q_stricmp(cstate.servername,"localhost")) {
-		Text_PaintCenter(centerPoint, yStart + 48, scale, colorWhite, va("Starting up..."), ITEM_TEXTSTYLE_SHADOWEDMORE);
+		Text_PaintCenter(centerPoint, yStart + GFIXED(48,0), scale, colorWhite, va("Starting up..."), MAKE_GFIXED(ITEM_TEXTSTYLE_SHADOWEDMORE));
 	} else {
 		strcpy(text, va("Connecting to %s", cstate.servername));
-		Text_PaintCenter(centerPoint, yStart + 48, scale, colorWhite,text , ITEM_TEXTSTYLE_SHADOWEDMORE);
+		Text_PaintCenter(centerPoint, yStart + GFIXED(48,0), scale, colorWhite,text , MAKE_GFIXED(ITEM_TEXTSTYLE_SHADOWEDMORE));
 	}
 
 	// display global MOTD at bottom
-	Text_PaintCenter(centerPoint, 600, scale, colorWhite, Info_ValueForKey( cstate.updateInfoString, "motd" ), 0);
+	Text_PaintCenter(centerPoint, GFIXED(600,0), scale, colorWhite, Info_ValueForKey( cstate.updateInfoString, "motd" ), GFIXED_0);
 	// print any server info (server full, bad version, etc)
 	if ( cstate.connState < CA_CONNECTED ) {
-		Text_PaintCenter_AutoWrapped(centerPoint, yStart + 176, 630, 20, scale, colorWhite, cstate.messageString, 0);
+		Text_PaintCenter_AutoWrapped(centerPoint, yStart + GFIXED(176,0), GFIXED(630,0), GFIXED(20,0), scale, colorWhite, cstate.messageString, GFIXED_0);
 	}
 
 	if ( lastConnState > cstate.connState ) {
@@ -5562,7 +5568,7 @@ void UI_DrawConnectScreen( qboolean overlay ) {
 
 
 	if (Q_stricmp(cstate.servername,"localhost")) {
-		Text_PaintCenter(centerPoint, yStart + 80, scale, colorWhite, s, 0);
+		Text_PaintCenter(centerPoint, yStart + GFIXED(80,0), scale, colorWhite, s, GFIXED_0);
 	}
 
 	// password required / connection rejected information goes here
@@ -5577,8 +5583,8 @@ cvars
 
 typedef struct {
 	vmCvar_t	*vmCvar;
-	char		*cvarName;
-	char		*defaultString;
+	const char		*cvarName;
+	const char		*defaultString;
 	int			cvarFlags;
 } _UI_cvarTable_t;
 
@@ -5878,7 +5884,7 @@ static void UI_StopServerRefresh( void )
 	if (count - uiInfo.serverStatus.numDisplayServers > 0) {
 		Com_Printf("%d servers not listed due to packet loss or pings higher than %d\n",
 						count - uiInfo.serverStatus.numDisplayServers,
-						(int) _UI_trap_Cvar_VariableValue("cl_maxPing"));
+						FIXED_TO_INT(_UI_trap_Cvar_VariableValue("cl_maxPing")));
 	}
 
 }
@@ -5892,7 +5898,7 @@ ArenaServers_MaxPing
 static int ArenaServers_MaxPing( void ) {
 	int		maxPing;
 
-	maxPing = (int)_UI_trap_Cvar_VariableValue( "cl_maxPing" );
+	maxPing = FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "cl_maxPing" ));
 	if( maxPing < 100 ) {
 		maxPing = 100;
 	}
@@ -5992,7 +5998,8 @@ static void UI_StartServerRefresh(qboolean full)
 			_UI_trap_Cmd_ExecuteText( EXEC_NOW, va( "globalservers %d %s full empty\n", i, ptr));
 		}
 		else {
-			_UI_trap_Cmd_ExecuteText( EXEC_NOW, va( "globalservers %d %d full empty\n", i, (int)_UI_trap_Cvar_VariableValue( "protocol" ) ) );
+			_UI_trap_Cmd_ExecuteText( EXEC_NOW, va( "globalservers %d %d full empty\n", i, 
+				FIXED_TO_INT(_UI_trap_Cvar_VariableValue( "protocol" )) ) );
 		}
 	}
 }

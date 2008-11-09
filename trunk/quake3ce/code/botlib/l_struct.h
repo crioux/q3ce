@@ -51,7 +51,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //structure field definition
 typedef struct fielddef_s
 {
-	char *name;										//name of the field
+	const char *name;										//name of the field
 	int offset;										//offset in the structure
 	int type;										//type of the field
 	//type specific fields

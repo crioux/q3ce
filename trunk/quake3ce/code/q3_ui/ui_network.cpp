@@ -146,7 +146,7 @@ static void UI_NetworkOptionsMenu_Init( void ) {
 	networkOptionsInfo.banner.generic.flags		= QMF_CENTER_JUSTIFY;
 	networkOptionsInfo.banner.generic.x			= 320;
 	networkOptionsInfo.banner.generic.y			= 16;
-	networkOptionsInfo.banner.string			= "SYSTEM SETUP";
+	networkOptionsInfo.banner.string			= strdup("SYSTEM SETUP");
 	networkOptionsInfo.banner.color				= color_white;
 	networkOptionsInfo.banner.style				= UI_CENTER;
 
@@ -172,7 +172,7 @@ static void UI_NetworkOptionsMenu_Init( void ) {
 	networkOptionsInfo.graphics.generic.callback	= UI_NetworkOptionsMenu_Event;
 	networkOptionsInfo.graphics.generic.x			= 216;
 	networkOptionsInfo.graphics.generic.y			= 240 - 2 * PROP_HEIGHT;
-	networkOptionsInfo.graphics.string				= "GRAPHICS";
+	networkOptionsInfo.graphics.string				= strdup("GRAPHICS");
 	networkOptionsInfo.graphics.style				= UI_RIGHT;
 	networkOptionsInfo.graphics.color				= color_red;
 
@@ -182,7 +182,7 @@ static void UI_NetworkOptionsMenu_Init( void ) {
 	networkOptionsInfo.display.generic.callback		= UI_NetworkOptionsMenu_Event;
 	networkOptionsInfo.display.generic.x			= 216;
 	networkOptionsInfo.display.generic.y			= 240 - PROP_HEIGHT;
-	networkOptionsInfo.display.string				= "DISPLAY";
+	networkOptionsInfo.display.string				= strdup("DISPLAY");
 	networkOptionsInfo.display.style				= UI_RIGHT;
 	networkOptionsInfo.display.color				= color_red;
 
@@ -192,7 +192,7 @@ static void UI_NetworkOptionsMenu_Init( void ) {
 	networkOptionsInfo.sound.generic.callback		= UI_NetworkOptionsMenu_Event;
 	networkOptionsInfo.sound.generic.x				= 216;
 	networkOptionsInfo.sound.generic.y				= 240;
-	networkOptionsInfo.sound.string					= "SOUND";
+	networkOptionsInfo.sound.string					= strdup("SOUND");
 	networkOptionsInfo.sound.style					= UI_RIGHT;
 	networkOptionsInfo.sound.color					= color_red;
 
@@ -202,7 +202,7 @@ static void UI_NetworkOptionsMenu_Init( void ) {
 	networkOptionsInfo.network.generic.callback		= UI_NetworkOptionsMenu_Event;
 	networkOptionsInfo.network.generic.x			= 216;
 	networkOptionsInfo.network.generic.y			= 240 + PROP_HEIGHT;
-	networkOptionsInfo.network.string				= "NETWORK";
+	networkOptionsInfo.network.string				= strdup("NETWORK");
 	networkOptionsInfo.network.style				= UI_RIGHT;
 	networkOptionsInfo.network.color				= color_red;
 

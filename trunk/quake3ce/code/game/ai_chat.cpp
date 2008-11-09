@@ -253,7 +253,7 @@ BotWeaponNameForMeansOfDeath
 ==================
 */
 
-char *BotWeaponNameForMeansOfDeath(int mod) {
+const char *BotWeaponNameForMeansOfDeath(int mod) {
 	switch(mod) {
 		case MOD_SHOTGUN: return "Shotgun";
 		case MOD_GAUNTLET: return "Gauntlet";
@@ -285,7 +285,7 @@ char *BotWeaponNameForMeansOfDeath(int mod) {
 BotRandomWeaponName
 ==================
 */
-char *BotRandomWeaponName(void) {
+const char *BotRandomWeaponName(void) {
 	int rnd;
 
 #ifdef MISSIONPACK
@@ -745,7 +745,8 @@ BotChat_HitTalking
 ==================
 */
 int BotChat_HitTalking(bot_state_t *bs) {
-	char name[32], *weap;
+	char name[32];
+	const char *weap;
 	int lasthurt_client;
 	gfixed rnd;
 
@@ -784,7 +785,8 @@ BotChat_HitNoDeath
 ==================
 */
 int BotChat_HitNoDeath(bot_state_t *bs) {
-	char name[32], *weap;
+	char name[32];
+ 	const char *weap;
 	gfixed rnd;
 	int lasthurt_client;
 	aas_entityinfo_t entinfo;
@@ -829,7 +831,8 @@ BotChat_HitNoKill
 ==================
 */
 int BotChat_HitNoKill(bot_state_t *bs) {
-	char name[32], *weap;
+	char name[32];
+	const char *weap;
 	gfixed rnd;
 	aas_entityinfo_t entinfo;
 
@@ -949,7 +952,7 @@ BotChatTest
 void BotChatTest(bot_state_t *bs) {
 
 	char name[32];
-	char *weap;
+	const char *weap;
 	int num, i;
 
 	num = _G_trap_BotNumInitialChats(bs->cs, "game_enter");

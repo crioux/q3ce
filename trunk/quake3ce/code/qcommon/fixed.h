@@ -1,9 +1,9 @@
 #ifndef __INC_FIXED_H
 #define __INC_FIXED_H
 
-
-#include<windows.h>
 #include<math.h>
+#include<stdlib.h>
+#include"unixdefs.h"
 
 //#define FIXED_IS_FLOAT 1
 

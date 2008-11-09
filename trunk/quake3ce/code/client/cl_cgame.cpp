@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // cl_cgame.c  -- client system interaction with client game
 
 #include"client_pch.h"
-#include"..\cgame\cg_public.h"
+#include"cg_public.h"
 
 extern	botlib_export_t	*botlib_export;
 
@@ -194,9 +194,9 @@ CL_ConfigstringModified
 =====================
 */
 void CL_ConfigstringModified( void ) {
-	char		*old, *s;
+	const char		*old, *s;
 	int			i, index;
-	char		*dup;
+	const char		*dup;
 	gameState_t	oldGs;
 	int			len;
 
@@ -258,8 +258,8 @@ Set up argc/argv for the given command
 ===================
 */
 qboolean CL_GetServerCommand( int serverCommandNumber ) {
-	char	*s;
-	char	*cmd;
+	const char	*s;
+	const char	*cmd;
 	static char bigConfigString[BIG_INFO_STRING];
 	int argc;
 
@@ -402,13 +402,13 @@ The cgame module is making a system call
 ====================
 */
 
-SysCallArg CL_CgameSystemCalls( int callnum, SysCallArgs &args ) {
+SysCallArg CL_CgameSystemCalls( int callnum, const SysCallArgs &args ) {
 	switch( callnum ) {
 	case CG_PRINT:
-		Com_Printf( "%s", args[0]);
+		Com_Printf( "%s", (const char *)args[0]);
 		return SysCallArg();
 	case CG_ERROR:
-		Com_Error( ERR_DROP, "%s", args[0] );
+		Com_Error( ERR_DROP, "%s", (const char *)args[0] );
 		return SysCallArg();
 	case CG_MILLISECONDS:
 		return SysCallArg::Int(Sys_Milliseconds());

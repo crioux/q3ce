@@ -21,11 +21,11 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 //
 #include"ui_pch.h"
-#include"..\qcommon\qcommon.h"
-#include"..\server\server.h"
-#include"..\qcommon\cm_public.h"
-#include"..\client\client.h"
-#include"..\game\botlib.h"
+#include"qcommon.h"
+#include"server.h"
+#include"cm_public.h"
+#include"client.h"
+#include"botlib.h"
 
 
 extern botlib_export_t	*botlib_export;
@@ -346,7 +346,7 @@ void _UI_trap_SetCDKey( char *buf ) {
 	CLUI_SetCDKey( buf );
 }
 
-int _UI_trap_PC_AddGlobalDefine( char *define ) {
+int _UI_trap_PC_AddGlobalDefine(const char *define ) {
 	return botlib_export->PC_AddGlobalDefine( define );
 }
 

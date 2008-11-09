@@ -1464,7 +1464,7 @@ void BotMatch_WhatIsMyCommand(bot_state_t *bs, bot_match_t *match) {
 BotNearestVisibleItem
 ==================
 */
-bfixed BotNearestVisibleItem(bot_state_t *bs, char *itemname, bot_goal_t *goal) {
+bfixed BotNearestVisibleItem(bot_state_t *bs, const char *itemname, bot_goal_t *goal) {
 	int i;
 	char name[64];
 	bot_goal_t tmpgoal;
@@ -1503,7 +1503,7 @@ void BotMatch_WhereAreYou(bot_state_t *bs, bot_match_t *match) {
 	int i, bestitem, redtt, bluett, client;
 	bot_goal_t goal;
 	char netname[MAX_MESSAGE_SIZE];
-	char *nearbyitems[] = {
+	const char *nearbyitems[] = {
 		"Shotgun",
 		"Grenade Launcher",
 		"Rocket Launcher",
