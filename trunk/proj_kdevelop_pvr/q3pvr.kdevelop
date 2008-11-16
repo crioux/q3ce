@@ -15,8 +15,8 @@
     <projectname>q3pvr</projectname>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
-    <defaultencoding/>
+    <description></description>
+    <defaultencoding></defaultencoding>
   </general>
   <kdevautoproject>
     <general/>
@@ -102,6 +102,7 @@
     <tree>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>
       <hidenonprojectfiles>false</hidenonprojectfiles>
+      <showvcsfields>false</showvcsfields>
     </tree>
   </kdevfileview>
   <kdevdocumentation>
@@ -160,7 +161,7 @@
       <includePaths>.;</includePaths>
     </codecompletion>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>
@@ -177,9 +178,9 @@
     <run>
       <directoryradio>executable</directoryradio>
       <mainprogram>/home/dildog/q3ce/proj_kdevelop_pvr/BuildDebug_Demo_x86/pack/q3pvr_x86</mainprogram>
-      <programargs/>
-      <globaldebugarguments/>
-      <globalcwd>/home/dildog/q3ce/proj_kdevelop_pvr/BuildDebug_Demo_x86/pack/</globalcwd>
+      <programargs></programargs>
+      <globaldebugarguments>-cmd &quot;map q3dm1&quot;</globaldebugarguments>
+      <globalcwd>/home/dildog/q3ce/proj_kdevelop_pvr/BuildDebug_Demo_x86/pack</globalcwd>
       <useglobalprogram>false</useglobalprogram>
       <terminal>false</terminal>
       <autocompile>false</autocompile>
@@ -205,77 +206,16 @@
     </filetypes>
     <blacklist>
       <path>Makefile</path>
-      <path>src/quake3ce/code/ui</path>
-      <path>src/quake3ce/code/ui/keycodes.h</path>
-      <path>src/quake3ce/code/ui/ui_atoms.cpp</path>
-      <path>src/quake3ce/code/ui/ui_gameinfo.cpp</path>
-      <path>src/quake3ce/code/ui/ui_local.h</path>
-      <path>src/quake3ce/code/ui/ui_main.cpp</path>
-      <path>src/quake3ce/code/ui/ui_players.cpp</path>
-      <path>src/quake3ce/code/ui/ui_public.h</path>
-      <path>src/quake3ce/code/ui/ui_shared.cpp</path>
-      <path>src/quake3ce/code/ui/ui_shared.h</path>
-      <path>src/quake3ce/code/ui/ui_syscalls.cpp</path>
-      <path>src/quake3ce/code/ui/ui_util.cpp</path>
-      <path>src/quake3ce/code/wce</path>
-      <path>src/quake3ce/code/wce/ce_input.cpp</path>
-      <path>src/quake3ce/code/wce/dll_load.cpp</path>
-      <path>src/quake3ce/code/wce/dll_load.h</path>
-      <path>src/quake3ce/code/wce/glw_win.h</path>
-      <path>src/quake3ce/code/wce/q3ce.cpp</path>
-      <path>src/quake3ce/code/wce/q3ce.h</path>
-      <path>src/quake3ce/code/wce/q3ce_main.cpp</path>
-      <path>src/quake3ce/code/wce/res</path>
-      <path>src/quake3ce/code/wce/res/newres.h</path>
-      <path>src/quake3ce/code/wce/res/resource.h</path>
-      <path>src/quake3ce/code/wce/win_glimp.cpp</path>
-      <path>src/quake3ce/code/wce/win_local.h</path>
-      <path>src/quake3ce/code/wce/win_net.cpp</path>
-      <path>src/quake3ce/code/wce/win_shared.cpp</path>
-      <path>src/quake3ce/code/wce/win_snd.cpp</path>
-      <path>src/quake3ce/code/wce/win_syscon.cpp</path>
-      <path>src/quake3ce/code/wce/win_wndproc.cpp</path>
-      <path>src/quake3ce/code/wce/xmalloc.cpp</path>
-      <path>src/quake3ce/code/wce/xmalloc.h</path>
-      <path>src/quake3ce/ui</path>
-      <path>src/quake3ce/ui/menudef.h</path>
-      <path>src/quake3ce/vm-backup</path>
-      <path>src/quake3ce/vm-backup/vm.cpp</path>
-      <path>src/quake3ce/vm-backup/vm_interpreted.cpp</path>
-      <path>src/quake3ce/vm-backup/vm_x86.cpp</path>
-      <path>src/quake3ce/code/jpeg-6/jmemdos.c</path>
-      <path>src/quake3ce/code/cgame/cg_newdraw.cpp</path>
-      <path>src/quake3ce/code/game/g_rankings.cpp</path>
-      <path>src/quake3ce/code/game/g_rankings.h</path>
-      <path>src/quake3ce/code/pvr/pvr_joystick.cpp</path>
-      <path>src/quake3ce/code/pvr/pvr_qgl.cpp</path>
-      <path>src/quake3ce/code/pvr/q3ce.cpp</path>
-      <path>src/quake3ce/code/pvr/q3ce.h</path>
-      <path>src/quake3ce/code/q3_ui/ui_login.cpp</path>
-      <path>src/quake3ce/code/q3_ui/ui_rankings.cpp</path>
-      <path>src/quake3ce/code/q3_ui/ui_rankstatus.cpp</path>
-      <path>src/quake3ce/code/q3_ui/ui_signup.cpp</path>
-      <path>src/quake3ce/code/q3_ui/ui_specifyleague.cpp</path>
-      <path>src/quake3ce/code/qcommon/find.cpp</path>
-      <path>src/quake3ce/code/qcommon/find.h</path>
-      <path>src/quake3ce/code/qcommon/fixed.cpp</path>
-      <path>src/quake3ce/code/server/sv_rankings.cpp</path>
-      <path>src/quake3ce/code/jpeg-6/jpegtran.c</path>
-      <path>src/quake3ce/code/cgame/cg_particles.cpp</path>
-      <path>src/quake3ce/code/jpeg-6/jmemname.c</path>
-      <path>src/vidplay/common/zlib/minigzip.c</path>
-      <path>src/vidplay/common/zlib/example.c</path>
-      <path>src/vidplay/common/win32</path>
     </blacklist>
     <build>
       <buildtool>make</buildtool>
-      <builddir/>
+      <builddir></builddir>
     </build>
     <other>
       <prio>0</prio>
-      <otherbin/>
-      <defaulttarget/>
-      <otheroptions/>
+      <otherbin></otherbin>
+      <defaulttarget></defaulttarget>
+      <otheroptions></otheroptions>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
@@ -286,9 +226,9 @@
       <numberofjobs>0</numberofjobs>
       <prio>0</prio>
       <dontact>false</dontact>
-      <makebin/>
-      <defaulttarget/>
-      <makeoptions/>
+      <makebin></makebin>
+      <defaulttarget></defaulttarget>
+      <makeoptions></makeoptions>
       <selectedenvironment>default</selectedenvironment>
       <environments>
         <default/>
@@ -303,11 +243,11 @@
   </cppsupportpart>
   <kdevdebugger>
     <general>
-      <gdbpath/>
-      <dbgshell/>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <gdbpath></gdbpath>
+      <dbgshell></dbgshell>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>

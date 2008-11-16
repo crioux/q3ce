@@ -318,6 +318,7 @@ void Com_Quit_f( void ) {
 		CL_Shutdown ();
 		Com_Shutdown ();
 		FS_Shutdown(qtrue);
+		Com_FreeZoneMemory();
 	}
 	Sys_Quit ();
 }
@@ -2010,6 +2011,11 @@ void Com_WriteConfiguration( void ) {
 #endif
 }
 
+void Com_FreeZoneMemory(void)
+{
+	zone.Destroy();
+}
+
 
 /*
 ===============
@@ -2269,9 +2275,6 @@ void Com_Shutdown (void) {
 		FS_FCloseFile( com_journalFile );
 		com_journalFile = 0;
 	}
-
-	zone.Destroy();
-
 }
 
 EXTERN_C void Com_Memcpy (void* dest, const void* src, const size_t count)

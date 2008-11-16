@@ -98,6 +98,26 @@ static	channel_t		*freelist = NULL;
 int						s_rawend;
 portable_samplepair_t	s_rawsamples[MAX_RAW_SAMPLES];
 
+static qboolean use_custom_memset = qfalse;
+
+// https://zerowing.idsoftware.com/bugzilla/show_bug.cgi?id=371 
+void Snd_Memset (void* dest, const int val, const size_t count)
+{
+  int *pDest;
+  int i, iterate;
+
+  if (!use_custom_memset)
+  {
+    Com_Memset(dest,val,count);
+    return;
+  }
+  iterate = count / sizeof(int);
+  pDest = (int*)dest;
+  for(i=0; i<iterate; i++)
+  {
+    pDest[i] = val;
+  }
+}
 
 // ====================================================================
 // User-setable variables

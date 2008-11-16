@@ -159,17 +159,41 @@ bool Q3PVR::InitApplication()
 }
 
 int main_init( int argc, char **argv );
-char *g_args[2];
+char *g_args[4];
+int g_arg_count;
 
 bool Q3PVR::InitView()
 {
 	g_pvr_window_height=PVRShellGet(prefHeight);
 	g_pvr_window_width=PVRShellGet(prefWidth);
+	
+	int argc=PVRShellGet(prefCommandLineOptNum);
+	SCmdLineOpt *argv=(SCmdLineOpt *)PVRShellGet(prefCommandLineOpts);
 
-	g_args[0]=strdup("q3pvr");
-	g_args[1]=NULL;
+	int i;
+	for(i=0;i<argc;i++)
+	{
+		if(strcmp(argv[i].pArg,"-start")==0)
+		{
+			break;
+		}
+	}
+	if(i<argc)
+	{
+		g_args[0]=strdup("q3pvr");
+		g_args[1]=strdup("spmap q3dm1");
+		g_args[2]=NULL;
+		g_arg_count=2;
+	}
+	else
+	{
+		
+		g_args[0]=strdup("q3pvr");
+		g_args[1]=NULL;
+		g_arg_count=1;
+	}
 
-	main_init( 1, g_args );
+	main_init( g_arg_count, g_args );
 
 	SetEventHandler(&g_Q3PVREventHandler);
 
@@ -178,7 +202,10 @@ bool Q3PVR::InitView()
 
 bool Q3PVR::ReleaseView()
 {
-	free(g_args[0]);
+	for(int i=0;i<g_arg_count;i++)
+	{
+		free(g_args[i]);
+	}
 
 	return true;
 }

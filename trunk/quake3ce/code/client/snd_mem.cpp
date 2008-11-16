@@ -101,7 +101,14 @@ redo:
 	return v;
 }
 
+static bool s_bSoundSetup=false;
+
 void SND_setup() {
+
+	if(s_bSoundSetup)
+	{
+		return;
+	}
 
 	sndBuffer *p, *q;
 	//cvar_t	*cv;
@@ -113,7 +120,6 @@ void SND_setup() {
 	//scs = (cv->integer*256);
 
 //	buffer = malloc(scs*sizeof(sndBuffer) );
-	
 	totalsndsize=g_mem_snd.GetTotalSize();
 	scs=totalsndsize/sizeof(sndBuffer);
 	totalsndsize=scs*sizeof(sndBuffer);
@@ -140,6 +146,8 @@ void SND_setup() {
 	freelist = p + scs - 1;
 
 	Com_Printf("Sound memory manager started\n");
+
+	s_bSoundSetup=true;
 }
 
 /*

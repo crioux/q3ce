@@ -777,7 +777,7 @@ void Hunk_Log( void);
 void Com_Init( const char *commandLine );
 void Com_Frame( void );
 void Com_Shutdown( void );
-
+void Com_FreeZoneMemory(void);
 
 /*
 ==============================================================
