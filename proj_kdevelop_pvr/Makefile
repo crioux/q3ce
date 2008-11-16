@@ -48,7 +48,7 @@ SDK_LIBRARIES = -lGLES_CM
 SDK_CPP_SOURCES = $(ROOT)/src/pvrsdk/PVRShell.cpp $(ROOT)/src/pvrsdk/API/KEGL/PVRShellAPI.cpp $(ROOT)/src/pvrsdk/OS/LinuxX11/PVRShellOS.cpp
 #SDK_CPP_SOURCES = $(SDKPATH)/Shell/PVRShell.cpp $(SDKPATH)/Shell/API/KEGL/PVRShellAPI.cpp $(SDKPATH)/Shell/OS/LinuxX11/PVRShellOS.cpp
 
-INCLUDES = $(SDK_INCLUDES) -I$(ROOT)/src/quake3ce/code -I$(ROOT)/src/quake3ce/code/cgame -I$(ROOT)/src/quake3ce/code/q3_ui -I$(ROOT)/src/quake3ce/code/game -I$(ROOT)/src/quake3ce/code/qcommon -I$(ROOT)/src/quake3ce/code/renderer -I$(ROOT)/src/quake3ce/code/client -I$(ROOT)/src/quake3ce/code/server -I$(ROOT)/src/quake3ce/code/pvr -I$(ROOT)/src/vidplay -I$(ROOT)/src/vidplay/common
+INCLUDES = $(SDK_INCLUDES) -I$(ROOT)/src/quake3ce/code -I$(ROOT)/src/quake3ce/code/cgame -I$(ROOT)/src/quake3ce/code/q3_ui -I$(ROOT)/src/quake3ce/code/game -I$(ROOT)/src/quake3ce/code/qcommon -I$(ROOT)/src/quake3ce/code/renderer -I$(ROOT)/src/quake3ce/code/client -I$(ROOT)/src/quake3ce/code/server -I$(ROOT)/src/quake3ce/code/pvr -I$(ROOT)/src/vidplay -I$(ROOT)/src/vidplay/common -I$(ROOT)/src/quake3ce/code/SDL12/include
 
 LIBRARIES = $(SDK_LIBDIRS) -lc $(SDK_LIBRARIES)
 
@@ -233,7 +233,7 @@ $(MODE)/$(CGAMENAME): $(CGAME_C_OBJECTS) $(CGAME_CPP_OBJECTS) $(MODE)/$(LIBMADNA
 
 $(MODE)/$(Q3PVRNAME): $(Q3PVR_C_OBJECTS) $(Q3PVR_CPP_OBJECTS) $(MODE)/$(LIBMADNAME) #$(MODE)/$(VIDPLAYNAME)
 	mkdir -p $(MODE)
-	$(LD) $(LDFLAGS) -o $@ $+ $(LIBRARIES)
+	$(LD) $(LDFLAGS) -o $@ $+ $(LIBRARIES)	/usr/lib/libSDL-1.2.so.0
 
 	
 

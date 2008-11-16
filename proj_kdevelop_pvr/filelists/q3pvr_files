@@ -223,7 +223,6 @@ src/quake3ce/code/pvr/pvr_common.cpp
 src/quake3ce/code/pvr/pvr_glimp.cpp
 src/quake3ce/code/pvr/pvr_local.h
 src/quake3ce/code/pvr/pvr_signals.cpp
-src/quake3ce/code/pvr/pvr_snd.cpp
 src/quake3ce/code/pvr/q3pvr.cpp
 src/quake3ce/code/pvr/q3pvr.h
 src/quake3ce/code/pvr/unix_glw.h
@@ -233,4 +232,4 @@ src/quake3ce/code/pvr/unix_shared.cpp
 src/quake3ce/code/pvr/vm_x86.cpp
 src/quake3ce/code/pvr/xmalloc.cpp
 src/quake3ce/code/pvr/xmalloc.h
-
+src/quake3ce/code/sdl/sdl_snd.cpp
