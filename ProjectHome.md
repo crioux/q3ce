@@ -1,0 +1,7 @@
+Q3CE is a port of id Software's Quake 3 first person shooter  to the Windows CE platform. Runs on Windows PPC2003, and partially works on Windows Mobile 5. Supports hardware acceleration on the Dell Axim x51v, otherwise software rendering is used. A retail Quake III CD is required to play.
+
+Ported by Christien Rioux of Noctemware. Extensive modifications were made to Quake 3 in order to run well on the ARM CPU and Windows CE platform, including a conversion to use fixed-point math.
+
+| Intro Cinematic | Main Menu | Loading | Shooting | Plasma Cannon | Fragged |
+|:----------------|:----------|:--------|:---------|:--------------|:--------|
+| ![http://q3ce.googlecode.com/files/intro_sm.jpg](http://q3ce.googlecode.com/files/intro_sm.jpg) | ![http://q3ce.googlecode.com/files/title_sm.jpg](http://q3ce.googlecode.com/files/title_sm.jpg) | ![http://q3ce.googlecode.com/files/loading_sm.jpg](http://q3ce.googlecode.com/files/loading_sm.jpg) | ![http://q3ce.googlecode.com/files/gun_sm.jpg](http://q3ce.googlecode.com/files/gun_sm.jpg) | ![http://q3ce.googlecode.com/files/cannon_sm.jpg](http://q3ce.googlecode.com/files/cannon_sm.jpg) | ![http://q3ce.googlecode.com/files/dead_sm.jpg](http://q3ce.googlecode.com/files/dead_sm.jpg) |
